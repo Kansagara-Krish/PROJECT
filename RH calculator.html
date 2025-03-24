@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Room Harmonics Results</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+            justify-content: center;
+            display: flexbox;
+            flex-direction: column;
+            min-height: 100vh;
+            height: 100%;
+        }
+
+        h2 {
+            color: #007bff;
+            text-align: center;
+        }
+
+        .results-table {
+            width: 90%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            min-width: 400px;
+            margin-top: 0px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        .results-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .results-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+
+        .results-table thead tr th {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            background-color: #f2f2f2;
+            color: #333;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .results-table-3 {
+            width: 95%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            min-width: 400px;
+            margin-left: 25px;
+            margin-top: 0px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
+            font-size: 0.9em;
+            text-align: center;
+            justify-content: none;
+            align-items: none;
+        }
+
+        .results-table-3 tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .results-table-3 tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+
+        .results-table-3 thead tr th {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .results-table-3 th,
+        .results-table-3 td {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            background-color: #f2f2f2;
+            color: #333;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .combined-column {
+            width: 7%;
+        }
+
+        .table-container {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .table-container-5 {
+            width: 100%;
+            /* Ensure the container takes the full width */
+            overflow-x: auto;
+            /* Add horizontal scroll if needed */
+            margin: 0 auto;
+            /* Center the container */
+            padding: 10px;
+            /* Add some padding */
+            box-sizing: border-box;
+            /* Include padding and border in the element's total width and height */
+        }
+
+        .results-table-5 {
+            width: 90%;
+            /* Make the table responsive */
+            border-collapse: collapse;
+            /* Ensure borders are collapsed */
+            margin: 0 auto;
+            /* Center the table */
+            font-size: 0.9em;
+            /* Adjust font size */
+            text-align: center;
+            box-shadow: 0 0 20px rgb(255, 255, 255);
+            margin-bottom: 20px;
+            /* Center align text */
+        }
+
+        .results-table-5 tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .results-table-5 tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+
+        .results-table-5 tr {
+            text-align: center;
+            width: 0px;
+            font-weight: bold;
+        }
+
+        .results-table-5 th,
+        .results-table-5 td {
+            padding: 10px auto;
+            border: 1px solid #ddd;
+            vertical-align: middle;
+            background-color: rgb(212, 208, 208);
+        }
+
+        .box-width-1 {
+            width: 65px;
+            text-align: right;
+        }
+
+        .box-width-2 {
+            width: 40px;
+            right: 60%;
+            text-align: center;
+            margin-right: 40px;
+        }
+
+        .box-width-3 {
+            width: 45px;
+            text-align: center;
+        }
+
+        .box-width-4 {
+            width: 40px;
+            text-align: center;
+            padding-right: 30px;
+        }
+
+        .box-width-4-1 {
+            width: 30px;
+            text-align: center;
+            padding-right: 10px;
+        }
+
+        .box-width-5 {
+            width: 80px;
+            text-align: left;
+        }
+
+        .box-width-6 {
+            width: 55px;
+            text-align: left;
+            padding-right: 0px;
+        }
+
+        .box-width-7 {
+            width: 65px;
+            text-align: left;
+        }
+
+        .box-width-7-1 {
+            width: 65px;
+            text-align: right;
+        }
+
+        .box-width-8 {
+            width: 70px;
+            text-align: left;
+        }
+
+        @media (max-width: 968px) {
+
+            .p2 {
+                margin-left: 30px;
+
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+
+            .results-table thead {
+                background: #f4f4f4;
+                position: sticky;
+                top: 0;
+                z-index: 2;
+            }
+
+            .results-table {
+                width: 50%;
+                /* Ensures the table doesn't shrink too much */
+                border-collapse: collapse;
+            }
+
+
+            .results-table tbody,
+            .results-table th,
+            .results-table td,
+            .results-table tr {
+
+                display: table-col-group;
+                /* Hide table headers on mobile */
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: 6px 10px;
+                font-size: 14px;
+                text-align: left;
+                border: 1px solid #ddd;
+            }
+
+            .results-table-wrapper {
+                width: 100%;
+                overflow-x: auto;
+                /* Enable horizontal scrolling */
+                display: block;
+            }
+
+            .results-table td,
+            .results-table th {
+                padding: 8px 10px;
+                font-size: 14px;
+                text-align: left;
+                border: 1px solid #ddd;
+            }
+
+            .list-button {
+                font-size: 14px;
+                padding: 10px 12px;
+                margin-left: 8px;
+                display: block !important;
+            }
+
+            .list-container ul {
+                width: 100%;
+                /* Make list-container take up the full width */
+            }
+
+            .list-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 50%;
+                /* Make list-container take up half of the screen */
+            }
+
+            body.blurred *:not(.list-button):not(.list-container):not(.list-container *):not(.overlay) {
+                filter: blur(5px);
+                /* Apply blur effect */
+            }
+
+            nav {
+                display: none !important;
+            }
+
+            .list-button {
+                font-size: 14px;
+                padding: 10px 12px;
+                padding-right: 10px;
+                margin-left: 8px;
+                display: block;
+            }
+
+            select.mobile {
+                display: block;
+            }
+
+            select.laptop {
+                display: none;
+            }
+
+            .overlay {
+                display: none;
+            }
+
+            .head {
+                margin-top: 50px;
+                /* Adjust top margin */
+                height: auto;
+                /* Let the height adjust to content */
+                padding: 20px;
+                margin-left: 0px;
+                align-items: left;
+                justify-content: left;
+                /* Add some padding for better spacing */
+                font-size: 16px;
+                width: 70%;
+                /* Adjust font size for smaller screens */
+            }
+
+            .header {
+                width: 50%;
+            }
+
+            .results-table {
+                margin-left: 25px;
+            }
+        }
+
+        @media (min-width: 969px) {
+            h2 {
+                margin-top: 100px;
+            }
+
+            .p2 {
+                margin-left: 100px;
+
+            }
+
+            .results-table {
+                margin-left: 55px;
+            }
+
+            nav a {
+                text-decoration: none;
+                color: white;
+            }
+
+            .list-button {
+                display: none;
+            }
+
+            select.mobile {
+                display: none;
+            }
+
+            select.laptop {
+                display: block;
+            }
+
+            .overlay {
+                display: block;
+            }
+        }
+
+        nav {
+            position: fixed;
+            /* Fix the header at the top */
+            top: 0;
+            width: 100%;
+            height: 60px;
+            background: #34495e;
+            border-radius: 0 0 8px 8px;
+            /* Round bottom corners */
+            box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: 1.5s;
+        }
+
+        nav:hover {
+            height: 12vh;
+            transition: 0.5s;
+            font-size: larger;
+        }
+
+        nav .brand {
+            float: center;
+            height: 100%;
+            line-height: 70px;
+        }
+
+        nav ul {
+            float: center;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            font-size: large;
+            list-style: none;
+
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            display: block;
+            height: 70px;
+            line-height: 70px;
+            padding: 0 20px;
+            box-sizing: border-box;
+            position: relative;
+            font-family: "Noto Serif", serif;
+            z-index: 1;
+            text-transform: uppercase;
+            transition: .8s;
+        }
+
+        nav ul li a::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+            background: #fffAfA;
+            transform-origin: right;
+            transform: scaleX(0);
+            font-size: large;
+            transition: transform .5s;
+        }
+
+        nav ul li a:hover::before {
+            transform-origin: left;
+            transform: scaleX(1);
+            transition: 0.5s;
+        }
+
+        nav ul li a:hover {
+            font-size: 20px;
+            color: #262622;
+            box-shadow: 0 5px 10px white;
+        }
+
+        body.scrolled nav {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 5px 20px;
+            margin-left: 0px;
+            display: flex;
+        }
+
+        nav li {
+            font-size: 15px;
+            text-transform: uppercase;
+            color: white;
+            text-decoration: none;
+            line-height: 50px;
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            display: inline-block;
+            text-align: center;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+        }
+
+        /* Class to trigger the slide in animation */
+        .list-container.show {
+            display: flex;
+            /* Show the container */
+            animation-name: slideIn;
+            /* Trigger the slide in animation */
+        }
+
+        /* Class to trigger the slide out animation */
+        .list-container.hide {
+            animation-name: slideOut;
+            /* Trigger the slide out animation */
+        }
+
+        .list-container ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            padding-top: 10px;
+            margin-top: 150px;
+        }
+
+        .list-container li:last-child {
+            border-bottom: none;
+        }
+
+        .list-container li {
+            display: flex;
+            height: 8vh;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 0px;
+        }
+
+        .list-container a {
+            text-decoration: none;
+            color: #eeeeee;
+            font-family: "Noto Serif", serif;
+            text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.7);
+            display: block;
+            padding: 12px 20px;
+        }
+
+        /* Overlay for blur effect */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            /* Semi-transparent dark background */
+            z-index: 998;
+            /* Ensure it's below the menu but above other content */
+        }
+
+        body.blurred .overlay {
+            display: block;
+        }
+
+        body.blurred {
+            overflow: hidden;
+            /* Prevent scrolling when overlay is active */
+        }
+
+        body.blurred *:not(.list-button):not(.list-container):not(.list-container *) {
+            filter: blur(5px);
+            /* Apply blur effect */
+        }
+
+        .list-button {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: larger;
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+            width: 10%;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 1000;
+            /* Ensure it is above other content */
+            display: none;
+            /* Hide by default */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .list-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 50%;
+            background-color: #2c3e50;
+            /* Dark blue background for better contrast */
+            border-right: 1px solid #34495e;
+            /* Slightly lighter border */
+            box-shadow: 1px 0 5px rgba(0, 0, 0, 0.2);
+            /* Darker shadow for better depth */
+            z-index: 999;
+            overflow-y: auto;
+            justify-content: center;
+            align-items: center;
+            display: none;
+            /* Hide by default */
+            transform: translateX(-100%);
+            /* Initial state for animation */
+            animation-duration: 0.5s;
+            /* Duration of the animation */
+            animation-fill-mode: forwards;
+            /* Retain the final state of the animation */
+            /* Retain the final state of the animation */
+        }
+
+        .p2 {
+            flex: 1;
+            width: 80%;
+            padding: 15px;
+            font-size: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            margin-bottom: 0px;
+            background-color: rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        b {
+            font-size: 16px;
+        }
+
+        hr {
+            height: 5px;
+            /* Adjust the height of the line */
+            background: linear-gradient(to right, #f0f0f0, #000000, #f0f0f0);
+            border: none;
+        }
+
+        .hr_list {
+            height: 3px;
+            /* Adjust the height of the line */
+            background: linear-gradient(to right, #000000, #7b0808, #f0f0f0);
+            border: none;
+            color: black;
+            width: 150px;
+        }
+
+        #company_logo {
+            height: 100%;
+            margin-left: 30px;
+            display: flex;
+            align-items: center;
+            position: absolute;
+            left: 0;
+        }
+
+        #b2 {
+            color: white;
+        }
+
+        .p2 .note {
+            color: #00ff3c;
+            font-weight: bolder;
+            font-size: larger;
+        }
+
+        .waves {
+            width: 100%;
+            height: 60vh;
+            padding-bottom: 0px;
+        }
+
+        .speed_of_sound {
+
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            /* Adds space inside the input box */
+            width: 150px;
+            height: 30px;
+            font-size: large;
+            /* Adjust the width to fit content comfortably */
+        }
+
+        /* Align small text to the right */
+
+
+        small {
+            padding-left: 40px;
+            margin-left: auto;
+            /* Push the small text to the right */
+            font-size: 0.85em;
+            color: grey;
+            text-align: right;
+            /* Optional: Make the text slightly smaller */
+        }
+
+        .wave-color {
+            color: #1E90FF;
+            width: 10px;
+            /* Example blue wave color */
+        }
+
+        .wave-start {
+            font-weight: bold;
+        }
+
+        .length_wave {
+            padding-top: 0px;
+        }
+
+        .length_wave th,
+        .length_wave td {
+            padding: 2px;
+            /* Reduce the padding for the cells */
+            font-size: 0.8em;
+            /* Reduce the font size */
+            /* Adjust width if necessary */
+        }
+
+        .length_wave td,
+        .length_wave th {
+            width: 2px;
+            /* Adjust width if necessary */
+        }
+
+        .length_wave .wave {
+            width: 0px;
+        }
+
+        .head {
+            background-color: whitesmoke;
+            margin-bottom: 0px;
+            display: flex;
+            /* Use flexbox for alignment */
+            justify-content: center;
+            /* Center horizontally */
+            align-items: center;
+            /* Center vertically */
+            border-radius: 15px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.9);
+            margin-top: 200px;
+            padding: 10px 10px 8px 8px;
+            height: 20vh;
+            box-shadow: 0px;
+            /* Keep height as defined */
+            text-align: center;
+            max-width: 500px;
+            position: relative;
+            /* Move it to 50% from the top */
+            left: 50%;
+            /* Move it to 50% from the left */
+            transform: translate(-50%, -50%);
+            flex-direction: column;
+        }
+
+        .header {
+            margin-top: 0px;
+            text-align: center;
+            margin-bottom: 0px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const listButton = document.querySelector('.list-button');
+            const listContainer = document.querySelector('.list-container');
+            const overlay = document.querySelector('.overlay');
+
+            listButton.addEventListener('click', () => {
+                if (listContainer.classList.contains('show')) {
+                    listContainer.classList.add('hide');
+                    listContainer.classList.remove('show');
+                    overlay.style.display = 'none'; // Hide the overlay
+                    document.body.classList.remove('blurred');
+                } else {
+                    listContainer.classList.add('show');
+                    listContainer.classList.remove('hide');
+                    listContainer.style.display = 'flex'; // Ensure the container is displayed
+                    overlay.style.display = 'block'; // Show the overlay
+                    document.body.classList.add('blurred');
+                }
+            });
+
+            overlay.addEventListener('click', () => {
+                listContainer.classList.add('hide');
+                listContainer.classList.remove('show');
+                overlay.style.display = 'none'; // Hide the overlay
+                document.body.classList.remove('blurred');
+            });
+
+            // Ensure the animation ends properly
+            listContainer.addEventListener('animationend', () => {
+                if (listContainer.classList.contains('hide')) {
+                    listContainer.style.display = 'none';
+                }
+            });
+        });
+
+        window.addEventListener("scroll", function () {
+            var header = document.querySelector("nav");
+            if (window.scrollY > 50) {
+                document.body.classList.add("scrolled");
+            } else { document.body.classList.remove("scrolled"); }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const listContainer = document.getElementById('listContainer');
+            const overlay = document.getElementById('overlay');
+            const body = document.body;
+            listContainer.style.display = 'none';
+            overlay.style.display = 'none';
+            body.classList.remove('blurred');
+        });
+
+        function toggleList() {
+            const listContainer = document.getElementById('listContainer');
+            const body = document.body;
+            const overlay = document.getElementById('overlay');
+            if (listContainer.style.display === 'none' || listContainer.style.display === '') {
+                listContainer.style.display = 'block';
+                overlay.style.display = 'block'; // Show overlay
+                body.classList.add('blurred'); // Add blur effect
+            } else {
+                listContainer.style.display = 'none';
+                overlay.style.display = 'none'; // Hide overlay
+                body.classList.remove('blurred'); // Remove blur effect
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <button class="list-button" onclick="toggleList()">☰</button>
+    <div class="list-container" id="listContainer">
+        <ul>
+            <a href="./home.html">
+                <li><b id="b2">Home</b></li>
+            </a>
+            <hr class="hr_list">
+            <a href="./WORKER.html">
+                <li><b id="b2">WORKER</b></li>
+            </a>
+            <hr class="hr_list">
+            <a href="./Room-Details.html">
+                <li><b class="b2">ROOM</b></li>
+            </a>
+            <hr class="hr_list">
+            <a href="./Live Update.html">
+                <li><b class="b2">LIVE UPDATES</b></li>
+            </a>
+            <hr class="hr_list">
+            <a href="./RT calculator.html">
+                <li><b>RT 60</b></li>
+            </a>
+            <hr class="hr_list">
+            <a href="./Sound Propagation Loss Calculator.html">
+                <li><b>SPL CALCULATOR</b></li>
+            </a>
+            <hr class="hr_list">
+            <a href="./HT calculator.html">
+                <li><b>HT CALCULATOR</b></li>
+            </a>
+            <hr class="hr_list">
+            <a href="./Phase calculator.html">
+                <li><b>PH CALCULATOR</b></li>
+            </a>
+        </ul>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleList()"></div>
+    <nav>
+        <img src="images/png logo.png" alt="company_logo" id="company_logo">
+        <ul>
+            <li><a href="./home.html"><b>Home</b></a></li>
+            <li><a href="./Room-Details.html"><b>ROOM</b></a></li>
+            <li><a href="./Live Update.html"><b>Live Updates</b></a></li>
+    </nav>
+    <div class="head">
+        <div class="header">
+            <h1>Room Harmonic Calculator</h1>
+        </div>
+    </div>
+    <hr>
+    <div id="table-container-1" class="table-container"></div>
+    <hr id="hr_list">
+    <div id="table-container-2" class="table-container"></div>
+    <hr><br>
+    <div id="table-container-3" class="table-container"></div>
+    <hr>
+    <p class="p2"><span class="note">NOTE:</span>Nodes are the point is 0 (Zero) Amplitude and Antinodes are the point
+        Maximum Amplitude of
+        the wavelength</p>
+
+    <p class="p2"><span class="note">Node:</span> This is a point where the air does not experience much displacement.
+        In terms of sound,
+        it could feel quieter because the sound wave's amplitude is nearly zero at that point. It's less likely that
+        you’ll experience the full loudness or richness of the sound.</p>
+    <p class="p2"><span class="note">At the Node:</span> If you're seated exactly at the node, you'll experience the
+        least sound intensity.
+        This is generally not ideal for listening because you’ll miss out on the full dynamic range of the sound.</p>
+
+    <p class="p2"><span class="note">Antinode: </span>You feel higher sound pressure near this spot as well. So the
+        sound experience is
+        mixed, as both a node and antinode occur at the same point due to the alternating nature of the standing wave.
+    </p>
+
+    <p class="p2"><span class="note">Antinode Region: </span>Generally, sitting closer to an antinodal position (not
+        directly at the node)
+        will give you better sound experience, as you will experience maximum sound displacement, meaning louder and
+        fuller sound.</p>
+    <hr>
+    <div id="table-container-4" class="table-container"></div>
+    <hr id="" hr_list"><br>
+    <div id="table-container-5" class="table_container"></div>
+    <script>
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const results = JSON.parse(localStorage.getItem("length_ft"));
+
+            var length_ft = localStorage.getItem("length_ft");
+            var length_inch = localStorage.getItem("length_inch");
+            var width_ft = localStorage.getItem("width_ft");
+            var width_inch = localStorage.getItem("width_inch");
+            var height_ft = localStorage.getItem("height_ft");
+            var height_inch = localStorage.getItem("height_inch");
+            var Seating_length = localStorage.getItem("Seating_length");
+            var Seating_width = localStorage.getItem("Seating_width");
+            var Seating_height = localStorage.getItem("Seating_height");
+
+            var rt_sec = localStorage.getItem("rt_sec");
+            if (rt_sec == 0) {
+                rt_sec = 0.6;
+            }
+
+            rt_sec = parseFloat(rt_sec).toFixed(2);
+
+            if (length_inch >= 12) {
+                length_ft = (parseInt(length_ft) + (length_inch / 12)).toFixed(2);
+                length_inch = 0;
+            }
+
+            if (width_inch >= 12) {
+                width_ft = (parseInt(width_ft) + (width_inch / 12)).toFixed(2);
+                width_inch = 0;
+            }
+
+            if (height_inch >= 12) {
+                height_ft = (parseInt(height_ft) + (height_inch / 12)).toFixed(2);
+                height_inch = 0;
+            }
+
+            var width_meter = (width_ft * 0.3048).toFixed(2);
+            var height_meter = (height_ft * 0.3048).toFixed(2);
+            var length_meter = (length_ft * 0.3048).toFixed(2);
+            var volume_meter = (width_meter * height_meter * length_meter).toFixed(2);
+            var volume_ft = (width_ft * height_ft * length_ft).toFixed(2);
+
+            var sound_speed_meter = 343;
+
+            var width_mode = Math.floor(sound_speed_meter / width_meter);
+            var length_mode = Math.floor(sound_speed_meter / length_meter);
+            var height_mode = Math.floor(sound_speed_meter / height_meter);
+
+            var first_harmonic_W = (width_mode * 0.5).toFixed(2);
+            var second_harmonic_W = (width_mode * 1).toFixed(2);
+            var thirde_harmonic_W = (width_mode * 1.5).toFixed(2);
+            var fourth_harmonic_W = (width_mode * 2).toFixed(2);
+
+            var first_harmonic_WL = (((sound_speed_meter / first_harmonic_W) * 3.28084) / 3).toFixed(2);
+            var second_harmonic_WL = (((sound_speed_meter / second_harmonic_W) * 3.28084) / 4).toFixed(2);
+            var thirde_harmonic_WL = (((sound_speed_meter / thirde_harmonic_W) * 3.28084)).toFixed(2);
+            var fourth_harmonic_WL = (((sound_speed_meter / fourth_harmonic_W) * 3.28084)).toFixed(2);
+
+            var first_harmonic_L = (length_mode * 0.5).toFixed(2);
+            var second_harmonic_L = (length_mode * 1).toFixed(2);
+            var thirde_harmonic_L = (length_mode * 1.5).toFixed(2);
+            var fourth_harmonic_L = (length_mode * 2).toFixed(2);
+
+            var first_harmonic_WL_2 = (((sound_speed_meter / first_harmonic_L) * 3.28084) / 3).toFixed(2);
+            var second_harmonic_WL_2 = (((sound_speed_meter / second_harmonic_L) * 3.28084) / 2).toFixed(2);
+            var thirde_harmonic_WL_2 = (((sound_speed_meter / thirde_harmonic_L) * 3.28084)).toFixed(2);
+            var fourth_harmonic_WL_2 = (((sound_speed_meter / fourth_harmonic_L) * 3.28084)).toFixed(2);
+
+            var first_harmonic_H = (height_mode * 0.5).toFixed(2);
+            var second_harmonic_H = (height_mode * 1).toFixed(2);
+            var thirde_harmonic_H = (height_mode * 1.5).toFixed(2);
+            var fourth_harmonic_H = (height_mode * 2).toFixed(2);
+
+            var first_harmonic_WL_3 = (((sound_speed_meter / first_harmonic_H) * 3.28084) / 4).toFixed(2);
+            var second_harmonic_WL_3 = (((sound_speed_meter / second_harmonic_H) * 3.28084)).toFixed(2);
+            var thirde_harmonic_WL_3 = (((sound_speed_meter / thirde_harmonic_H) * 3.28084)).toFixed(2);
+            var fourth_harmonic_WL_3 = (((sound_speed_meter / fourth_harmonic_H) * 3.28084)).toFixed(2);
+
+            var first_harmonic_radiance = ((first_harmonic_W * Math.PI) / 180).toFixed(2);
+            var second_harmonic_radiance = ((second_harmonic_W * Math.PI) / 180).toFixed(2);
+            var thirde_harmonic_radiance = ((thirde_harmonic_W * Math.PI) / 180).toFixed(2);
+            var fourth_harmonic_radiance = ((fourth_harmonic_W * Math.PI) / 180).toFixed(2);
+
+            var first_harmonic_sine = Math.sin(first_harmonic_H).toFixed(2);
+            var second_harmonic_sine = Math.sin(second_harmonic_H).toFixed(2);
+            var thirde_harmonic_sine = Math.sin(thirde_harmonic_H).toFixed(2);
+            var fourth_harmonic_sine = Math.sin(fourth_harmonic_H).toFixed(2);
+
+            var first_harmonic_cosine = Math.cos(first_harmonic_radiance).toFixed(2);
+            var second_harmonic_cosine = Math.cos(second_harmonic_radiance).toFixed(2);
+            var thirde_harmonic_cosine = Math.cos(thirde_harmonic_radiance).toFixed(2);
+            var fourth_harmonic_cosine = Math.cos(fourth_harmonic_radiance).toFixed(2);
+
+            if (length_ft || length_inch) {
+                const tableHTML = `
+                <div class="results-table-wrapper">
+                    <table id="results-table-1" class="results-table">
+                        <thead>
+                        <tr>
+                            <th>Room Size</th><th>Meter</th><th>Ft</th><th>Mode</th><th>Harmonic</th><th>W</th><th>Full WL</th><th>L</th><th>Full WL</th><th>H</th><th>Full WL</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                         <tr>
+                            <th>Length</th><td>${length_meter}</td><td>${length_ft}</td><td>${length_mode}</td><td>2nd</td><td>${second_harmonic_W}</td><td>${second_harmonic_WL}</td><td>${second_harmonic_L}</td><td>${second_harmonic_WL_2}</td><td>${second_harmonic_H}</td><td>${second_harmonic_WL_3}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Width</th><td>${width_meter}</td><td>${width_ft}</td><td>${width_mode}</td><td>1st</td><td>${first_harmonic_W}</td><td>${first_harmonic_WL}</td><td>${first_harmonic_L}</td><td>${first_harmonic_WL_2}</td><td>${first_harmonic_H}</td><td>${first_harmonic_WL_3}</td>
+                        </tr>
+                           
+                        <tr>
+                            <th>Height</th><td>${height_meter}</td><td>${height_ft}</td><td>${height_mode}</td><td>3rd</td><td>${thirde_harmonic_W}</td><td>${thirde_harmonic_WL}</td><td>${thirde_harmonic_L}</td><td>${thirde_harmonic_WL_2}</td><td>${thirde_harmonic_H}</td><td>${thirde_harmonic_WL_3}</td>
+                        </tr>
+                        <tr>
+                            <th>Room Volume</th><td>${volume_meter}</td><td>${volume_ft}</td><td></td><td>4th</td><td>${fourth_harmonic_W}</td><td>${fourth_harmonic_WL}</td><td>${fourth_harmonic_L}</td><td>${fourth_harmonic_WL_2}</td><td>${fourth_harmonic_H}</td><td>${fourth_harmonic_WL_3}</td>
+                        </tr>
+                        <tr>
+                            <th>Speed of Sound</th><td>1130</td><td>Feet per second</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr><th>Speed of sound</th><td>343</td><td>Meter per second</td><td></td><td><td></td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tbody>
+                    </table>
+                    </div>
+                `;
+                document.getElementById("table-container-1").innerHTML = tableHTML;
+            } else {
+                document.getElementById("table-container-1").innerHTML = "<p>No results found.</p><br>Please go back and enter the required data. <b>OR</b> Refresh the page</p>";
+            }
+
+            var sound_speed_ft = 1130.00;
+            var first_harmonic_length = (sound_speed_ft / (length_ft * 2)).toFixed(2);
+            var second_harmonic_length = (first_harmonic_length * 2).toFixed(2);
+            var thirde_harmonic_length = (first_harmonic_length * 3).toFixed(2);
+            var fourth_harmonic_length = (first_harmonic_length * 4).toFixed(2);
+            var fifth_harmonic_length = (first_harmonic_length * 5).toFixed(2);
+            var denominator = (length_ft * width_ft * height_ft) * 0.0283168;
+            var calculation = rt_sec / denominator;
+            var Schroder_Frequency = (2000 * Math.sqrt(calculation)).toFixed(2);
+
+            var first_harmonic_width = (sound_speed_ft / (width_ft * 2)).toFixed(2);
+            var second_harmonic_width = (first_harmonic_width * 2).toFixed(2);
+            var thirde_harmonic_width = (first_harmonic_width * 3).toFixed(2);
+            var fourth_harmonic_width = (first_harmonic_width * 4).toFixed(2);
+            var fifth_harmonic_width = (first_harmonic_width * 5).toFixed(2);
+
+            var first_harmonic_height = (sound_speed_ft / (height_ft * 2)).toFixed(2);
+            var second_harmonic_height = (first_harmonic_height * 2).toFixed(2);
+            var thirde_harmonic_height = (first_harmonic_height * 3).toFixed(2);
+            var fourth_harmonic_height = (first_harmonic_height * 4).toFixed(2);
+            var fifth_harmonic_height = (first_harmonic_height * 5).toFixed(2);
+
+            var first_l_w = (sound_speed_ft / 2) * Math.sqrt(((1 / length_ft) ** 2) + ((1 / width_ft) ** 2));
+            var second_l_w = (sound_speed_ft / 2) * Math.sqrt(((1 / length_ft) ** 2) + ((2 / width_ft) ** 2));
+            var thirde_l_w = (sound_speed_ft / 2) * Math.sqrt(((1 / length_ft) ** 2) + ((3 / width_ft) ** 2));
+            var fourth_l_w = (sound_speed_ft / 2) * Math.sqrt(((2 / length_ft) ** 2) + ((2 / width_ft) ** 2));
+            var fifth_l_w = (sound_speed_ft / 2) * Math.sqrt(((2 / length_ft) ** 2) + ((3 / width_ft) ** 2));
+            var sixth_l_w = (sound_speed_ft / 2) * Math.sqrt(((2 / length_ft) ** 2) + ((4 / width_ft) ** 2));
+            var seventh_l_w = (sound_speed_ft / 2) * Math.sqrt(((3 / length_ft) ** 2) + ((3 / width_ft) ** 2));
+            var eighth_l_w = (sound_speed_ft / 2) * Math.sqrt(((3 / length_ft) ** 2) + ((4 / width_ft) ** 2));
+            var ninth_l_w = (sound_speed_ft / 2) * Math.sqrt(((3 / length_ft) ** 2) + ((5 / width_ft) ** 2));
+
+            var first_l_h = (sound_speed_ft / 2) * Math.sqrt(((1 / length_ft) ** 2) + ((1 / height_ft) ** 2));
+            var second_l_h = (sound_speed_ft / 2) * Math.sqrt(((1 / length_ft) ** 2) + ((2 / height_ft) ** 2));
+            var thirde_l_h = (sound_speed_ft / 2) * Math.sqrt(((1 / length_ft) ** 2) + ((3 / height_ft) ** 2));
+            var fourth_l_h = (sound_speed_ft / 2) * Math.sqrt(((2 / length_ft) ** 2) + ((2 / height_ft) ** 2));
+            var fifth_l_h = (sound_speed_ft / 2) * Math.sqrt(((2 / length_ft) ** 2) + ((3 / height_ft) ** 2));
+            var sixth_l_h = (sound_speed_ft / 2) * Math.sqrt(((2 / length_ft) ** 2) + ((4 / height_ft) ** 2));
+            var seventh_l_h = (sound_speed_ft / 2) * Math.sqrt(((3 / length_ft) ** 2) + ((3 / height_ft) ** 2));
+            var eighth_l_h = (sound_speed_ft / 2) * Math.sqrt(((3 / length_ft) ** 2) + ((4 / height_ft) ** 2));
+            var ninth_l_h = (sound_speed_ft / 2) * Math.sqrt(((3 / length_ft) ** 2) + ((5 / height_ft) ** 2));
+
+            var first_w_h = (sound_speed_ft / 2) * Math.sqrt(((1 / width_ft) ** 2) + ((1 / height_ft) ** 2));
+            var second_w_h = (sound_speed_ft / 2) * Math.sqrt(((1 / width_ft) ** 2) + ((2 / height_ft) ** 2));
+            var thirde_w_h = (sound_speed_ft / 2) * Math.sqrt(((1 / width_ft) ** 2) + ((3 / height_ft) ** 2));
+            var fourth_w_h = (sound_speed_ft / 2) * Math.sqrt(((2 / width_ft) ** 2) + ((2 / height_ft) ** 2));
+            var fifth_w_h = (sound_speed_ft / 2) * Math.sqrt(((2 / width_ft) ** 2) + ((3 / height_ft) ** 2));
+            var sixth_w_h = (sound_speed_ft / 2) * Math.sqrt(((2 / width_ft) ** 2) + ((4 / height_ft) ** 2));
+            var seventh_w_h = (sound_speed_ft / 2) * Math.sqrt(((3 / width_ft) ** 2) + ((3 / height_ft) ** 2));
+            var eighth_w_h = (sound_speed_ft / 2) * Math.sqrt(((3 / width_ft) ** 2) + ((4 / height_ft) ** 2));
+            var ninth_w_h = (sound_speed_ft / 2) * Math.sqrt(((3 / width_ft) ** 2) + ((5 / height_ft) ** 2));
+
+            var first_l_w_h = ((1125 / 2) * Math.sqrt((1 / length_ft) ** 2) + (1 / width_ft) ** 2 + (1 / height_ft) ** 2);
+            var second_l_w_h = ((1125 / 2) * Math.sqrt((1 / length_ft) ** 2) + (2 / width_ft) ** 2 + (1 / height_ft) ** 2);
+            var thired_l_w_h = ((1125 / 2) * Math.sqrt((2 / length_ft) ** 2) + (2 / width_ft) ** 2 + (2 / height_ft) ** 2);
+            var fourth_l_w_h = ((1125 / 2) * Math.sqrt((2 / length_ft) ** 2) + (1 / width_ft) ** 2 + (2 / height_ft) ** 2);
+            var fifth_l_w_h = ((1125 / 2) * Math.sqrt((3 / length_ft) ** 2) + (3 / width_ft) ** 2 + (3 / height_ft) ** 2);
+
+            const tableHTML2 = `
+            <div class="results-table-wrapper">
+                    <table id="results-table-2" class="results-table">
+                    <thead>
+                        <tr><th>Select Ft or meter</th><th colspan="2">ft</th><th colspan="4">Axial Mode</th><th colspan="4">Tangential Mode</th><th colspan="2">Oblique Modes</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><th>Room Size</th><th class="combined-column">Ft</th><th class="combined-column">Meter</th><th>Harmonics >>>>> </th><th>Length</th><th>Width</th><th>Height</th><th>Mode</th><th>L & W </th><th> L & H </th><th> W & H </th><th>Mode</th><th> L & W & H </th></tr>
+                        <tr><th>Length</th><td>${length_ft}</td><td>${length_meter}</td><td>Fundamental Frequency (1st mode)</td><td>${first_harmonic_length}</td><td>${first_harmonic_width}</td><td>${first_harmonic_height}</td><td>(1,1)</td><td>${(first_l_w).toFixed(2)}</td><td>${(first_l_h).toFixed(2)}</td><td>${(first_w_h).toFixed(2)}</td><td>(1,1,1)</td><td>${(first_l_w_h).toFixed(2)}</td></tr>
+                        <tr><th>Width</th><td>${width_ft}</td><td>${width_meter}</td><td>1st Harmonics(2nd mode)</td><td>${second_harmonic_length}</td><td>${second_harmonic_width}</td><td>${second_harmonic_height}</td><td>(1,2)</td><td>${(second_l_w).toFixed(2)}</td><td>${(second_l_h).toFixed(2)}</td><td>${(second_w_h).toFixed(2)}</td><td>(1,2,1)</td><td>${(second_l_w_h).toFixed(2)}</td></tr>
+                        <tr><th>Height</th><td>${height_ft}</td><td>${height_meter}</td><td>2nd Harmonics(3rd mode)</td><td>${thirde_harmonic_length}</td><td>${thirde_harmonic_width}</td><td>${thirde_harmonic_height}</td><td>(1,3)</td><td>${(thirde_l_w).toFixed(2)}</td><td>${(thirde_l_h).toFixed(2)}</td><td>${(thirde_w_h).toFixed(2)}</td><td>(2,2,2)</td><td>${(thired_l_w_h).toFixed(2)}</td></tr>
+                        <tr><th>Speed of sound(ft)</th><th>1130.00</th><td></td><td>3td Harmonics(4th mode)</td><td>${fourth_harmonic_length}</td><td>${fourth_harmonic_width}</td><td>${fourth_harmonic_height}</td><td>(2,2)</td><td>${(fourth_l_w).toFixed(2)}</td><td>${(fourth_l_h).toFixed(2)}</td><td>${(fourth_w_h).toFixed(2)}</td><td>(2,1,2)</td><td>${(fourth_l_w_h).toFixed(2)}</td></tr>
+                        <tr><th>Speed of sound(m)</th><th>344.42</th><td></td><td>4th Harmonics(5th mode)</td><td>${fifth_harmonic_length}</td><td>${fifth_harmonic_width}</td><td>${fifth_harmonic_height}</td><td>(2,3)</td><td>${(fifth_l_w).toFixed(2)}</td><td>${(fifth_l_h).toFixed(2)}</td><td>${(fifth_w_h).toFixed(2)}</td><td>(3,3,3)</td><td>${(fifth_l_w_h).toFixed(2)}</td></tr>
+                        <tr><th>RT 60</th><td>${rt_sec}</td><td></td><th>Schroder Frequency</th><td>${Schroder_Frequency}</td><td></td><td></td><td>(2,4)</td><td>${(sixth_l_w).toFixed(2)}</td><td>${(sixth_l_h).toFixed(2)}</td><td>${(sixth_w_h).toFixed(2)}</td><td></td><td></td></tr>
+                        <tr><th>Room volume (cubic ft/ m)</th><th>${volume_ft}</th><th>${volume_meter}</th><td></td><td></td><td></td><td></td><td>(3,3)</td><td>${(seventh_l_w).toFixed(2)}</td><td>${(seventh_l_h).toFixed(2)}</td><td>${(seventh_w_h).toFixed(2)}</td><td></td><td></td></tr>
+                        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>(3,4)</td><td>${(eighth_l_w).toFixed(2)}</td><td>${(eighth_l_h).toFixed(2)}</td><td>${(eighth_w_h).toFixed(2)}</td><td></td><td></td></tr>
+                        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>(3,5)</td><td>${(ninth_l_w).toFixed(2)}</td><td>${(ninth_l_h).toFixed(2)}</td><td>${(ninth_w_h).toFixed(2)}</td><td></td><td></td></tr>
+                        </tbody>
+                        </table>
+                        </div>
+                `;
+            document.getElementById("table-container-2").innerHTML = tableHTML2;
+
+            // Perform calculations for results_5
+            var width_Fundamental_Frequency = (sound_speed_ft / width_ft).toFixed(2);
+            var length_Fundamental_Frequency = (sound_speed_ft / length_ft).toFixed(2);
+            var height_Fundamental_Frequency = (sound_speed_ft / height_ft).toFixed(2);
+
+            var length_Wavelength = (sound_speed_ft / length_Fundamental_Frequency).toFixed(2);
+            var width_Wavelength = (sound_speed_ft / width_Fundamental_Frequency).toFixed(2);
+            var height_Wavelength = (sound_speed_ft / height_Fundamental_Frequency).toFixed(2);
+
+            var length_Fre_mode = 0;
+            var width_Fre_mode = 0;
+            var height_Fre_mode = 0;
+
+            if (Seating_length % (sound_speed_ft / (2 * length_Fundamental_Frequency)) === 0) {
+                length_Fre_mode = "Node";
+            }
+            else if (Seating_length % (sound_speed_ft / (4 * length_Fundamental_Frequency)) === 0) {
+                length_Fre_mode = "Antinode";
+            } else {
+                length_Fre_mode = "NA";
+            }
+
+            if (Seating_width % (sound_speed_ft / (2 * width_Fundamental_Frequency)) === 0) {
+                width_Fre_mode = "Node";
+            }
+            else if (Seating_width % (sound_speed_ft / (4 * width_Fundamental_Frequency)) === 0) {
+                width_Fre_mode = "Antinode";
+            } else {
+                width_Fre_mode = "NA";
+            }
+
+            if (Seating_height % (sound_speed_ft / (2 * height_Fundamental_Frequency)) === 0) {
+                height_Fre_mode = "Node";
+            }
+            else if (Seating_height % (sound_speed_ft / (4 * height_Fundamental_Frequency)) === 0) {
+                height_Fre_mode = "Antinode";
+            } else {
+                height_Fre_mode = "NA";
+            }
+
+            var length_Rec_icon = 0;
+            var width_Rec_icon = 0;
+            var height_Rec_icon = 0;
+
+            if (Seating_length % (sound_speed_ft / (2 * length_Fundamental_Frequency)) === 0 || Seating_length % (sound_speed_ft / (4 * length_Fundamental_Frequency)) === 0) {
+                length_Rec_icon = "Avoid";
+            } else { length_Rec_icon = "Good"; }
+
+            if (Seating_width % (sound_speed_ft / (2 * width_Fundamental_Frequency)) === 0 || Seating_width % (sound_speed_ft / (4 * width_Fundamental_Frequency)) === 0) {
+                width_Rec_icon = "Avoid";
+            } else { width_Rec_icon = "Good"; }
+
+            if (Seating_height % (sound_speed_ft / (2 * height_Fundamental_Frequency)) === 0 || Seating_height % (sound_speed_ft / (4 * height_Fundamental_Frequency)) === 0) {
+                height_Rec_icon = "Avoid";
+            } else { height_Rec_icon = "Good"; }
+
+            var length_node2 = (length_Wavelength / 2);
+            var width_node2 = (width_Wavelength / 2);
+            var height_node2 = (height_Wavelength / 2);
+
+            var length_node3 = (length_node2 + length_node2).toFixed(2);
+            var width_node3 = (width_node2 + width_node2).toFixed(2);
+            var height_node3 = (height_node2 + height_node2).toFixed(2);
+            // Variables for node calculations
+            var length_antinode1 = (length_Wavelength / 4).toFixed(2);
+            var width_antinode1 = (width_Wavelength / 4).toFixed(2);
+            var height_antinode1 = (height_Wavelength / 4).toFixed(2);
+
+            var length_antinode2 = (length_Wavelength / 2).toFixed(2);
+            var width_antinode2 = (width_Wavelength / 2).toFixed(2);
+            var height_antinode2 = (height_Wavelength / 2).toFixed(2);
+
+            var length_antinode3 = (length_Wavelength / 4 * 3).toFixed(2);
+            var width_antinode3 = (width_Wavelength / 4 * 3).toFixed(2);
+            var height_antinode3 = (height_Wavelength / 4 * 3).toFixed(2);
+
+            var length_antinode4 = length_Wavelength;
+            var width_antinode4 = width_Wavelength;
+            var height_antinode4 = height_Wavelength;
+
+            if (Seating_height || Seating_length || Seating_width) {
+                const tableHTML3 = `
+                <div class="results-table-wrapper">
+                    <table id="results-table-3" class="results-table-3">
+                        <thead>
+                        <tr><th colspan="6">Identify Optimal Seating Position</th></tr>
+                       </thead>
+                       <tbody>
+                        <tr><th>Seating Position</th><th>Distance(ft)</th><th>Fundamental Frequency(Hz)</th><th>Wavelength(ft)</th><th>Frequency Mode</th><th>Recommendation</th><th>Node 1 (ft)</th><th>Node 2 (ft)</th><th>Node 3 (ft)</th><th>Antinode 1 (ft)</th><th>Antinode 2 (ft)</th><th>Antinode 3 (ft)</th><th>Antinode 4 (ft)</th></tr>
+                        <tr><td>Length</td><th>${Seating_length}</th><td>${length_Fundamental_Frequency}</td><td>${length_Wavelength}</td><td>${length_Fre_mode}</td><td>${length_Rec_icon}</td><td>0.00</td><td>${length_node2}</td><td>${length_node3}</td><td>${length_antinode1}</td><td>${length_antinode2}</td><td>${length_antinode3}</td><td>${length_antinode4}</td></tr>
+                        <tr><td>Width</td><th>${Seating_width}</th><td>${width_Fundamental_Frequency}</td><td>${width_Wavelength}</td><td>${width_Fre_mode}</td><td>${width_Rec_icon}</td><td>0.00</td><td>${width_node2}</td><td>${width_node3}</td><td>${width_antinode1}</td><td>${width_antinode2}</td><td>${width_antinode3}</td><td>${width_antinode4}</td></tr>
+                        <tr><td>Height</td><th>${Seating_height}</th><td>${height_Fundamental_Frequency}</td><td>${height_Wavelength}</td><td>${height_Fre_mode}</td><td>${height_Rec_icon}</td><td>0.00</td><td>${height_node2}</td><td>${height_node3}</td><td>${height_antinode1}</td><td>${height_antinode2}</td><td>${height_antinode3}</td><td>${height_antinode4}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                `;
+                document.getElementById("table-container-3").innerHTML += tableHTML3;
+            } else {
+                document.getElementById("table-container-3").innerHTML = "<p>No results found.</p>";
+            }
+
+
+            var first_harmonic_Wavelength = (sound_speed_ft / 62.78).toFixed(2);
+            var second_harmonic_Wavelength = (sound_speed_ft / 94.17).toFixed(2);
+            var thirde_harmonic_Wavelength = (sound_speed_ft / 125.56).toFixed(2);
+            var fourth_harmonic_Wavelength = (sound_speed_ft / 156.94).toFixed(2);
+
+
+            if (length_ft) {
+                const tableHTML4 = `
+                <div class="results-table-wrapper">
+                    <table id="results-table-3" class="results-table">
+                        <thead>
+                            <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th><th>H</th><th>I<th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th></th><th>Fequency (f) in Hz</th><th>Speed of Sound (v) in ft/s</th><th>Wavelength (λ) in ft</th><th>Harmonic Mode</th><th>Node/Antinode (Peak/Dip)</th><th>Distance (Nearest Surface)</th>
+                                <th>Distance to Next Antinode (if Peak)</th><th>Distance to Next Node (if Dip)</th><th>Recommendation (Avoid/Good)</th>
+                                </tr>
+                                <tr>
+                                    <td>1st Harmonics (2nd mode)</td><td>62.78</td><td>${sound_speed_ft}</td><td>${first_harmonic_Wavelength}</td><td>1.00</td>
+                                </tr>
+                                <tr>
+                                    <td>2nd Harmonics (3rd mode)</td><td>94.17</td><td>${sound_speed_ft}</td><td>${second_harmonic_Wavelength}</td><td>2.00</td>
+                                </tr>
+                                <tr>
+                                    <td>3rd Harmonics (4th mode)</td><td>125.56</td><td>${sound_speed_ft}</td><td>${thirde_harmonic_Wavelength}</td><td>3.00</td>
+                                </tr>
+                                <tr>
+                                    <td>4th Harmonics (5th mode)</td><td>156.94</td><td>${sound_speed_ft}</td><td>${fourth_harmonic_Wavelength}</td><td>4.00</td>
+                                </tr>
+                    </table>
+                </div>
+                  `;
+                document.getElementById("table-container-4").innerHTML += tableHTML4;
+            }
+            else {
+                document.getElementById("table-container-4").innerHTML = "<p>No results found.</p>";
+            }
+
+        });
+        document.addEventListener("DOMContentLoaded", () => {
+            function updateAxialStandingWaves() {
+                const soundInput = document.querySelector(".speed_of_sound");
+                const sound_speed_ft = parseFloat(soundInput?.value) || 1130.0; // Fallback to default value if input is invalid
+
+                // Ensure the element exists before proceeding
+                if (!sound_speed_ft) {
+                    console.error("Speed of sound input not found.");
+                    return;
+                }
+
+                //  const sound_speed_ft = parseFloat(soundInput.value) || 1130.0;
+                const height_ft = parseFloat(localStorage.getItem("height_ft")) || 8;
+                const height_inch = parseFloat(localStorage.getItem("height_inch")) || 0;
+                const width_ft = parseFloat(localStorage.getItem("width_ft")) || 10;
+                const width_inch = parseFloat(localStorage.getItem("width_inch")) || 0;
+                const length_ft = parseFloat(localStorage.getItem("length_ft")) || 15;
+                const length_inch = parseFloat(localStorage.getItem("length_inch")) || 0;
+
+                var height_first = ((sound_speed_ft) / ((height_ft) + height_inch / 12) / 2);
+                height_first = parseInt(height_first);
+                var height_sec = ((sound_speed_ft) / ((height_ft) + height_inch / 12));
+                height_sec = Math.ceil(height_sec);
+                var height_thired = ((sound_speed_ft) / ((height_ft) + height_inch / 12) * 1.5);
+                height_thired = Math.ceil(height_thired);
+                var height_fourth = ((sound_speed_ft) / ((height_ft) + height_inch / 12) * 2);
+                height_fourth = Math.ceil(height_fourth);
+
+                var width_first = ((sound_speed_ft) / ((width_ft) + width_inch / 12) / 2);
+                width_first = parseInt(width_first);
+                var width_sec = ((sound_speed_ft) / ((width_ft) + width_inch / 12));
+                width_sec = Math.ceil(width_sec);
+                var width_thired = ((sound_speed_ft) / ((width_ft) + width_inch / 12) * 1.5);
+                width_thired = Math.ceil(width_thired);
+                var width_fourth = ((sound_speed_ft) / ((width_ft) + width_inch / 12) * 2);
+                width_fourth = Math.ceil(width_fourth);
+
+                var length_first = ((sound_speed_ft) / ((length_ft) + length_inch / 12) / 2);
+                length_first = parseInt(length_first);
+                var length_sec = ((sound_speed_ft) / ((length_ft) + length_inch / 12));
+                length_sec = Math.ceil(length_sec);
+                var length_thired = ((sound_speed_ft) / ((length_ft) + length_inch / 12) * 1.5);
+                length_thired = Math.ceil(length_thired);
+                var length_fourth = ((sound_speed_ft) / ((length_ft) + length_inch / 12) * 2);
+                length_fourth = Math.ceil(length_fourth);
+
+                var volume = (height_ft * 12 + parseFloat(height_inch)) * (width_ft * 12 + parseFloat(width_inch)) * (length_ft * 12 + parseFloat(height_inch)) / 1728;
+
+                function convertToMixedFraction(decimal) {
+                    const wholeNumber = Math.floor(decimal); // Get the whole number part
+                    const fractionalPart = decimal - wholeNumber; // Get the fractional part
+
+                    if (fractionalPart === 0) {
+                        return `${wholeNumber}`; // If no fractional part, return the whole number
+                    }
+
+                    // Convert fractional part to a numerator and denominator
+                    const denominator = 4; // Fixed denominator (quarters)
+                    const numerator = Math.round(fractionalPart * denominator);
+
+                    // Simplify the fraction if needed
+                    const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
+                    const divisor = gcd(numerator, denominator);
+                    const simplifiedNumerator = numerator / divisor;
+                    const simplifiedDenominator = denominator / divisor;
+
+                    return `${wholeNumber} ${simplifiedNumerator}/${simplifiedDenominator}`;
+                }
+
+                var length_1 = (sound_speed_ft / length_fourth) * 0.25;
+                var length_1_1 = length_1;
+                length_1 = convertToMixedFraction(length_1);
+                var length_2 = (sound_speed_ft / length_sec) * 0.167;
+                var length_2_1 = length_2;
+                length_2 = convertToMixedFraction(length_2);
+                var length_3 = (length_ft / 4);
+                var length_3_1 = length_3;
+                length_3 = convertToMixedFraction(length_3);
+                var length_4 = ((sound_speed_ft / length_fourth) * 0.5) + length_1_1;
+                var length_4_1 = length_4;
+                length_4 = convertToMixedFraction(length_4);
+                var length_5 = (length_ft + (length_inch / 12)) * 0.5;
+                length_5 = convertToMixedFraction(length_5);
+                var length_6 = ((sound_speed_ft / length_fourth) * 0.5) + length_4_1;
+                length_6 = convertToMixedFraction(length_6);
+                var length_7 = (length_ft - length_3_1);
+                length_7 = convertToMixedFraction(length_7);
+                var length_8 = ((sound_speed_ft / length_fourth) * 1.5) + length_1_1;
+                length_8 = convertToMixedFraction(length_8);
+                var length_fifth = (sound_speed_ft / length_thired) + length_2_1;
+                length_fifth = convertToMixedFraction(length_fifth);
+
+                var width_1 = (sound_speed_ft / width_fourth) * 0.25;
+                var width_1_1 = width_1;
+                width_1 = convertToMixedFraction(width_1);
+                var width_2 = (sound_speed_ft / width_sec) * 0.167;
+                var width_2_1 = width_2;
+                width_2 = convertToMixedFraction(width_2);
+                var width_3 = (width_ft / 4);
+                var width_3_1 = width_3;
+                width_3 = convertToMixedFraction(width_3);
+                var width_4 = ((sound_speed_ft / width_fourth) * 0.5) + width_1_1;
+                var width_4_1 = width_4;
+                width_4 = convertToMixedFraction(width_4);
+                var width_5 = (width_ft + (width_inch / 12)) * 0.5;
+                width_5 = convertToMixedFraction(width_5);
+                var width_6 = ((sound_speed_ft / width_fourth) * 0.5) + width_4_1;
+                width_6 = convertToMixedFraction(width_6);
+                var width_7 = (width_ft - width_3_1);
+                width_7 = convertToMixedFraction(width_7);
+                var width_8 = ((sound_speed_ft / width_fourth) * 1.5) + width_1_1;
+                width_8 = convertToMixedFraction(width_8);
+                var width_fifth = (sound_speed_ft / width_thired) + width_2_1;
+                width_fifth = convertToMixedFraction(width_fifth);
+
+                var height_1 = (sound_speed_ft / height_fourth) * 0.25;
+                var height_1_1 = height_1;
+                height_1 = convertToMixedFraction(height_1);
+                var height_2 = (sound_speed_ft / height_sec) * 0.167;
+                var height_2_1 = height_2;
+                height_2 = convertToMixedFraction(height_2);
+                var height_3 = (height_ft / 4);
+                var height_3_1 = height_3;
+                height_3 = convertToMixedFraction(height_3);
+                var height_4 = ((sound_speed_ft / height_fourth) * 0.5) + height_1_1;
+                var height_4_1 = height_4;
+                height_4 = convertToMixedFraction(height_4);
+                var height_5 = (height_ft + (height_inch / 12)) * 0.5;
+                height_5 = convertToMixedFraction(height_5);
+                var height_6 = ((sound_speed_ft / height_fourth) * 0.5) + height_4_1;
+                height_6 = convertToMixedFraction(height_6);
+                var height_7 = (height_ft - height_3_1);
+                height_7 = convertToMixedFraction(height_7);
+                var height_8 = ((sound_speed_ft / height_fourth) * 1.5) + height_1_1;
+                height_8 = convertToMixedFraction(height_8);
+                var height_fifth = (sound_speed_ft / height_thired) + height_2_1;
+                height_fifth = convertToMixedFraction(height_fifth);
+
+                const tableHTML5 = `
+    <div class="results-table-wrapper">
+      <table id="results-table-3" class="results-table">
+        <thead>
+          <tr><th colspan="8">Axial Standing Waves</th></tr>
+        </thead>
+        <tbody>
+          <tr><th colspan="3">Room Dimensions</th><th>1st</th><th>2nd</th><th>3rd</th><th>4th</th><th></th></tr>
+        <tr><th>Length</th><td>${length_ft} ft</td><td>${length_inch} in</td><td>${length_first} Hz</td><td>${length_sec} Hz</td><td>${length_thired} Hz</td><td>${length_fourth} Hz</td><td></td></tr>
+          <tr><th>Width</th><td>${width_ft} ft</td><td>${width_inch} in</td><td>${width_first} Hz</td><td>${width_sec} Hz</td><td>${width_thired} Hz</td><td>${width_fourth} Hz</td><td></td></tr>
+           <tr><th>Height</th><td>${height_ft} ft</td><td>${height_inch} in</td><td>${height_first} Hz</td><td>${height_sec} Hz</td><td>${height_thired} Hz</td><td>${height_fourth} Hz</td><td></td></tr>
+          <tr>
+            <td colspan="7">
+              <input type="number" class="speed_of_sound" value="${(sound_speed_ft).toFixed(2)}" step="0.01" /> Feet per second
+              <small>Default = 1130.0 (344 M/sec)</small><td></td>
+            </td>
+          </tr>
+          <tr>
+            <th colspan="7">Room Volume: ${volume.toFixed(2)} <b>Cubic Feet</b></th><td></td>
+          </tr>
+           </tbody>
+          </table>
+          <hr>
+          <br>
+        <div class="results-table-wrapper">
+        <table class="results-table-3" class="results-table">
+          <tr>
+            <th>0 ft</th><th colspan="5">LENGTH</th><th>${length_ft} ft</th><th>${length_inch} in</th>
+          </tr>
+           <tr class="length_wave">
+                <th class="box-width-1" colspan="8">-------------------------${length_1}-------------${length_2}
+                --------------------${length_3}
+               ---------------------------------${length_4}
+               -------------------------------------- ${length_5}
+                ----------------------------------${length_6}
+                ----------------------------------${length_7}
+                ----------------------------------${length_8}-------------------------------</th>
+            </tr>
+          <tr>
+            <td colspan="8"><img src="images/waves.jpg" alt="" class="waves"></td>
+          </tr>
+    <tr>
+    <td class="box-width-1">${length_fourth} Hz</td>
+    <td class="box-width-2">${length_thired} Hz</td>
+    <td class="box-width-3">${length_sec} Hz</td>
+    <td class="box-width-4-1" colspan="2">${length_first} Hz</td>
+    <td class="box-width-6"></td>
+    <td class="box-width-7"></td>
+    <td class="box-width-8">${length_fifth} Hz</td>
+  </tr>
+   </table>
+   <div>
+    <br>
+    <hr>
+<table class="results-table-3">
+  <tr>
+    <th class="box-width-1">0 ft</th>
+    <th class="box-width-2" colspan="5">WIDTH</th>
+    <th class="box-width-7">${width_ft} ft</th>
+    <th class="box-width-8">${width_inch} in</th>
+  </tr>
+   <tr class="length_wave">
+    <th class="box-width-1">${width_1}</th>
+    <th class="box-width-2">${width_2}</th>
+    <th class="box-width-3">${width_3}</th>
+    <th class="box-width-4">${width_4}</th>
+    <th class="box-width-5">${width_5}</th>
+    <th class="box-width-6">${width_6}</th>
+    <th class="box-width-7">${width_7}</th>
+    <th class="box-width-8">${width_8}</th>
+    </tr>
+  <tr>
+    <td colspan="8"><img src="images/waves.jpg" alt="" class="waves"></td>
+  </tr>
+    <tr>
+    <th class="box-width-1">${width_fourth} Hz</th>
+    <th class="box-width-2">${width_thired} Hz</th>
+    <th class="box-width-3">${width_sec} Hz</th>
+    <th class="box-width-4">${width_fourth} Hz</th>
+    <th class="box-width-5">${width_first} Hz</th>
+    <th class="box-width-6"></th>
+    <th class="box-width-7-1">${width_fifth} Hz</th>
+    <th class="box-wdith-8"></th>
+    </tr>
+    </table>
+    <br>
+    <hr>
+    <br>
+<div class="results-table-wrapper">
+    <table class="results-table-3">
+    <tr>
+    <th>0 ft</th><th colspan="5">HEIGHT</th><th>${height_ft} ft</th><th>${height_inch} in</th>
+    </tr>
+    <tr class="length_wave">
+    <th class="box-width-1">${height_1}</th>
+    <th class="box-width-2">${height_2}</th>
+    <th class="box-width-3">${height_3}</th>
+    <th class="box-width-4">${height_4}</th>
+    <th class="box-width-5">${height_5}</th>
+    <th class="box-width-6">${height_6}</th>
+    <th class="box-width-7">${height_7}</th>
+    <th class="box-width-8">${height_8}</th>
+    </tr>
+    <tr>
+    <td colspan="8"><img src="images/waves.jpg" alt="" class="waves"></td>
+    </tr>
+    <tr>
+    <th class="box-width-1">${height_fourth} Hz</th>
+    <th class="box-width-2">${height_thired} Hz</th>
+    <th class="box-width-3">${height_sec} Hz</th>
+    <th class="box-width-4"></th>
+    <th class="box-width-5">${height_first} Hz</th>
+    <th class="box-width-6"></th>
+    <th class="box-width-7-1">${height_fifth} Hz</th>
+    <th class="box-wdith-8"></th>
+    </tr>
+      </table>
+      </div>`;
+                document.getElementById("table-container-5").innerHTML = tableHTML5;
+
+                const speedOfSoundInput = document.querySelector(".speed_of_sound");
+                speedOfSoundInput.addEventListener("input", debounce(updateAxialStandingWaves, 1000));
+            }
+
+            function debounce(func, delay) {
+                let timeout;
+                return function (...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), delay);
+                };
+            }
+            // Initialize table and event listener
+            updateAxialStandingWaves();
+        });
+
+    </script>
+
+</body>
+
+</html>

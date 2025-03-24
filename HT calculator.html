@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <title>Home Theater Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #4CAF50;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      color: #000000;
+    }
+
+    .head {
+      background-color: whitesmoke;
+      margin-bottom: 10px;
+      display: flex;
+      /* Use flexbox for alignment */
+      justify-content: center;
+      /* Center horizontally */
+      align-items: center;
+      /* Center vertically */
+      border-radius: 15px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.9);
+      margin-top: 100px;
+      padding: 10px 10px 8px 8px;
+      height: 40vh;
+      box-shadow: 0px;
+      /* Keep height as defined */
+      text-align: center;
+      width: 500px;
+      flex-direction: column;
+    }
+
+    .header {
+      margin-top: 0px;
+      text-align: center;
+      margin-bottom: 0px;
+    }
+
+    .version {
+      font-size: 0.8em;
+      color: #888;
+    }
+
+    .room-container {
+      display: flex;
+      justify-content: space-between;
+      width: 480px;
+      flex-wrap: nowrap;
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      gap: 10px;
+      box-shadow: 0px 0px 8px rgba(0, 0, 0, 1.0);
+      background: linear-gradient(to right, #ffffff, #b5b4b4);
+      margin: auto;
+      box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.5);
+      margin-bottom: 10px;
+      border-radius: 20px;
+    }
+
+    table {
+      margin-top: 30px;
+      border-collapse: collapse;
+      width: 200px;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .toggle label {
+      margin-right: 10px;
+    }
+
+    .toggle input {
+      cursor: pointer;
+    }
+
+
+    nav {
+      position: fixed;
+      /* Fix the header at the top */
+      top: 0;
+      width: 100%;
+      height: 60px;
+      background: #34495e;
+      border-radius: 0 0 8px 8px;
+      /* Round bottom corners */
+      box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      transition: 1.5s;
+    }
+
+    nav:hover {
+      height: 12vh;
+      transition: 0.5s;
+      font-size: larger;
+    }
+
+    body.scrolled nav {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 5px 20px;
+    }
+
+    nav .brand {
+      float: left;
+      height: 100%;
+      line-height: 70px;
+    }
+
+    nav ul {
+      float: center;
+      display: flex;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav ul li {
+      font-size: large;
+      list-style: none;
+
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+      display: block;
+      height: 70px;
+      line-height: 70px;
+      padding: 0 20px;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 1;
+      font-family: "Noto Serif", serif;
+      text-transform: uppercase;
+      transition: .8s;
+    }
+
+    nav ul li a::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+      background: #fffAfA;
+      transform-origin: right;
+      transform: scaleX(0);
+      font-size: large;
+      transition: transform .5s;
+    }
+
+    nav ul li a:hover::before {
+      transform-origin: left;
+      transform: scaleX(1);
+      transition: 0.5s;
+    }
+
+    nav ul li a:hover {
+      font-size: 20px;
+      color: #262622;
+      box-shadow: 0 5px 10px white;
+    }
+
+    body.scrolled nav {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 5px 20px;
+    }
+
+    nav li {
+      font-size: 15px;
+      text-transform: uppercase;
+      color: white;
+      text-decoration: none;
+      line-height: 50px;
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      display: inline-block;
+      text-align: center;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      to {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+    }
+
+    /* Class to trigger the slide in animation */
+    .list-container.show {
+      display: flex;
+      /* Show the container */
+      animation-name: slideIn;
+      /* Trigger the slide in animation */
+    }
+
+    /* Class to trigger the slide out animation */
+    .list-container.hide {
+      animation-name: slideOut;
+      /* Trigger the slide out animation */
+    }
+
+    .list-container ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      padding-top: 10px;
+      margin-top: 150px;
+    }
+
+    .list-container li:last-child {
+      border-bottom: none;
+    }
+
+    .list-container li {
+      display: flex;
+      height: 8vh;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: large;
+    }
+
+    .list-container a {
+      text-decoration: none;
+      color: #eeeeee;
+      text-shadow: 0 0 2px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.7);
+      display: block;
+      font-family: "Noto Serif", serif;
+      padding: 10px 10px;
+    }
+
+    /* Overlay for blur effect */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      /* Semi-transparent dark background */
+      z-index: 998;
+      /* Ensure it's below the menu but above other content */
+    }
+
+    body.blurred .overlay {
+      display: block;
+    }
+
+    body.blurred {
+      overflow: hidden;
+      /* Prevent scrolling when overlay is active */
+    }
+
+    body.blurred *:not(.list-button):not(.list-container):not(.list-container *) {
+      filter: blur(5px);
+      /* Apply blur effect */
+    }
+
+    .list-button {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      font-size: larger;
+      padding: 10px 20px;
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      width: 10%;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      /* Ensure it is above other content */
+      display: none;
+      /* Hide by default */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .list-container {
+      position: fixed;
+      display: none;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 50%;
+      background-color: #2c3e50;
+      /* Dark blue background for better contrast */
+      border-right: 1px solid #34495e;
+      /* Slightly lighter border */
+      box-shadow: 1px 0 5px rgba(0, 0, 0, 0.2);
+      /* Darker shadow for better depth */
+      z-index: 999;
+      overflow-y: auto;
+      justify-content: center;
+      align-items: center;
+      display: none;
+      /* Hide by default */
+      transform: translateX(-100%);
+      /* Initial state for animation */
+      animation-duration: 0.5s;
+      /* Duration of the animation */
+      animation-fill-mode: forwards;
+      /* Retain the final state of the animation */
+      /* Retain the final state of the animation */
+    }
+
+    @media (max-width: 968px) {
+      .head {
+        margin-top: 50px;
+        /* Adjust top margin */
+        height: auto;
+        /* Let the height adjust to content */
+        padding: 20px;
+        /* Add some padding for better spacing */
+        font-size: 16px;
+        width: 240px;
+        /* Adjust font size for smaller screens */
+      }
+
+      .head h1 {
+        font-size: 24px;
+        /* Adjust heading size for mobile */
+      }
+
+      .head h3 {
+        font-size: 18px;
+        /* Adjust subheading size */
+      }
+
+      .list-button {
+        font-size: 14px;
+        padding: 10px 12px;
+        margin-left: 8px;
+        display: block !important;
+      }
+
+      .list-container ul {
+        width: 100%;
+        /* Make list-container take up the full width */
+      }
+
+      .list-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50%;
+        /* Make list-container take up half of the screen */
+      }
+
+      body.blurred *:not(.list-button):not(.list-container):not(.list-container *):not(.overlay) {
+        filter: blur(5px);
+        /* Apply blur effect */
+      }
+
+      nav {
+        display: none !important;
+      }
+
+      select.mobile {
+        display: block;
+      }
+
+      select.laptop {
+        display: none;
+      }
+
+      .overlay {
+        display: none;
+      }
+    }
+
+    @media (min-width: 969px) {
+      h2 {
+        margin-top: 15px;
+        text-align: center;
+      }
+
+      nav a {
+        text-decoration: none;
+        color: white;
+      }
+
+      .list-button {
+        display: none !important;
+      }
+
+      select.mobile {
+        display: none;
+      }
+
+      select.laptop {
+        display: block;
+      }
+
+      .overlay {
+        display: block;
+      }
+    }
+
+    #company_logo {
+      height: 100%;
+      margin-left: 30px;
+      display: flex;
+      align-items: center;
+      position: absolute;
+      left: 0;
+    }
+
+    .hr_list {
+      height: 3px;
+      /* Adjust the height of the line */
+      background: linear-gradient(to right, #000000, #7b0808, #f0f0f0);
+      border: none;
+      width: 150px;
+    }
+
+  </style>
+</head>
+
+<body>
+  <button class="list-button" onclick="toggleList()">☰</button>
+  <div class="list-container" id="listContainer">
+    <ul>
+      <a href="./home.html"><li><b id="b2">Home</b></li></a>
+      <hr class="hr_list">
+      <a href="./Room-Details.html"><li><b class="b2">ROOM</b></li></a>
+      <hr class="hr_list">
+      <a href="./WORKER.html"><li><b class="b2">WORKER</b></li></a>
+      <hr class="hr_list">
+      <a href="./RT calculator.html"><li><b>RT 60</b></li></a>
+      <hr class="hr_list">
+      <a href="./Sound Propagation Loss Calculator.html"><li><b>SPL CALCULATOR</b></li></a>
+      <hr class="hr_list">
+      <a href="./RH calculator.html"><li><b>RH CALCULATOR</b></li></a>
+      <hr class="hr_list">
+      <a href="./HT calculator.html"><li><b>HT CALCULATOR</b></li></a>
+      <hr class="hr_list">
+      <a href="./Live Update.html"><li><b class="b2">LIVE UPDATES</b></li></a>
+    </ul>
+  </div>
+  <div class="overlay" id="overlay" onclick="toggleList()"></div>
+  <nav>
+    <img src="images/png logo.png" alt="company_logo" id="company_logo">
+    <ul>
+      <li><a href="./home.html"><b>Home</b></a></li>
+      <li><a href="./Room-Details.html"><b>ROOM</b></a></li>
+      <li><a href="./Live Update.html"><b>LIVE UPDATES</b></a></li>
+    </ul>
+  </nav>
+  <div class="head">
+    <div class="header">
+      <h1>Home Theater Calculator</h1>
+      <div class="version">Version v.0</div>
+    </div>
+
+    <h2>Input Room Dimensions</h2>
+
+    <div class="toggle">
+      <label for="unit-toggle">Select Unit:</label>
+      <input type="checkbox" id="unit-toggle" onchange="toggleUnit()" />
+      <label for="unit-toggle">Feet</label>
+    </div>
+  </div>
+
+
+  <div class="room-container">
+    <div class="result">
+      <h2>Room Dimensions</h2>
+      <table>
+        <tr>
+          <th>Size</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <th>Length</th>
+          <td><input type="number" step="0.01" placeholder="Value" id="length" value="7"
+              oninput="updateRoomDimensions()" /> <span id="length-unit">m</span></td>
+        </tr>
+        <tr>
+          <th>Width</th>
+          <td><input type="number" step="0.01" placeholder="Value" id="width" value="4"
+              oninput="updateRoomDimensions()" /> <span id="width-unit">m</span></td>
+        </tr>
+        <tr>
+          <th>Height</th>
+          <td><input type="number" step="0.01" placeholder="Value" id="height" value="2.65"
+              oninput="updateRoomDimensions()" /> <span id="height-unit">m</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="result">
+      <h2>Room <br>Properties</h2>
+      <label for="rt60">RT60 (seconds):</label>
+      <input type="number" step="0.1" id="rt_sec" value="0.6" oninput="updateRT60()" /><br>
+
+      <label>Room Proportions (L:W:H):</label>
+      <input type="text" id="room-proportions" readonly /><br>
+
+      <label for="room-volume">Room Volume:</label>
+      <input type="text" id="room-volume" readonly /><br>
+
+      <label for="schroeder-frequency">Schroeder Frequency (Hz):</label>
+      <input type="text" id="schroeder-frequency" readonly /><br>
+
+      <label for="room-temperature">Room Temperature (°C):</label>
+      <input type="number" step="0.1" id="room-temperature" value="21" oninput="updateSpeedOfSound()" /><br>
+
+      <label for="speed-of-sound">Speed of Sound (m/s):</label>
+      <input type="text" id="speed-of-sound" readonly /><br>
+    </div>
+  </div>
+
+  <script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const listButton = document.querySelector('.list-button');
+      const listContainer = document.querySelector('.list-container');
+      const overlay = document.querySelector('.overlay');
+
+      listButton.addEventListener('click', () => {
+        if (listContainer.classList.contains('show')) {
+          listContainer.classList.add('hide');
+          listContainer.classList.remove('show');
+          overlay.style.display = 'none'; // Hide the overlay
+          document.body.classList.remove('blurred');
+        } else {
+          listContainer.classList.add('show');
+          listContainer.classList.remove('hide');
+          listContainer.style.display = 'flex'; // Ensure the container is displayed
+          overlay.style.display = 'block'; // Show the overlay
+          document.body.classList.add('blurred');
+        }
+      });
+
+      overlay.addEventListener('click', () => {
+        listContainer.classList.add('hide');
+        listContainer.classList.remove('show');
+        overlay.style.display = 'none'; // Hide the overlay
+        document.body.classList.remove('blurred');
+      });
+
+      // Ensure the animation ends properly
+      listContainer.addEventListener('animationend', () => {
+        if (listContainer.classList.contains('hide')) {
+          listContainer.style.display = 'none';
+        }
+      });
+    });
+
+    window.addEventListener("scroll", function () {
+      var header = document.querySelector("nav");
+      if (window.scrollY > 50) {
+        document.body.classList.add("scrolled");
+      } else { document.body.classList.remove("scrolled"); }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const listContainer = document.getElementById('listContainer');
+      const overlay = document.getElementById('overlay');
+      const body = document.body;
+      listContainer.style.display = 'none';
+      overlay.style.display = 'none';
+      body.classList.remove('blurred');
+    });
+
+    function toggleList() {
+      const listContainer = document.getElementById('listContainer');
+      const body = document.body;
+      const overlay = document.getElementById('overlay');
+      if (listContainer.style.display === 'none' || listContainer.style.display === '') {
+        listContainer.style.display = 'block';
+        overlay.style.display = 'block'; // Show overlay
+        body.classList.add('blurred'); // Add blur effect
+      } else {
+        listContainer.style.display = 'none';
+        overlay.style.display = 'none'; // Hide overlay
+        body.classList.remove('blurred'); // Remove blur effect
+      }
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      // Retrieve values from localStorage (stored in feet)
+      const length_ft = parseFloat(localStorage.getItem("length_ft")) || 20.0; // Default in feet
+      const width_ft = parseFloat(localStorage.getItem("width_ft")) || 65.6;  // Default in feet
+      const height_ft = parseFloat(localStorage.getItem("height_ft")) || 131.2; // Default in feet
+      const rt_sec = parseFloat(localStorage.getItem("rt_sec")) || 6.0;
+      const room_temperature = parseFloat(localStorage.getItem("room_temperature")) || 21; // Default 21°C
+
+      const feetPerMeter = 3.28084; // Conversion factor from feet to meters
+
+      // Convert feet to meters
+      function convertFeetToMeters(feet) {
+        return feet / feetPerMeter;
+      }
+
+      // Initialize input fields with values from localStorage
+      function initializeInputs() {
+        const isFeet = document.getElementById("unit-toggle").checked;
+
+        // If units are feet, display the feet value; otherwise, convert to meters
+        document.getElementById("length").value = isFeet
+          ? length_ft.toFixed(2)
+          : convertFeetToMeters(length_ft).toFixed(2);
+
+        document.getElementById("width").value = isFeet
+          ? width_ft.toFixed(2)
+          : convertFeetToMeters(width_ft).toFixed(2);
+
+        document.getElementById("height").value = isFeet
+          ? height_ft.toFixed(2)
+          : convertFeetToMeters(height_ft).toFixed(2);
+
+        document.getElementById("rt_sec").value = rt_sec.toFixed(1);
+        document.getElementById("room-temperature").value = room_temperature.toFixed(1);
+      }
+
+      let roomVolumeM3 = 0;
+      let roomVolumeFT3 = 0;
+
+      // Function to update room dimensions and live calculations
+      function updateRoomDimensions() {
+        const isFeet = document.getElementById("unit-toggle").checked;
+
+        // Temporarily adjust for calculations based on the unit type selected (feet or meters)
+        const length = isFeet ? parseFloat(document.getElementById("length").value) : convertFeetToMeters(parseFloat(document.getElementById("length").value));
+        const width = isFeet ? parseFloat(document.getElementById("width").value) : convertFeetToMeters(parseFloat(document.getElementById("width").value));
+        const height = isFeet ? parseFloat(document.getElementById("height").value) : convertFeetToMeters(parseFloat(document.getElementById("height").value));
+
+        // No changes to localStorage or tempMemory; just perform calculations based on user input
+        roomVolumeM3 = length * width * height;
+        roomVolumeFT3 = roomVolumeM3 * feetPerMeter ** 3;
+
+        document.getElementById("room-volume").value = isFeet
+          ? `${roomVolumeFT3.toFixed(2)} ft³`
+          : `${roomVolumeM3.toFixed(2)} m³`;
+
+        updateRoomProportions(length, width, height);
+        updateSchroederFrequency();
+        updateSpeedOfSound();
+      }
+
+      // Function to update room proportions
+      function updateRoomProportions(length, width, height) {
+        const minDimension = Math.min(length, width, height);
+
+        const lengthRatio = (length / minDimension).toFixed(2);
+        const widthRatio = (width / minDimension).toFixed(2);
+        const heightRatio = (height / minDimension).toFixed(2);
+
+        const proportions = `${lengthRatio} : ${widthRatio} : ${heightRatio}`;
+        document.getElementById("room-proportions").value = proportions;
+      }
+
+      // Function to update Schroeder Frequency
+      function updateSchroederFrequency() {
+        const rt_sec = parseFloat(document.getElementById("rt_sec").value) || 0;
+
+        const isFeet = document.getElementById("unit-toggle").checked;
+        const volume = isFeet ? roomVolumeFT3 * 0.0283168 : roomVolumeM3;
+
+        if (!isNaN(rt_sec) && rt_sec > 0 && volume > 0) {
+          const schroederFreq = (200 / Math.sqrt(rt_sec * volume)).toFixed(2);
+          document.getElementById("schroeder-frequency").value = schroederFreq;
+        } else {
+          document.getElementById("schroeder-frequency").value = "0.00";
+        }
+      }
+
+      // Function to update the speed of sound
+      function updateSpeedOfSound() {
+        const temperature = parseFloat(document.getElementById("room-temperature").value);
+
+        if (!isNaN(temperature)) {
+          const speedOfSoundM = 331.3 + 0.606 * temperature; // Speed of sound formula
+          document.getElementById("speed-of-sound").value = `${speedOfSoundM.toFixed(2)} m/s`;
+        } else {
+          document.getElementById("speed-of-sound").value = "Invalid";
+        }
+      }
+
+      // Function to update unit labels
+      function updateUnitLabels() {
+        const isFeet = document.getElementById("unit-toggle").checked;
+        const unitLabel = isFeet ? "ft" : "m";
+
+        document.getElementById("length-unit").textContent = unitLabel;
+        document.getElementById("width-unit").textContent = unitLabel;
+        document.getElementById("height-unit").textContent = unitLabel;
+        const volumeUnitEl = document.getElementById("volume-unit");
+        if (volumeUnitEl) {
+          volumeUnitEl.textContent = isFeet ? "ft³" : "m³";
+        } else {
+          console.error("Error: Element with ID 'volume-unit' not found.");
+        }
+      }
+
+      // Event listeners for live updates
+      document.getElementById("length").addEventListener("input", updateRoomDimensions);
+      document.getElementById("width").addEventListener("input", updateRoomDimensions);
+      document.getElementById("height").addEventListener("input", updateRoomDimensions);
+      document.getElementById("rt_sec").addEventListener("input", updateSchroederFrequency);
+      document.getElementById("room-temperature").addEventListener("input", updateSpeedOfSound);
+
+      document.getElementById("unit-toggle").addEventListener("change", () => {
+        initializeInputs();
+        updateRoomDimensions();
+        updateUnitLabels();
+      });
+
+      // Initialize inputs and calculations on page load
+      initializeInputs();
+      updateRoomDimensions();
+      updateUnitLabels();
+    });
+  </script>
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Room Dimensions Input</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    .result,
+    .speaker-settings {
+
+      padding: 0px 20px 10px 10px;
+      border-radius: 20px;
+      box-shadow: 0 0px 8px rgba(0, 0, 0, 0.5);
+      background: #fff;
+    }
+
+    .result {
+      padding-top: 0px;
+      flex: 1 1 clac(50% - 20px);
+      min-width: 200px;
+      max-width: 60%;
+      margin-top: 0px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      /* Smooth width and shadow change */
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+      background: whitesmoke;
+    }
+
+    @media (min-width: 968px) {
+      nav a {
+        text-decoration: none;
+        color: white;
+      }
+
+      .list-button {
+        display: none;
+      }
+
+      .overlay {
+        display: block;
+      }
+
+      select.mobile {
+        display: none;
+      }
+
+      select.laptop {
+        display: block;
+      }
+    }
+
+    @media (max-width: 968px) {
+      .room-container {
+        display: flex;
+        /* Enable Flexbox */
+        flex-direction: column;
+        /* Align items in a single row */
+        justify-content: space-between;
+        /* Space the items evenly */
+        gap: 10px;
+        width: auto;
+        /* Reduce spacing */
+      }
+
+      .result {
+        flex: 1 1 calc(50% - 20px);
+        margin-bottom: 10px;
+        width: auto;
+        /* Center the container */
+      }
+
+      .speaker-wrapper {
+        flex-direction: column;
+        flex: 1 1 calc(50% - 20px);
+        padding-right: 10px;
+      }
+
+      .speaker-container h2 {
+        text-align: center;
+      }
+
+    }
+
+    .result label {
+      color: rgb(85, 85, 85);
+    }
+
+    .result:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.9);
+      background: linear-gradient(to bottom, #ffffff, #c2c2c2);
+    }
+
+    .result:hover th,
+    .result:hover td {
+      color: black;
+      font-weight: bold;
+    }
+
+    .result:hover h2 {
+      color: black;
+    }
+
+    .result:hover label {
+      color: black;
+    }
+
+    .result th,
+    .result td {
+      color: rgb(75, 74, 74);
+    }
+
+    .result:hover::after {
+      position: absolute;
+      background-color: #333;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 5px;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: auto;
+      max-width: 100%;
+    }
+
+    .speaker-container {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 5px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      flex: 1 1 clac(50% - 20px);
+      border-radius: 8px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+      background: whitesmoke;
+    }
+
+    .speaker-container label {
+      color: rgb(85, 85, 85);
+    }
+
+
+    .speaker-container:hover label {
+      color: black;
+    }
+
+    .speaker-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.9);
+      background-color: linear-gradient(to bottom, #ffffff, #7c7b7b);
+    }
+
+    .speaker-container:hover h2 {
+      color: black;
+    }
+
+    .speaker-container:hover::after {
+      position: absolute;
+      background-color: #333;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 5px;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: auto;
+      max-width: 100%;
+    }
+
+    .speaker-wrapper {
+      display: flex;
+      flex: 1 1 clac(50% - 20px);
+      justify-content: space-between;
+    }
+
+    .distance-label {
+      display: inline-block;
+      min-width: 140px;
+      /* Minimum width to maintain alignment */
+      width: 60%;
+      /* Set consistent width */
+      font-size: 16px;
+      margin-right: 10px;
+      /* Spacing between label and input */
+      white-space: normal;
+      /* Allow text wrapping to the next line */
+      word-wrap: break-word;
+      /* Ensure long words wrap properly */
+      line-height: 1.5;
+      margin-left: 0px;
+      /* Increase line height for better readability */
+    }
+
+
+    .distance-inputs {
+      display: flex;
+      align-items: center;
+      margin-left: 0px;
+      justify-content: center;
+      margin-top: 5px;
+      background-color: #f5f5f5;
+      border-bottom: 1px solid #6e6e6e;
+      /* Default slightly gray input box background */
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .distance-inputs input {
+      width: 70px;
+      margin-right: 5px;
+    }
+  </style>
+
+</head>
+
+<div class="speaker-settings">
+  <h2>Speaker First/ Early Reflaction Point</h2>
+  <div class="speaker-wrapper">
+    <div class="speaker-container">
+      <h2>Front Left</h2>
+      <div class="distance-inputs">
+        <label class="distance-label">Speaker to Listening Position (feet):</label>
+        <input type="number" step="0.01" id="fl-listening-position-distance" placeholder="9 ft"
+          oninput="updateSpeaker('fl',this.value)" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Left Wall from MLP (feet):</label>
+        <input type="number" step="0.01" id="fl-left-wall-mlp-distance" placeholder="6 ft"
+          oninput="updateSpeaker('fl')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Right Wall from MLP (feet):</label>
+        <input type="number" step="0.01" id="fl-right-wall-mlp-distance" placeholder="6 ft"
+          oninput="updateSpeaker('fl')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Floor to MLP (feet):</label>
+        <input type="number" step="0.01" id="fl-floor-mlp-distance" placeholder="3.5 ft"
+          oninput="updateSpeaker('fl')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Ceiling to MLP (feet):</label>
+        <input type="number" step="0.01" id="fl-ceiling-mlp-distance" placeholder="5.5 ft"
+          oninput="updateSpeaker('fl')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Speaker to Left Wall (feet):</label>
+        <input type="number" step="0.01" id="fl-left-wall-distance" placeholder="2.5 ft"
+          oninput="updateSpeaker('fl')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Speaker to Right Wall (feet):</label>
+        <input type="number" step="0.01" id="fl-right-wall-distance" placeholder="9.5 ft"
+          oninput="updateSpeaker('fl')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Speaker to Floor Distance (feet):</label>
+        <input type="number" step="0.01" id="fl-floor-distance" placeholder="3.5 ft" oninput="updateSpeaker('fl')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Speaker to Ceiling Distance (feet):</label>
+        <input type="number" step="0.01" id="fl-ceiling-distance" placeholder="5.5 ft" oninput="updateSpeaker('fl')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label" style="color: rgb(39, 39, 199);">First Reflection Point (Left Wall)
+          (feet):</label>
+        <span id="fl-left-wall-reflection-point" style="color: rgb(39, 39, 199);">0.00 ft</span>
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label" style="color: rgb(39, 39, 199);">First Reflection Point (Right Wall)
+          (feet):</label>
+        <span id="fl-right-wall-reflection-point" style="color: blue;">0.00 ft</span>
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label" style="color: rgb(39, 39, 199);">First Reflection Point (Floor) (feet):</label>
+        <span id="fl-floor-reflection-point" style="color: rgb(39, 39, 199);">0.00 ft</span>
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label" style="color: rgb(39, 39, 199);">First Reflection Point (Ceiling) (feet):</label>
+        <span id="fl-ceiling-reflection-point" style="color: rgb(39, 39, 199);">0.00 ft</span>
+      </div>
+    </div>
+
+    <div class="speaker-container">
+      <h2>Front Right</h2>
+      <div class="distance-inputs">
+        <label class="distance-label">Speaker to Listening Position (feet):</label>
+        <input type="number" step="0.01" id="fr-listening-position-distance" placeholder="9 ft"
+          oninput="updateSpeaker('fr')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Left Wall from MLP (feet):</label>
+        <input type="number" step="0.01" id="fr-left-wall-mlp-distance" placeholder="6 ft"
+          oninput="updateSpeaker('fr')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Right Wall from MLP (feet):</label>
+        <input type="number" step="0.01" id="fr-right-wall-mlp-distance" placeholder="6 ft"
+          oninput="updateSpeaker('fr')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Floor to MLP (feet):</label>
+        <input type="number" step="0.01" id="fr-floor-mlp-distance" placeholder="3.5 ft"
+          oninput="updateSpeaker('fr')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Ceiling to MLP (feet):</label>
+        <input type="number" step="0.01" id="fr-ceiling-mlp-distance" placeholder="5.5 ft"
+          oninput="updateSpeaker('fr')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Speaker to Left Wall (feet):</label>
+        <input type="number" step="0.01" id="fr-left-wall-distance" placeholder="9.5 ft"
+          oninput="updateSpeaker('fr')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Speaker to Right Wall (feet):</label>
+        <input type="number" step="0.01" id="fr-right-wall-distance" placeholder="2.5 ft"
+          oninput="updateSpeaker('fr')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Speaker to Floor Distance (feet):</label>
+        <input type="number" step="0.01" id="fr-floor-distance" placeholder="3.5 ft" oninput="updateSpeaker('fr')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Speaker to Ceiling Distance (feet):</label>
+        <input type="number" step="0.01" id="fr-ceiling-distance" placeholder="5.5 ft" oninput="updateSpeaker('fr')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label" style="color: rgb(39, 39, 199);">First Reflection Point (Left Wall)
+          (feet):</label>
+        <span id="fr-left-wall-reflection-point" style="color: rgb(39, 39, 199);">0.00 ft</span>
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label" style="color: rgb(39, 39, 199);">First Reflection Point (Right Wall)
+          (feet):</label>
+        <span id="fr-right-wall-reflection-point" style="color: rgb(39, 39, 199);">0.00 ft</span>
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label" style="color: rgb(39, 39, 199);">First Reflection Point (Floor) (feet):</label>
+        <span id="fr-floor-reflection-point" style="color: rgb(39, 39, 199);">0.00 ft</span>
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label" style="color: rgb(39, 39, 199);">First Reflection Point (Ceiling) (feet):</label>
+        <span id="fr-ceiling-reflection-point" style="color: rgb(39, 39, 199);">0.00 ft</span>
+      </div>
+    </div>
+
+    <div class="speaker-container">
+      <h2>Center Speaker</h2>
+      <div class="distance-inputs">
+        <label class="distance-label">Speaker to Listening Position (feet):</label>
+        <input type="number" step="0.01" id="c-listening-position-distance" placeholder="9 ft"
+          oninput="updateSpeaker('c')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Left Wall from MLP (feet):</label>
+        <input type="number" step="0.01" id="c-left-wall-mlp-distance" placeholder="6 ft"
+          oninput="updateSpeaker('c')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Right Wall from MLP (feet):</label>
+        <input type="number" step="0.01" id="c-right-wall-mlp-distance" placeholder="6 ft"
+          oninput="updateSpeaker('c')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Floor to MLP (feet):</label>
+        <input type="number" step="0.01" id="c-floor-mlp-distance" placeholder="3.5 ft" oninput="updateSpeaker('c')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Ceiling to MLP (feet):</label>
+        <input type="number" step="0.01" id="c-ceiling-mlp-distance" placeholder="5.5 ft"
+          oninput="updateSpeaker('c')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Speaker to Left Wall (feet):</label>
+        <input type="number" step="0.01" id="c-left-wall-distance" placeholder="6 ft" oninput="updateSpeaker('c')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Speaker to Right Wall (feet):</label>
+        <input type="number" step="0.01" id="c-right-wall-distance" placeholder="6 ft" oninput="updateSpeaker('c')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Speaker to Floor Distance (feet):</label>
+        <input type="number" step="0.01" id="c-floor-distance" placeholder="2.5 ft" oninput="updateSpeaker('c')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label">Speaker to Ceiling Distance (feet):</label>
+        <input type="number" step="0.01" id="c-ceiling-distance" placeholder="6.5 ft" oninput="updateSpeaker('c')" />
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label" style="color: rgb(39, 39, 199);">First Reflection Point (Left Wall)
+          (feet):</label>
+        <span id="c-left-wall-reflection-point" style="color: rgb(39, 39, 199);">0.00 ft</span>
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label" style="color: rgb(39, 39, 199);">First Reflection Point (Right Wall)
+          (feet):</label>
+        <span id="c-right-wall-reflection-point" style="color: rgb(39, 39, 199);">0.00 ft</span>
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label" style="color: rgb(39, 39, 199);">First Reflection Point (Floor) (feet):</label>
+        <span id="c-floor-reflection-point" style="color: rgb(39, 39, 199);">0.00 ft</span>
+      </div>
+      <div class="distance-inputs">
+        <label class="distance-label" style="color: rgb(39, 39, 199);">First Reflection Point (Ceiling) (feet):</label>
+        <span id="c-ceiling-reflection-point" style="color: rgb(39, 39, 199);">0.00 ft</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  function updateSpeaker(speaker) {
+
+    const listeningPositionDistance = parseFloat(document.getElementById(`${speaker}-listening-position-distance`).value) || 9;
+    const leftWallMlpDistance = parseFloat(document.getElementById(`${speaker}-left-wall-mlp-distance`).value) || 6;
+    const rightWallMlpDistance = parseFloat(document.getElementById(`${speaker}-right-wall-mlp-distance`).value) || 6;
+    const floorMlpDistance = parseFloat(document.getElementById(`${speaker}-floor-mlp-distance`).value) || 3.5;
+    const ceilingMlpDistance = parseFloat(document.getElementById(`${speaker}-ceiling-mlp-distance`).value) || 5.5;
+    const leftWallDistance = parseFloat(document.getElementById(`${speaker}-left-wall-distance`).value) || 2.5;
+    const rightWallDistance = parseFloat(document.getElementById(`${speaker}-right-wall-distance`).value) || 9.5;
+    const floorDistance = parseFloat(document.getElementById(`${speaker}-floor-distance`).value) || 3.5;
+    const ceilingDistance = parseFloat(document.getElementById(`${speaker}-ceiling-distance`).value) || 5.5;
+
+    const leftWallReflectionPoint = (listeningPositionDistance * leftWallMlpDistance) / (leftWallDistance + leftWallMlpDistance);
+    const rightWallReflectionPoint = (listeningPositionDistance * rightWallMlpDistance) / (rightWallDistance + rightWallMlpDistance);
+    const floorReflectionPoint = (listeningPositionDistance * floorMlpDistance) / (floorDistance + floorMlpDistance);
+    const ceilingReflectionPoint = (listeningPositionDistance * ceilingMlpDistance) / (ceilingDistance + ceilingMlpDistance);
+
+    document.getElementById(`${speaker}-left-wall-reflection-point`).innerText = `${leftWallReflectionPoint.toFixed(2)} ft`;
+    document.getElementById(`${speaker}-right-wall-reflection-point`).innerText = `${rightWallReflectionPoint.toFixed(2)} ft`;
+    document.getElementById(`${speaker}-floor-reflection-point`).innerText = `${floorReflectionPoint.toFixed(2)} ft`;
+    document.getElementById(`${speaker}-ceiling-reflection-point`).innerText = `${ceilingReflectionPoint.toFixed(2)} ft`;
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    updateSpeaker('fl');
+    updateSpeaker('fr');
+    updateSpeaker('c');
+  });
+</script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speaker Distance Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .main-container {
+      display: flex;
+      flex-wrap: wrap;
+      /* Allow wrapping of elements */
+      justify-content: space-between;
+      /* Distribute space evenly */
+      margin-top: 0px;
+      margin-bottom: 20px;
+      padding: 10px 10px 8px 8px;
+      gap: 10px;
+      width: 95%;
+      background-color: whitesmoke;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.9);
+      /* Add spacing between containers */
+    }
+
+    .container {
+      background: whitesmoke;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin: 5px;
+      flex: 1 1 calc(16.66% - 20px);
+      /* Allow 6 containers in a row with equal space */
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+      min-width: 150px;
+      /* Ensure a minimum size */
+      transition: transform 0.2s;
+      box-sizing: border-box;
+      /* Include padding and border in size calculations */
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.9);
+      background-color: linear-gradient(to bottom, #ffffff, #7c7b7b);
+    }
+
+    .container h2 {
+      color: rgb(85, 85, 85);
+      font-size: 14px;
+    }
+
+    .h2_1 {
+      color: #000000;
+      margin-top: 20px;
+      margin-bottom: 1px;
+      border-radius: 15px;
+
+      background-color: whitesmoke;
+      width: 1290px;
+      height: 40px;
+
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: rgb(85, 85, 85);
+    }
+
+    .container:hover label {
+      color: black;
+      font-weight: bolder;
+      transition: 0.5s;
+    }
+
+    .container:hover h2 {
+      color: #000000;
+      font-weight: bolder;
+    }
+
+    input {
+      margin-bottom: 10px;
+      padding: 8px;
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    input:focus {
+      border-color: #007BFF;
+      outline: none;
+    }
+
+    .result-1 {
+      padding: 10px 10px 8px 8px;
+      background-color: rgb(218, 216, 216);
+      border-radius: 10px;
+      color: #000000;
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex: 1 1 calc(50% - 10px);
+        /* 2 containers per row */
+      }
+
+      .main-container {
+        gap: 0px;
+      }
+
+      .h2_1 {
+        width: 350px;
+        font-size: large;
+        text-align: center;
+        padding-top: 8px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h2 class="h2_1">Speaker Placement Calculator</h2>
+  <div class="main-container">
+    <div class="container">
+      <h2>FL</h2>
+      <label for="distance-fl">Distance to Front Wall (feet):</label>
+      <input type="number" id="distance-fl" value="9" step="0.01" oninput="calculateDistances()" />
+      <label for="desired-angle-fl">Desired Angle (degrees):</label>
+      <input type="number" id="desired-angle-fl" value="36" oninput="calculateDistances()" />
+      <div class="result-1" id="result-fl"></div>
+    </div>
+
+    <div class="container">
+      <h2>FR</h2>
+      <label for="distance-fr">Distance to Front Wall (feet):</label>
+      <input type="number" id="distance-fr" value="9" step="0.01" oninput="calculateDistances()" />
+      <label for="desired-angle-fr">Desired Angle (degrees):</label>
+      <input type="number" id="desired-angle-fr" value="36" oninput="calculateDistances()" />
+      <div class="result-1" id="result-fr"></div>
+    </div>
+
+    <div class="container">
+      <h2>SL</h2>
+      <label for="distance-sl">Distance to Left Wall (feet):</label>
+      <input type="number" id="distance-sl" value="3" step="0.01" oninput="calculateDistances()" />
+      <label for="desired-angle-sl">Desired Angle (degrees):</label>
+      <input type="number" id="desired-angle-sl" value="90" oninput="calculateDistances()" />
+      <div class="result-1" id="result-sl"></div>
+    </div>
+
+    <div class="container">
+      <h2>SR</h2>
+      <label for="distance-sr">Distance to Right Wall (feet):</label>
+      <input type="number" id="distance-sr" value="3" step="0.01" oninput="calculateDistances()" />
+      <label for="desired-angle-sr">Desired Angle (degrees):</label>
+      <input type="number" id="desired-angle-sr" value="90" oninput="calculateDistances()" />
+      <div class="result-1" id="result-sr"></div>
+    </div>
+
+    <div class="container">
+      <h2>SBL</h2>
+      <label for="distance-sbl">Distance to Side Wall (feet):</label>
+      <input type="number" id="distance-sbl" value="3" step="0.01" oninput="calculateDistances()" />
+      <label for="desired-angle-sbl">Desired Angle (degrees):</label>
+      <input type="number" id="desired-angle-sbl" value="110" oninput="calculateDistances()" />
+      <div class="result-1" id="result-sbl"></div>
+    </div>
+
+    <div class="container">
+      <h2>SBR</h2>
+      <label for="distance-sbr">Distance to Right Wall (feet):</label>
+      <input type="number" id="distance-sbr" value="3" step="0.01" oninput="calculateDistances()" />
+      <label for="desired-angle-sbr">Desired Angle (degrees):</label>
+      <input type="number" id="desired-angle-sbr" value="110" oninput="calculateDistances()" />
+      <div class="result-1" id="result-sbr"></div>
+    </div>
+
+    <div class="container">
+      <h2>TFL</h2>
+      <label for="distance-tfl">Distance to Ceiling (feet):</label>
+      <input type="number" id="distance-tfl" value="6" step="0.01" oninput="calculateDistances()" />
+      <label for="desired-angle-tfl">Desired Angle (degrees):</label>
+      <input type="number" id="desired-angle-tfl" value="30" oninput="calculateDistances()" />
+      <div class="result-1" id="result-tfl"></div>
+    </div>
+
+    <div class="container">
+      <h2>TFR</h2>
+      <label for="distance-tfr">Distance to Ceiling (feet):</label>
+      <input type="number" id="distance-tfr" value="6" step="0.01" oninput="calculateDistances()" />
+      <label for="desired-angle-tfr">Desired Angle (degrees):</label>
+      <input type="number" id="desired-angle-tfr" value="30" oninput="calculateDistances()" />
+      <div class="result-1" id="result-tfr"></div>
+    </div>
+
+    <div class="container">
+      <h2>TML</h2>
+      <label for="distance-tml">Distance to Ceiling (feet):</label>
+      <input type="number" id="distance-tml" value="6" step="0.01" oninput="calculateDistances()" />
+      <label for="desired-angle-tml">Desired Angle (degrees):</label>
+      <input type="number" id="desired-angle-tml" value="60" oninput="calculateDistances()" />
+      <div class="result-1" id="result-tml"></div>
+    </div>
+
+    <div class="container">
+      <h2>TMR</h2>
+      <label for="distance-tmr">Distance to TMR (feet):</label>
+      <input type="number" id="distance-tmr" value="6" step="0.01" oninput="calculateDistances()" />
+      <label for="desired-angle-tmr">Desired Angle (degrees):</label>
+      <input type="number" id="desired-angle-tmr" value="60" oninput="calculateDistances()" />
+      <div class="result-1" id="result-tmr"></div>
+    </div>
+
+    <div class="container">
+      <h2>TBL</h2>
+      <label for="distance-tbl">Distance to Ceiling (feet):</label>
+      <input type="number" id="distance-tbl" value="6" step="0.01" oninput="calculateDistances()" />
+      <label for="desired-angle-tbl">Desired Angle (degrees):</label>
+      <input type="number" id="desired-angle-tbl" value="120" oninput="calculateDistances()" />
+      <div class="result-1" id="result-tbl"></div>
+    </div>
+
+    <div class="container">
+      <h2>TBR</h2>
+      <label for="distance-tbr">Distance to Ceiling (feet):</label>
+      <input type="number" id="distance-tbr" value="6" step="0.01" oninput="calculateDistances()" />
+      <label for="desired-angle-tbr">Desired Angle (degrees):</label>
+      <input type="number" id="desired-angle-tbr" value="120" oninput="calculateDistances()" />
+      <div class="result-1" id="result-tbr"></div>
+    </div>
+  </div>
+
+  <script>
+    function calculateDistance(angle, distance) {
+      if (angle === 0) {
+        return 0; // Distance is 0 feet
+      }
+      const radians = angle * (Math.PI / 180); // Convert to radians
+      return Math.abs(distance * Math.cos(radians)).toFixed(2);
+    }
+
+    function calculateDistances() {
+      // FL
+      const distanceFL = parseFloat(document.getElementById("distance-fl").value);
+      const angleFL = parseFloat(document.getElementById("desired-angle-fl").value);
+      const resultFL = calculateDistance(angleFL, distanceFL);
+      document.getElementById("result-fl").innerText = `Result: ${resultFL} feet`;
+
+      // FR
+      const distanceFR = parseFloat(document.getElementById("distance-fr").value);
+      const angleFR = parseFloat(document.getElementById("desired-angle-fr").value);
+      const resultFR = calculateDistance(angleFR, distanceFR);
+      document.getElementById("result-fr").innerText = `Result: ${resultFR} feet`;
+
+      // SL
+      const distanceSL = parseFloat(document.getElementById("distance-sl").value);
+      const angleSL = parseFloat(document.getElementById("desired-angle-sl").value);
+      const resultSL = calculateDistance(angleSL, distanceSL);
+      document.getElementById("result-sl").innerText = `Result: ${resultSL} feet`;
+
+      // SR
+      const distanceSR = parseFloat(document.getElementById("distance-sr").value);
+      const angleSR = parseFloat(document.getElementById("desired-angle-sr").value);
+      const resultSR = calculateDistance(angleSR, distanceSR);
+      document.getElementById("result-sr").innerText = `Result: ${resultSR} feet`;
+
+      // SBL
+      const distanceSBL = parseFloat(document.getElementById("distance-sbl").value);
+      const angleSBL = parseFloat(document.getElementById("desired-angle-sbl").value);
+      const resultSBL = calculateDistance(angleSBL, distanceSBL);
+      document.getElementById("result-sbl").innerText = `Result: ${resultSBL} feet`;
+
+      // SBR
+      const distanceSBR = parseFloat(document.getElementById("distance-sbr").value);
+      const angleSBR = parseFloat(document.getElementById("desired-angle-sbr").value);
+      const resultSBR = calculateDistance(angleSBR, distanceSBR);
+      document.getElementById("result-sbr").innerText = `Result: ${resultSBR} feet`;
+
+      // TFL
+      const distanceTFL = parseFloat(document.getElementById("distance-tfl").value);
+      const angleTFL = parseFloat(document.getElementById("desired-angle-tfl").value);
+      const resultTFL = calculateDistance(angleTFL, distanceTFL);
+      document.getElementById("result-tfl").innerText = `Result: ${resultTFL} feet`;
+
+      // TFR
+      const distanceTFR = parseFloat(document.getElementById("distance-tfr").value);
+      const angleTFR = parseFloat(document.getElementById("desired-angle-tfr").value);
+      const resultTFR = calculateDistance(angleTFR, distanceTFR);
+      document.getElementById("result-tfr").innerText = `Result: ${resultTFR} feet`;
+
+      // TML
+      const distanceTML = parseFloat(document.getElementById("distance-tml").value);
+      const angleTML = parseFloat(document.getElementById("desired-angle-tml").value);
+      const resultTML = calculateDistance(angleTML, distanceTML);
+      document.getElementById("result-tml").innerText = `Result: ${resultTML} feet`;
+
+      // TMR
+      const distanceTMR = parseFloat(document.getElementById("distance-tmr").value);
+      const angleTMR = parseFloat(document.getElementById("desired-angle-tmr").value);
+      const resultTMR = calculateDistance(angleTMR, distanceTMR);
+      document.getElementById("result-tmr").innerText = `Result: ${resultTMR} feet`;
+
+      // TBL
+      const distanceTBL = parseFloat(document.getElementById("distance-tbl").value);
+      const angleTBL = parseFloat(document.getElementById("desired-angle-tbl").value);
+      const resultTBL = calculateDistance(angleTBL, distanceTBL);
+      document.getElementById("result-tbl").innerText = `Result: ${resultTBL} feet`;
+
+      // TBR
+      const distanceTBR = parseFloat(document.getElementById("distance-tbr").value);
+      const angleTBR = parseFloat(document.getElementById("desired-angle-tbr").value);
+      const resultTBR = calculateDistance(angleTBR, distanceTBR);
+      document.getElementById("result-tbr").innerText = `Result: ${resultTBR} feet`;
+    }
+
+    window.onload = calculateDistances;
+  </script>
+</body>
+
+</html>

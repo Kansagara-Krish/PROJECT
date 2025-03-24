@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase calculator</title>
+</head>
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(to right, #00c6ff, #0072ff);
+        color: #333;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        height: 100%;
+    }
+
+    #company_logo {
+        height: 100%;
+        margin-left: 30px;
+        display: flex;
+        align-items: center;
+        position: absolute;
+        left: 0;
+    }
+
+    nav {
+        position: fixed;
+        /* Fix the header at the top */
+        top: 0;
+        width: 100%;
+        height: 60px;
+        background: #34495e;
+        border-radius: 0 0 8px 8px;
+        /* Round bottom corners */
+        box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        transition: 1.5s;
+        margin-left: -10px;
+    }
+
+    nav:hover {
+        height: 12vh;
+        transition: 0.5s;
+        font-size: larger;
+    }
+
+    body.scrolled nav {
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 5px 20px;
+    }
+
+    nav .brand {
+        float: left;
+        height: 100%;
+        line-height: 70px;
+    }
+
+    nav ul {
+        float: center;
+        display: flex;
+        margin: 0;
+        padding: 0;
+    }
+
+    nav ul li {
+        font-size: large;
+        list-style: none;
+
+    }
+
+    nav ul li a {
+        text-decoration: none;
+        color: white;
+        display: block;
+        height: 70px;
+        line-height: 70px;
+        padding: 0 20px;
+        box-sizing: border-box;
+        position: relative;
+        z-index: 1;
+        font-family: "Noto Serif", serif;
+        text-transform: uppercase;
+        transition: .8s;
+    }
+
+    nav ul li a::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+        background: #fffAfA;
+        transform-origin: right;
+        transform: scaleX(0);
+        font-size: large;
+        transition: transform .5s;
+    }
+
+    nav ul li a:hover::before {
+        transform-origin: left;
+        transform: scaleX(1);
+        transition: 0.5s;
+    }
+
+    nav ul li a:hover {
+        font-size: 20px;
+        color: #262622;
+        box-shadow: 0 5px 10px white;
+    }
+
+    body.scrolled nav {
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 5px 20px;
+    }
+
+    nav li {
+        font-size: 15px;
+        text-transform: uppercase;
+        color: white;
+        text-decoration: none;
+        line-height: 50px;
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        display: inline-block;
+        text-align: center;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        to {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+    }
+
+    /* Class to trigger the slide in animation */
+    .list-container.show {
+        display: flex;
+        /* Show the container */
+        animation-name: slideIn;
+        /* Trigger the slide in animation */
+    }
+
+    /* Class to trigger the slide out animation */
+    .list-container.hide {
+        animation-name: slideOut;
+        /* Trigger the slide out animation */
+    }
+
+    .list-container ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        padding-top: 40px;
+    }
+
+    .list-container li:last-child {
+        border-bottom: none;
+    }
+
+    .list-container li {
+        display: flex;
+        height: 8vh;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-size: large;
+    }
+
+    .list-container a {
+        text-decoration: none;
+        color: #eeeeee;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 255, 255, 0.7);
+        display: block;
+        font-family: "Noto Serif", serif;
+        padding: 10px 10px;
+    }
+
+    /* Overlay for blur effect */
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        /* Semi-transparent dark background */
+        z-index: 998;
+        /* Ensure it's below the menu but above other content */
+    }
+
+    body.blurred .overlay {
+        display: block;
+    }
+
+    body.blurred {
+        overflow: hidden;
+        /* Prevent scrolling when overlay is active */
+    }
+
+    body.blurred *:not(.list-button):not(.list-container):not(.list-container *) {
+        filter: blur(5px);
+        /* Apply blur effect */
+    }
+
+    .list-button {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        font-size: larger;
+        padding: 10px 20px;
+        background-color: #1abc9c;
+        color: white;
+        border: none;
+        width: 10%;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 16px;
+        z-index: 1000;
+        /* Ensure it is above other content */
+        display: none;
+        /* Hide by default */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .list-container {
+        position: fixed;
+        display: none;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 50%;
+        background-color: #2c3e50;
+        /* Dark blue background for better contrast */
+        border-right: 1px solid #34495e;
+        /* Slightly lighter border */
+        box-shadow: 1px 0 5px rgba(0, 0, 0, 0.2);
+        /* Darker shadow for better depth */
+        z-index: 999;
+        overflow-y: auto;
+        justify-content: center;
+        align-items: center;
+        display: none;
+        /* Hide by default */
+        transform: translateX(-100%);
+        /* Initial state for animation */
+        animation-duration: 0.5s;
+        /* Duration of the animation */
+        animation-fill-mode: forwards;
+        /* Retain the final state of the animation */
+        /* Retain the final state of the animation */
+    }
+
+    .head {
+        background-color: whitesmoke;
+        margin-bottom: 0px;
+        display: flex;
+        /* Use flexbox for alignment */
+        justify-content: center;
+        /* Center horizontally */
+        align-items: center;
+        /* Center vertically */
+        border-radius: 15px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.9);
+        margin-top: 100px;
+        padding: 10px 10px 8px 8px;
+        height: 40vh;
+        box-shadow: 0px;
+        /* Keep height as defined */
+        text-align: center;
+        width: 500px;
+        flex-direction: column;
+    }
+
+    .header {
+        margin-top: 0px;
+        text-align: center;
+        margin-bottom: 0px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #4CAF50;
+        margin-bottom: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .head {
+            margin-top: 50px;
+            /* Adjust top margin */
+            height: auto;
+            /* Let the height adjust to content */
+            padding: 20px;
+            /* Add some padding for better spacing */
+            font-size: 16px;
+            width: 240px;
+            /* Adjust font size for smaller screens */
+        }
+
+        .list-button {
+            font-size: 14px;
+            padding: 10px 12px;
+            margin-left: 8px;
+            display: block;
+        }
+
+        .list-container ul {
+            width: 100%;
+            /* Make list-container take up the full width */
+        }
+
+        .list-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 50%;
+            /* Make list-container take up half of the screen */
+        }
+
+        body.blurred *:not(.list-button):not(.list-container):not(.list-container *):not(.overlay) {
+            filter: blur(5px);
+            /* Apply blur effect */
+        }
+
+        nav {
+            display: none !important;
+        }
+
+        .list-button {
+            display: block;
+        }
+
+        select.mobile {
+            display: block;
+        }
+
+        select.laptop {
+            display: none;
+        }
+
+        .overlay {
+            display: none;
+        }
+
+        .results-table {
+            width: 70%;
+            /* Ensures the table doesn't shrink too much */
+            border-collapse: collapse;
+        }
+
+        .results-table thead
+         {
+            background: #f4f4f4;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 6px 10px;
+            font-size: 14px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        .results-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            /* Enables horizontal scrolling */
+            display: block;
+        }
+
+        .results-table-3
+        {
+            margin-left: 40px;
+        }
+
+    }
+
+    @media (min-width: 769px) {
+
+        nav a {
+            text-decoration: none;
+            color: white;
+        }
+
+        .list-button {
+            display: none;
+        }
+
+        select.mobile {
+            display: none;
+        }
+
+        select.laptop {
+            display: block;
+        }
+
+        .overlay {
+            display: block;
+        }
+    }
+
+    .results-table {
+        width: 95%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        margin-left: 30px;
+        min-width: 400px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+        font-size: 0.9em;
+        text-align: left;
+        justify-content: center;
+    }
+
+    .table-container-1 {
+        text-align: center;
+        align-items: center;
+    }
+
+    .results-table tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3;
+    }
+
+    .results-table tbody tr:last-of-type {
+        border-bottom: 2px solid #009879;
+    }
+
+    .results-table thead tr th {
+        background-color: #009879;
+        color: #ffffff;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .results-table th,
+    .results-table td {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        background-color: #f2f2f2;
+        color: #333;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .results-table input {
+        width: 55px;
+        text-align: left;
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const listButton = document.querySelector('.list-button');
+        const listContainer = document.querySelector('.list-container');
+        const overlay = document.querySelector('.overlay');
+
+        listButton.addEventListener('click', () => {
+            if (listContainer.classList.contains('show')) {
+                listContainer.classList.add('hide');
+                listContainer.classList.remove('show');
+                overlay.style.display = 'none'; // Hide the overlay
+                document.body.classList.remove('blurred');
+            } else {
+                listContainer.classList.add('show');
+                listContainer.classList.remove('hide');
+                listContainer.style.display = 'flex'; // Ensure the container is displayed
+                overlay.style.display = 'block'; // Show the overlay
+                document.body.classList.add('blurred');
+            }
+        });
+
+        overlay.addEventListener('click', () => {
+            listContainer.classList.add('hide');
+            listContainer.classList.remove('show');
+            overlay.style.display = 'none'; // Hide the overlay
+            document.body.classList.remove('blurred');
+        });
+
+        // Ensure the animation ends properly
+        listContainer.addEventListener('animationend', () => {
+            if (listContainer.classList.contains('hide')) {
+                listContainer.style.display = 'none';
+            }
+        });
+    });
+
+    window.addEventListener("scroll", function () {
+        var header = document.querySelector("nav");
+        if (window.scrollY > 50) {
+            document.body.classList.add("scrolled");
+        } else { document.body.classList.remove("scrolled"); }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const listContainer = document.getElementById('listContainer');
+        const overlay = document.getElementById('overlay');
+        const body = document.body;
+        listContainer.style.display = 'none';
+        overlay.style.display = 'none';
+        body.classList.remove('blurred');
+    });
+
+    function toggleList() {
+        const listContainer = document.getElementById('listContainer');
+        const body = document.body;
+        const overlay = document.getElementById('overlay');
+        if (listContainer.style.display === 'none' || listContainer.style.display === '') {
+            listContainer.style.display = 'block';
+            overlay.style.display = 'block'; // Show overlay
+            body.classList.add('blurred'); // Add blur effect
+        } else {
+            listContainer.style.display = 'none';
+            overlay.style.display = 'none'; // Hide overlay
+            body.classList.remove('blurred'); // Remove blur effect
+        }
+    }
+</script>
+
+<body>
+    <button class="list-button" onclick="toggleList()">☰</button>
+    <div class="list-container" id="listContainer">
+        <ul>
+            <a href="./home.html">
+                <li><b id="b2">Home</b></li>
+            </a>
+            <hr class="hr_list">
+            <a href="./Room-Details.html">
+                <li><b class="b2">ROOM</b></li>
+            </a>
+            <hr class="hr_list">
+            <a href="./WORKER.html">
+                <li><b class="b2">WORKER</b></li>
+            </a>
+            <hr class="hr_list">
+            <a href="./RT calculator.html">
+                <li><b>RT 60</b></li>
+            </a>
+            <hr class="hr_list">
+            <a href="./Sound Propagation Loss Calculator.html">
+                <li><b>SPL CALCULATOR</b></li>
+            </a>
+            <hr class="hr_list">
+            <a href="./RH calculator.html">
+                <li><b>RH CALCULATOR</b></li>
+            </a>
+            <hr class="hr_list">
+            <a href="./HT calculator.html">
+                <li><b>HT CALCULATOR</b></li>
+            </a>
+
+            <hr class="hr_list">
+            <a href="./Live Update.html">
+                <li><b class="b2">Live Updates</b></li>
+            </a>
+        </ul>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleList()"></div>
+    <nav>
+        <img src="images/png logo.png" alt="company_logo" id="company_logo">
+        <ul>
+            <li><a href="./home.html"><b>Home</b></a></li>
+            <li><a href="./Room-Details.html"><b>ROOM</b></a></li>
+            <li><a href="./Live Update.html"><b>Live Updates</b></a></li>
+    </nav>
+    <div class="head">
+        <div class="header">
+            <h1>Phace Calculator</h1>
+        </div>
+    </div>
+    <div  class="results-table-wrapper">
+    <div id="table-container-1" class="table-container"></div>
+    </div>
+    <hr><br>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            function updateTable() {
+                const chann_A = parseFloat(document.querySelector(".chann_A").value) || 0; // Get input value
+                const chann_B = parseFloat(document.querySelector(".chann_B").value) || 0;
+                const target_fre = parseFloat(document.querySelector(".target_fre").value) || 0;
+                const avr_dist = parseFloat(document.querySelector(".avr_dist").value) || 0;
+                const avr_dist_2 = parseFloat(document.querySelector(".avr_dist_2").value) || 0;
+
+                let phase_diff = 0;
+                let chann_A_2 = 0;
+                let chann_B_2 = 0;
+
+                if (chann_A < 0 && chann_B < 0) {
+                    phase_diff = (360 + chann_A) - (360 + chann_B);
+                } else {
+                    phase_diff = chann_A - chann_B;
+                }
+
+                if (chann_A < 0) {
+                    chann_A_2 = 360 + chann_A;
+                }
+                else {
+                    chann_A_2 = chann_A;
+                }
+
+                if (chann_B < 0) {
+                    chann_B_2 = 360 + chann_B;
+                }
+                else {
+                    chann_B_2 = chann_B;
+                }
+
+                let phase_diff_deg = 1000;
+                let phase_diff_2 = phase_diff / 360;
+                let target_fre_2 = phase_diff_deg / target_fre;
+                let phase_diff_3 = chann_A_2 - chann_B_2 - 15;
+                let phase_diff_4 = phase_diff_3 / 360;
+                let phase_diff_5 = phase_diff_deg / target_fre;
+                let delay_ms_1 = phase_diff_2 * target_fre_2;
+                let delay_ms_2 = delay_ms_1;
+                let delay_ms_3 = delay_ms_2;
+                let delay_ms_4 = phase_diff_4 * phase_diff_5;
+                let delay_ms_5 = delay_ms_4;
+                let delay_ms_6 = delay_ms_5;
+                let delay_ft_in_1 = 0;
+                let delay_ft_in_2 = 0;
+
+                if (delay_ms_1 >= 1) {
+                    delay_ft_in_1 = delay_ms_1 * 1.13;
+                }
+                else if (delay_ms_1 <= -1) {
+                    delay_ft_in_1 = delay_ms_1 * 1.13;
+                }
+                else {
+                    delay_ft_in_1 = (delay_ms_1 * 1.13) * 12 / 100;
+                }
+
+                if (delay_ms_2 >= 1) {
+                    delay_ft_in_2 = delay_ms_2 * 1.13;
+                }
+                else if (delay_ms_2 <= -1) {
+                    delay_ft_in_2 = delay_ms_2 * 1.13;
+                }
+                else {
+                    delay_ft_in_2 = (delay_ms_2 * 1.13);
+                }
+
+                let delay_ft_in_3 = 0;
+
+                if (delay_ms_4 >= 1) {
+                    delay_ft_in_3 = delay_ms_4 * 1.13;
+                } else if (delay_ms_4 <= -1) {
+                    delay_ft_in_3 = delay_ms_4 * 1.13;
+                } else {
+                    delay_ft_in_3 = (delay_ms_4 * 1.13) * 12 / 100;
+                }
+
+                let delay_ft_in_4 = 0;
+
+                if (delay_ms_4 >= 1) {
+                    delay_ft_in_4 = delay_ms_5 * 1.13;
+                } else if (delay_ms_5 <= -1) {
+                    delay_ft_in_4 = delay_ms_5 * 1.13;
+                } else {
+                    delay_ft_in_4 = (delay_ms_5 * 1.13);
+                }
+
+                let delay_mtr_1 = delay_ms_1 * 0.34;
+                let delay_mtr_2 = delay_ms_2 * 0.34;
+                let delay_mtr_3 = delay_ms_3 * 0.34;
+                let delay_mtr_4 = delay_ms_4 * 0.34;
+                let delay_mtr_5 = delay_ms_5 * 0.34;
+                let delay_mtr_6 = delay_ms_6 * 0.34;
+                let new_dist_1 = (avr_dist + delay_ft_in_1);
+                let new_dist_2 = avr_dist + delay_ft_in_2;
+                let new_dist_3 = avr_dist_2 + delay_mtr_3;
+                let avr_dist_3 = avr_dist;
+                let avr_dist_4 = avr_dist_3;
+                let avr_dist_5 = avr_dist_2;
+                let avr_dist_6 = avr_dist;
+                let avr_dist_7 = avr_dist_6;
+                let avr_dist_8 = avr_dist_2;
+                let new_dist_4 = (avr_dist_3 + delay_ft_in_3);
+                let new_dist_5 = (avr_dist_4 + delay_ft_in_4);
+                let new_dist_6 = (avr_dist_5 + delay_mtr_6);
+                let phase_delay_1 = chann_A;
+                let phase_delay_2 = chann_B;
+                let phase_delay_3 = 0;
+                let v1 = 0;
+                let v2 = 0;
+                let target_fre_3 = target_fre;
+
+                if (phase_delay_1 < 0) {
+                    v1 = phase_delay_1 - phase_delay_1 * 2
+                }
+                else {
+                    v1 = phase_delay_1;
+                }
+
+                if (phase_delay_2 < 0) {
+                    v2 = phase_delay_2 - phase_delay_2 * 2;
+                }
+                else {
+                    v2 = phase_delay_2;
+                }
+                phase_delay_3 = v1 - v2;
+
+                let delay_ms_7 = ((((phase_delay_3) / 360) / (target_fre_3)) * 1000);
+                let delay_ms_8 = delay_ms_7;
+                let delay_ms_9 = delay_ms_8;
+
+                let delay_ft_in_5 = 0;
+                if (delay_ms_7 >= 1) {
+                    delay_ft_in_5 = delay_ms_7 * 1.13;
+                } else if (delay_ms_7 <= -1) {
+                    delay_ft_in_5 = delay_ms_7 * 1.13;
+                } else {
+                    delay_ft_in_5 = (delay_ms_7 * 1.13) * 12 / 100;
+                }
+
+                let delay_ft_in_6 = 0;
+
+                if (delay_ms_8 >= 1) {
+                    delay_ft_in_6 = delay_ms_8 * 1.13;
+                } else if (delay_ms_8 <= -1) {
+                    delay_ft_in_6 = delay_ms_8 * 1.13;
+                } else {
+                    delay_ft_in_6 = delay_ms_8 * 1.13;
+                }
+
+                let delay_mtr_7 = delay_ms_7 * 0.34;
+                let delay_mtr_8 = delay_ms_8 * 0.34;
+                let delay_mtr_9 = delay_ms_9 * 0.34;
+                let new_dist_7 = avr_dist_6 + delay_ft_in_5;
+                let new_dist_8 = avr_dist_7 + delay_ft_in_6;
+                let new_dist_9 = avr_dist_8 + delay_mtr_9;
+
+                // Update dependent cells dynamically
+                document.querySelector("#phase_diff").textContent = phase_diff.toFixed(2); // Phase difference
+                document.querySelector("#phase_diff_2").textContent = phase_diff_2.toFixed(3);
+                document.querySelector("#phase_diff_3").textContent = phase_diff_3.toFixed(1);
+                document.querySelector("#phase_diff_4").textContent = phase_diff_4.toFixed(3);
+                document.querySelector("#avr_dist_3").textContent = avr_dist_3.toFixed(2);
+                document.querySelector("#avr_dist_4").textContent = avr_dist_4.toFixed(2);
+                document.querySelector("#avr_dist_5").textContent = avr_dist_5.toFixed(2);
+                document.querySelector("#new_dist_4").textContent = new_dist_4.toFixed(2);
+                document.querySelector("#new_dist_5").textContent = new_dist_5.toFixed(2);
+                document.querySelector("#new_dist_6").textContent = new_dist_6.toFixed(2);
+                document.querySelector("#new_dist_7").textContent = new_dist_7.toFixed(2);
+                document.querySelector("#new_dist_8").textContent = new_dist_8.toFixed(2);
+                document.querySelector("#new_dist_9").textContent = new_dist_9.toFixed(2);
+
+                document.querySelector("#chann_A").textContent = chann_A.toFixed(1);
+                document.querySelector("#chann_B").textContent = chann_B.toFixed(1);
+                document.querySelector("#target_fre").textContent = target_fre.toFixed(1);
+                document.querySelector("#target_fre_2").textContent = target_fre_2.toFixed(2);
+                document.querySelector("#target_fre_3").textContent = target_fre_3.toFixed(2);
+                document.querySelector("#phase_diff_5").textContent = phase_diff_5.toFixed(2);
+                document.querySelector("#delay_ms_1").textContent = delay_ms_1.toFixed(3);
+                document.querySelector("#delay_ms_2").textContent = delay_ms_2.toFixed(3);
+                document.querySelector("#delay_ms_3").textContent = delay_ms_3.toFixed(3);
+                document.querySelector("#delay_ms_4").textContent = delay_ms_4.toFixed(3);
+                document.querySelector("#delay_mtr_5").textContent = delay_mtr_5.toFixed(3);
+                document.querySelector("#delay_mtr_6").textContent = delay_mtr_6.toFixed(3);
+                document.querySelector("#delay_ft_in_1").textContent = delay_ft_in_1.toFixed(3);
+                document.querySelector("#delay_ft_in_2").textContent = delay_ft_in_2.toFixed(3);
+                document.querySelector("#delay_mtr_1").textContent = delay_mtr_1.toFixed(3);
+                document.querySelector("#delay_mtr_2").textContent = delay_mtr_2.toFixed(3);
+                document.querySelector("#delay_mtr_3").textContent = delay_mtr_3.toFixed(3);
+                document.querySelector("#delay_mtr_4").textContent = delay_mtr_4.toFixed(3);
+                document.querySelector("#delay_mtr_7").textContent = delay_mtr_7.toFixed(3);
+                document.querySelector("#delay_mtr_8").textContent = delay_mtr_8.toFixed(3);
+                document.querySelector("#delay_mtr_9").textContent = delay_mtr_9.toFixed(3);
+                document.querySelector("#avr_dist").textContent = avr_dist.toFixed(2);
+                document.querySelector("#avr_dist_6").textContent = avr_dist_6.toFixed(2);
+                document.querySelector("#avr_dist_7").textContent = avr_dist_7.toFixed(2);
+                document.querySelector("#avr_dist_8").textContent = avr_dist_8.toFixed(2);
+                document.querySelector("#delay_ms_4").textContent = delay_ms_4.toFixed(3);
+                document.querySelector("#delay_ms_5").textContent = delay_ms_5.toFixed(3);
+                document.querySelector("#delay_ms_6").textContent = delay_ms_6.toFixed(3);
+                document.querySelector("#delay_ms_7").textContent = delay_ms_7.toFixed(4);
+                document.querySelector("#delay_ms_8").textContent = delay_ms_8.toFixed(4);
+                document.querySelector("#delay_ms_9").textContent = delay_ms_9.toFixed(4);
+                document.querySelector("#delay_ft_in_3").textContent = delay_ft_in_3.toFixed(3);
+                document.querySelector("#delay_ft_in_4").textContent = delay_ft_in_4.toFixed(3);
+                document.querySelector("#delay_ft_in_5").textContent = delay_ft_in_5.toFixed(4);
+                document.querySelector("#delay_ft_in_6").textContent = delay_ft_in_6.toFixed(4);
+                document.querySelector("#phase_delay_1").textContent = phase_delay_1.toFixed(2);
+                document.querySelector("#phase_delay_2").textContent = phase_delay_2.toFixed(2);
+                document.querySelector("#phase_delay_3").textContent = phase_delay_3.toFixed(2);
+
+
+                //     document.querySelector("#avr_dist_2").textContent = avr_dist_2.toFixed(2);
+
+                if (document.querySelector("#new_dist_1")) {
+                    document.querySelector("#new_dist_1").textContent = new_dist_1.toFixed(2);
+                }
+
+                if (document.querySelector("#new_dist_2")) {
+                    document.querySelector("#new_dist_2").textContent = new_dist_2.toFixed(2);
+                }
+
+                if (document.querySelector("#new_dist_3")) {
+                    document.querySelector("#new_dist_3").textContent = new_dist_3.toFixed(2);
+                }
+
+                if (document.querySelector("#chann_A_2")) {
+                    document.querySelector("#chann_A_2").textContent = chann_A_2.toFixed(1);
+                }
+                if (document.querySelector("#chann_B_2")) {
+                    document.querySelector("#chann_B_2").textContent = chann_B_2.toFixed(1);
+                }
+            }
+
+            // Generate table HTML dynamically
+            const tableHTML = `
+                <table id="results-table" class="results-table">
+                    <thead>
+                        <tr>
+                            <th colspan="5">Phase Delay (Method 01)</th>
+                            <th colspan="4">Phase Delay (Method 02) (15° Mic phase offset considered)</th>
+                            <th colspan="3">Phase Delay (Method 03)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Channel/Speaker A</td>
+                            <td><input type="number" class="chann_A" value="10" step="0.01" /></td>
+                            <td>Large Value</td>
+                            <td rowspan="2" colspan="2">Speed of Sound for Phase correction (D&M speed of sound 300 mtr / 984 ft per second)</td>
+                            <td id="chann_A">0</td>
+                            <td id="chann_A_2">0.00</td>    
+                            <td colspan="2" rowspan="2"></td>  
+                            <td id="phase_delay_1">0.00</td>
+                            <td rowspan="2" colspan="2"></td>
+                        </tr>
+                        <tr>
+                            <td>Channel/Speaker B</td>
+                            <td><input type="number" class="chann_B" value="5" step="0.01" /></td>
+                            <td>small Value</td>
+                            <td id="chann_B">0</td>
+                            <td id="chann_B_2">0.00</td>
+                            <td id="phase_delay_2">0.00</td>
+                        </tr>
+                        <tr>
+                            <td><b>Phase Difference in°</b></td>
+                            <td id="phase_diff">0.00</td>
+                            <td id="phase_diff_2">0.00</td>
+                            <td colspan="2">1000</td>
+                            <td id="phase_diff_3">0</td>
+                            <td id="phase_diff_4">0</td>
+                            <td></td>
+                            <td></td>
+                            <td id="phase_delay_3">0.00<td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Target Frequancy HZ</td>
+                            <td><input type="number" class="target_fre" value="80" step="0.01" /></td>
+                            <td id="target_fre_2">0.00</td>
+                            <td><b>Ft</b></td>
+                            <td><b>Mtr</b></td>
+                            <td id="target_fre">0.00</td>
+                            <td id="phase_diff_5">0.00</td>
+                            <td><b>Ft</b></td>
+                            <td><b>Mtr</b></td>
+                            <td id="target_fre_3">0.00</td>
+                            <td><b>Ft</b></td>
+                            <td><b>Mtr</b></td>
+                        </tr>
+                        <tr>
+                            <td><b>Delay ms</b></td>
+                            <td></td>
+                            <td id="delay_ms_1"><b>0.00</b></td>
+                            <td id="delay_ms_2">0.00</td>
+                            <td id="delay_ms_3">0.00</td>
+                            <td></td>
+                            <td id="delay_ms_4">0.00</td>
+                            <td id="delay_ms_5">0.00</td>
+                            <td id="delay_ms_6">0.00</td>
+                            <td id="delay_ms_7">0.00</td>
+                            <td id="delay_ms_8">0.00</td>
+                            <td id="delay_ms_9">0.00</td>
+                        </tr>
+                        <tr>
+                            <td><b>Delay Ft & In</b></td><td></td>
+                            <td id="delay_ft_in_1">0.00</td>
+                            <td id="delay_ft_in_2">0.00</td>
+                            <td></td>
+                            <td></td>
+                            <td id="delay_ft_in_3">0.00</td>
+                            <td id="delay_ft_in_4">0.00</td>
+                            <td></td>
+                            <td id="delay_ft_in_5">0.00</td>
+                            <td id="delay_ft_in_6">0.00</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><b>Dealy mtr</b></td>
+                            <td></td>
+                            <td id="delay_mtr_1">0.00</td>
+                            <td id="delay_mtr_2">0.00</td>
+                            <td id="delay_mtr_3">0.00</td>
+                            <td></td>
+                            <td id="delay_mtr_4">0.00</td>
+                            <td id="delay_mtr_5">0.00</td>
+                            <td id="delay_mtr_6">0.00</td>
+                            <td id="delay_mtr_7">0.00</td>
+                            <td id="delay_mtr_8">0.00</td>     
+                            <td id="delay_mtr_9">0.00</td>      
+                        </tr>
+                        <tr>
+                            <td>AVR Distance (ft)/(mtr)</td>
+                            <td></td>
+                            <td><input type="number" class="avr_dist" value="10.40" step="0.01" /></td>
+                            <td id="avr_dist">0.00</td>
+                            <td><input type="number" class="avr_dist_2" value="10.40" step="0.01" /></td>
+                            <td></td>
+                            <td id="avr_dist_3">0.00</td>
+                            <td id="avr_dist_4">0.00</td>
+                            <td id="avr_dist_5">0.00</td>
+                            <td id="avr_dist_6">0.00</td>
+                            <td id="avr_dist_7">0.00</td>
+                            <td id="avr_dist_8">0.00</td>
+                        </tr>
+                        <tr>
+                            <td>New Distance in AVR (ft)/(mtr)</td>
+                            <td></td>
+                            <td id="new_dist_1">0.00</td>
+                            <td id="new_dist_2">0.00</td>
+                            <td id="new_dist_3">0.00</td>
+                            <td></td>
+                            <td id="new_dist_4">0.00</td>
+                            <td id="new_dist_5">0.00</td>
+                            <td id="new_dist_6">0.00</td>
+                            <td id="new_dist_7">0.00</td>
+                            <td id="new_dist_8">0.00</td>
+                            <td id="new_dist_9">0.00</td>
+
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById("table-container-1").innerHTML = tableHTML;
+
+            // Add event listeners to input boxes for live calculations
+            document.querySelector(".chann_A").addEventListener("input", updateTable);
+            document.querySelector(".chann_B").addEventListener("input", updateTable);
+            document.querySelector(".target_fre").addEventListener("input", updateTable);
+            document.querySelector(".avr_dist").addEventListener("input", updateTable);
+            document.querySelector(".avr_dist_2").addEventListener("input", updateTable);
+
+            // Initialize the table with default values
+            updateTable();
+        });
+    </script>
+
+
+</body>
+
+</html>

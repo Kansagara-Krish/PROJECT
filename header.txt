@@ -1,0 +1,87 @@
+nav {
+      width: 100%;
+      background-color: #A9A9A9;
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      z-index: 1000;
+    }
+    nav ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      align-items: center;
+    }
+    nav ul li {
+      margin: 0 5px;
+      text-transform: uppercase;
+      color: white;
+    }
+    nav a {
+      display: inline-block;
+      padding: 10px;
+      text-decoration: none;
+      transition: 0.5s;
+      color: white;
+    }
+    nav a:hover {
+      background-color: #ff0000;
+    }
+    nav .nav-right {
+      margin-left: auto;
+    }
+    .btn-supervisor {
+      background-color: #FFFAFA;
+      color: #333;
+      border: none;
+    }
+    .btn-supervisor:hover{
+      background-color: #ff0000;
+    }
+    .btn-menu {
+      background-color: #FFFAFA;
+      color: black;
+    }
+    .btn-menu:hover{
+      background-color: #ff0000;
+    }
+
+    /* Media query for small screens */
+    @media (max-width: 768px) {
+      nav ul.nav-left {
+        display: none;
+      }
+      nav .dropdown {
+        display: block;
+      }
+    }
+<header>
+    <nav>
+      <div class="dropdown d-block d-md-none">
+        <button class="btn btn-menu dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          Menu
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <li><a class="dropdown-item" href="topic1">Topic1</a></li>
+          <li><a class="dropdown-item" href="topic2">Topic2</a></li>
+          <li><a class="dropdown-item" href="topic3">Topic3</a></li>
+          <li><a class="dropdown-item" href="topic4">Topic4</a></li>
+        </ul>
+      </div>
+      <ul class="nav-left d-none d-md-flex">
+        <li><a href="topic1">Topic1</a></li>
+        <li><a href="topic2">Topic2</a></li>
+        <li><a href="topic3">Topic3</a></li>
+        <li><a href="topic4">Topic4</a></li>
+      </ul>
+      <div class="nav-right">
+        <a href="supervisor" class="btn btn-supervisor">Supervisor</a>
+      </div>
+    </nav>
+  </header>

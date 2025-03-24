@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervisor Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-in-out;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        .login-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .login-container input[type="text"],
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #0072ff;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        .login-container button:hover {
+            background-color: #00c6ff;
+        }
+        @media (max-width: 600px) {
+            .login-container {
+                padding: 15px;
+            }
+            .login-container h2 {
+                font-size: 18px;
+            }
+            .login-container input[type="text"],
+            .login-container input[type="password"] {
+                padding: 8px;
+                font-size: 14px;
+            }
+            .login-container button {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
+        h2{
+            justify-content: center;
+            align-items: ceneter;
+        }
+    </style>
+    <script src="https://fontawesome.com/icons/user?f=classic&s=solid"></script>
+</head>
+<body>
+    <div class="login-container">
+        <h2><B>LOGIN</B></h2>
+        <form>
+        <input type="text" placeholder="Supervisor Name" required>
+        <label for="">Username</label>
+        <i class="fa-solid fa-user"></i>
+        <input type="password" placeholder="Password" required>
+        <button><a href="Thank you customer.html">Login</a></button>
+    </div>
+</form>
+</body>
+</html>

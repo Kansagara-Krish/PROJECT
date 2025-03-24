@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Thank-you</title>
+    <style>
+        /* Reset default margin and padding */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            height: 100%;
+        }
+
+        .list-button {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: larger;
+            padding: 10px 20px;
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+            width: 10%;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 1000;
+            /* Ensure it is above other content */
+            display: none;
+            /* Hide by default */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.3s;
+            /* Ensure it is above other content */
+        }
+
+        .list-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            text-decoration: solid;
+            text-decoration: none;
+            width: 50%;
+            color: rgb(0, 0, 0);
+            background-color: #2c3e50;
+            /* Light blue background with transparency */
+            border-right: 1px solid #ccc;
+            box-shadow: 1px 0 5px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            /* Ensure it is above other content */
+            overflow-y: auto;
+            
+            /* Enable scrolling if content overflows */
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+        }
+
+        .list-container.show {
+            display: flex;
+            /* Show the container */
+            animation-name: slideIn;
+            /* Trigger the slide in animation */
+        }
+
+        /* Class to trigger the slide out animation */
+        .list-container.hide {
+            animation-name: slideOut;
+            /* Trigger the slide out animation */
+        }
+
+        .list-container ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            padding-top: 10px;
+            margin-top: 20px;
+        }
+
+        .list-container li:last-child {
+            border-bottom: none;
+        }
+
+        .list-container li {
+            height: 8vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .list-container a {
+            text-decoration: none;
+            text-transform: uppercase;
+            color: #eeeeee;
+            text-shadow: 0 0 2px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.7);
+            display: block;
+            padding: 12px 20px;
+            font-family: "Noto Serif", serif;
+        }
+
+        .hr_list {
+            height: 3px;
+            /* Adjust the height of the line */
+            background: linear-gradient(to right, #000000, #7b0808, #f0f0f0);
+            border: none;
+        }
+
+        /* Overlay for blur effect */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:  rgba(0, 0, 0, 0.5);
+            /* Semi-transparent dark background */
+            z-index: 998;
+            /* Ensure it's below the menu but above other content */
+        }
+
+        body.blurred .overlay {
+            display: block;
+        }
+
+        body.blurred {
+            overflow: hidden;
+            /* Prevent scrolling when overlay is active */
+        }
+
+        body.blurred *:not(.list-button):not(.list-container):not(.list-container *) {
+            filter: blur(3px);
+            /* Apply blur effect */
+        }
+
+        nav {
+            position: fixed;
+            /* Fix the header at the top */
+            top: 0;
+            width: 100%;
+            height: 60px;
+            background: #34495e;
+            border-radius: 0 0 8px 8px;
+            /* Round bottom corners */
+            box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: 1.5s;
+        }
+
+        nav:hover {
+            height: 12vh;
+            transition: 0.5s;
+            font-size: larger;
+        }
+
+        body.scrolled nav {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 5px 20px;
+        }
+
+        nav .brand {
+            float: left;
+            height: 100%;
+            line-height: 70px;
+        }
+
+        nav ul {
+            float: center;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            font-size: large;
+            list-style: none;
+
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            display: block;
+            height: 70px;
+            line-height: 70px;
+            padding: 0 20px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1;
+            font-family: "Noto Serif", serif;
+            text-transform: uppercase;
+            transition: .8s;
+        }
+
+        nav ul li a::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+            background: #fffAfA;
+            transform-origin: right;
+            transform: scaleX(0);
+            font-size: large;
+            transition: transform .5s;
+        }
+
+        nav ul li a:hover::before {
+            transform-origin: left;
+            transform: scaleX(1);
+            transition: 0.5s;
+        }
+
+        nav ul li a:hover {
+            font-size: 20px;
+            color: #262622;
+            box-shadow: 0 5px 10px white;
+        }
+
+        body.scrolled nav {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 5px 20px;
+        }
+
+        nav li {
+            font-size: 15px;
+            text-transform: uppercase;
+            color: white;
+            text-decoration: none;
+            line-height: 50px;
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-menu {
+            display: block;
+            background-color: #FFFAFA;
+            color: black;
+            padding: 15px 30px;
+            font-size: 22px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 500px;
+        }
+
+
+        @media (max-width: 768px) {
+            .list-button {
+                font-size: 14px;
+                padding: 10px 12px;
+                margin-left: 8px;
+            }
+
+            .list-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 50%;
+                /* Make list-container take up half of the screen */
+            }
+
+            body.blurred *:not(.list-button):not(.list-container):not(.list-container *):not(.overlay) {
+                filter: blur(5px);
+                /* Apply blur effect */
+            }
+
+            nav {
+                display: none !important;
+            }
+
+            .list-button {
+                display: block;
+            }
+
+            select.mobile {
+                display: block;
+            }
+
+            select.laptop {
+                display: none;
+            }
+
+            nav .logout span {
+                display: none;
+            }
+
+            nav .logout a {
+                font-size: 1.5rem;
+                /* Adjust icon size as needed */
+            }
+        }
+
+        @media (min-width: 769px) {
+            nav a {
+                text-decoration: none;
+                color: white;
+            }
+
+            .list-button {
+                display: none;
+            }
+
+            .overlay {
+                display: block;
+            }
+
+            select.mobile {
+                display: none;
+            }
+
+            select.laptop {
+                display: block;
+            }
+
+            nav .logout-icon a i {
+                margin-right: 5px;
+            }
+        }
+
+
+        .thank-you-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+            width: 80%;
+            height: 100%;
+            max-width: 600px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .thank-you-container h2 {
+            color: #0072ff;
+        }
+
+        .thank-you-container p {
+            margin-top: 10px;
+            color: #333;
+        }
+
+        #company_logo {
+            height: 100%;
+            margin-left: 30px;
+            display: flex;
+            align-items: center;
+            position: absolute;
+            left: 0;
+        }
+
+        nav .logout {
+            margin-left: auto;
+        }
+
+        nav .logout-icon {
+            margin-left: auto;
+        }
+
+        nav .logout-icon a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
+    <script>
+        window.addEventListener("scroll", function () {
+            var header = document.querySelector("nav");
+            if (window.scrollY > 50) {
+                document.body.classList.add("scrolled");
+            } else { document.body.classList.remove("scrolled"); }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const listContainer = document.getElementById('listContainer');
+            const overlay = document.getElementById('overlay');
+            const body = document.body;
+            listContainer.style.display = 'none';
+            overlay.style.display = 'none';
+            body.classList.remove('blurred');
+        });
+
+        function toggleList() {
+            const listContainer = document.getElementById('listContainer');
+            const overlay = document.getElementById('overlay');
+            const body = document.body;
+
+            if (listContainer.style.display === 'none' || listContainer.style.display === '') {
+                listContainer.style.display = 'block';
+                overlay.style.display = 'block';
+                body.classList.add('blurred');
+            } else {
+                listContainer.style.display = 'none';
+                overlay.style.display = 'none';
+                body.classList.remove('blurred');
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <button class="list-button" onclick="toggleList()">☰</button>
+    <div class="list-container" id="listContainer">
+        <ul>
+            <a href="./home_2.html"><li><b>HOME</b></li></a>
+            <hr class="hr_list">
+            <a href="./WORKER.html"><li><b>WORKER</b></li></a>
+            <hr class="hr_list">
+            <a href="./Live Update.html"><li><b>LIVE UPDATES</b></li></a>
+            <hr class="hr_list">
+            <a href="./search.php"><li><b>search</b></li></a>
+            <hr class="hr_list">
+            <a href="./RT calculator.html"><li><b>RT 60</b></li></a>
+            <hr class="hr_list">
+            <a href="./Sound Propagation Loss Calculator.html"><li><b>SPL CALCULATOR</b></li></a>
+            <hr class="hr_list">
+            <a href="./RH calculator.html"><li><b>RH CALCULATOR</b></li></a>
+            <hr class="hr_list">
+            <a href="./HT calculator.html"><li><b>HT CALCULATOR</b></li></a>
+            <hr class="hr_list">
+            <a href="./Phase calculator.html"><li><b>PH CALCULATOR</b></li></a>
+            <hr class="hr_list">
+            <a href="./Login_page.php"><li class="logout-icon"><i class="fas fa-sign-out-alt"></i><span> Log out</span></li></a>
+        </ul>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleList()"></div>
+    <nav>
+        <img src="./images/png logo.png" alt="company_logo" id="company_logo">
+        <ul>
+            <li><a href="./home_2.html"><b>Home</b></a></li>
+            <li><a href="./WORKER.php"><b>WORKER</b></a></li>
+            <li><a href="./Room-Details.php"><b>ROOM</b></a></li>
+            <li><a href="./Live Update.php"><b>Live Updates</b></a></li>
+            <li><a href="./search.php"><b>search</b></a></li>
+            <li class="logout-icon"><a href="./Login_page.php"><i class="fas fa-sign-out-alt"></i><span><b>Log
+            out</b></span></a></li>
+        </ul>
+    </nav>
+    <div class="thank-you-container">
+        <h2>Thank You!</h2>
+        <p>Your details have been submitted successfully.</p>
+    </div>
+</body>
+
+</html>

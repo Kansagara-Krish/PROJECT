@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HOME</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url("images/home.jpg") no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+    }
+
+    .list-button {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      font-size: larger;
+      padding: 10px 20px;
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      width: 10%;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+      /* Ensure it is above other content */
+      display: none;
+      /* Hide by default */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    /* Keyframes for sliding in and out */
+    @keyframes slideIn {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      to {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+    }
+
+    .list-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 50%;
+      background-color: #2c3e50;
+      /* Dark blue background for better contrast */
+      border-right: 1px solid #34495e;
+      /* Slightly lighter border */
+      box-shadow: 1px 0 5px rgba(0, 0, 0, 0.2);
+      /* Darker shadow for better depth */
+      z-index: 999;
+      overflow-y: auto;
+      justify-content: center;
+      align-items: center;
+      display: none;
+      /* Hide by default */
+      transform: translateX(-100%);
+      /* Initial state for animation */
+      animation-duration: 0.5s;
+      /* Duration of the animation */
+      animation-fill-mode: forwards;
+      /* Retain the final state of the animation */
+      /* Retain the final state of the animation */
+    }
+
+    /* Class to trigger the slide in animation */
+    .list-container.show {
+      display: flex;
+      /* Show the container */
+      animation-name: slideIn;
+      /* Trigger the slide in animation */
+    }
+
+    /* Class to trigger the slide out animation */
+    .list-container.hide {
+      animation-name: slideOut;
+      /* Trigger the slide out animation */
+    }
+
+    .list-button:hover {
+      background-color: #16a085;
+      transform: scale(1.05);
+    }
+
+    .list-container {
+
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 50%;
+      background-color: rgba(0, 0, 0, 0.7);
+      /* White background with 50% transparency */
+      border-right: 1px solid #ccc;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      z-index: 999;
+      /* Ensure it is above other content */
+      overflow-y: auto;
+      /* Enable scrolling if content overflows */
+      justify-content: center;
+      align-items: center;
+      /* Center text horizontally */
+    }
+
+    .list-container ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      padding-top: 10px;
+      margin-top: 50px;
+    }
+
+    .list-container li:last-child {
+      border-bottom: none;
+    }
+
+    .list-container li {
+      display: flex;
+      height: 8vh;
+      align-items: center;
+      justify-content:center;
+      text-decoration: none;
+      font-size: 15px;
+      flex-wrap:100px;
+    }
+
+    .list-container a {
+      text-decoration: none;
+      color: #eeeeee;
+      text-shadow: 10px whitesmoke;
+      display: block;
+      padding: 12px 20px;
+      font-family: "Noto Serif", serif;
+    }
+
+    .hr_list {
+      height: 3px;
+      /* Adjust the height of the line */
+      background: linear-gradient(to right, #000000, #7b0808, #f0f0f0);
+      border: none;
+      width: 120px;
+    }
+
+    /* Overlay for blur effect */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      /* Semi-transparent dark background */
+      z-index: 998;
+      /* Ensure it's below the menu but above other content */
+    }
+
+    body.blurred .overlay {
+      display: block;
+    }
+
+    body.blurred {
+      overflow: hidden;
+      /* Prevent scrolling when overlay is active */
+    }
+
+    body.blurred *:not(.list-button):not(.list-container):not(.list-container *) {
+      filter: blur(5px);
+      /* Apply blur effect */
+    }
+
+    /* Media queries for mobile responsiveness */
+    @media (max-width: 968px) {
+      .footer {
+        font-size: 12px;
+        padding: 10px 0 20px;
+      }
+
+      .row {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .col {
+        flex-basis: 100%;
+        text-align: center;
+        padding: 5px;
+      }
+
+      .col h3,
+      .col h4 {
+        margin-bottom: 20px;
+      }
+
+      .list-button {
+        font-size: 14px;
+        padding: 10px 12px;
+        margin-left: 8px;
+      }
+
+      .list-button {
+        display: block;
+        /* Show the button on mobile */
+      }
+
+
+      nav {
+        display: none !important;
+        /* Hide the nav on mobile */
+      }
+    }
+
+    @media (min-width: 969px) {
+      .list-button {
+        display: none;
+        /* Hide the button on larger screens */
+      }
+
+      nav {
+        display: flex;
+        /* Show the nav on larger screens */
+      }
+    }
+
+    nav {
+      height: 10vh;
+      top: 0;
+      left: 0;
+      width: 100%;
+      font-family: cursive;
+      height: 10vh;
+      z-index: 1000;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      position: fixed;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      overflow: hidden;
+      text-transform: uppercase;
+      transition: 1.5s;
+    }
+
+    nav:hover {
+      height: 12vh;
+      transition: 0.5s;
+      font-size: larger;
+    }
+
+    nav::before {
+      padding-top: 2vh;
+      padding-bottom: 2vh;
+      font-family: "Noto Serif", serif;
+      font-optical-sizing: auto;
+      font-weight: bold;
+      font-style: normal;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.4rem;
+      color: rgb(160, 160, 160);
+      font-style: jagged;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    nav .menu {
+      width: 40%;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    nav .menu a {
+      width: 25%;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+    }
+
+    nav .menu a:first-child {
+      color: #f8f8f8;
+    }
+
+    nav a {
+      font-size: 15px;
+      text-transform: uppercase;
+      color: #000;
+      /* Dark font */
+      text-decoration: none;
+      line-height: 50px;
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      text-align: center;
+      font-family: "Noto Serif", serif;
+    }
+
+    nav li {
+      font-size: 15px;
+      text-transform: uppercase;
+      color: white;
+      text-decoration: none;
+      line-height: 50px;
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      display: inline-block;
+      text-align: center;
+    }
+
+    body.scrolled nav {
+      background-color: rgba(0, 0, 0, 0.9);
+      font-size: large;
+      height: 12vh;
+
+
+    }
+
+    nav .brand {
+      float: left;
+      height: 100%;
+      line-height: 70px;
+    }
+
+    nav ul {
+      float: center;
+      display: flex;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav ul li {
+      list-style: none;
+
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+      display: block;
+      height: 70px;
+      line-height: 70px;
+      padding: 0 20px;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 1;
+      text-transform: uppercase;
+      transition: 0.8s;
+    }
+
+    nav ul li a:hover::after
+    {
+      transition: 1.9s;
+    }
+    nav ul li a::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+      background: #fffAfA;
+      transform-origin: right;
+      transform: scaleX(0);
+      font-size: large;
+      transition: transform .7s;
+    }
+
+    nav ul li a:hover::before {
+      transform-origin: left;
+      transform: scaleX(1);
+      transition: 0.3s;
+    }
+
+    nav ul li a:hover {
+      font-size: 20px;
+      color: #000000;
+      border-radius: 20%;
+      transition: transform 0.3s, box-shadow 0.3s;
+      transform: scale(1.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      /*box-shadow: 0 5px 10px white;*/
+    }
+
+    .footer {
+      width: 100%;
+      padding: 20px 0 30px;
+      border-top-left-radius: 115px;
+      font-size: 9px;
+      font-family: 'Arial', sans-serif;
+      line-height: 20px;
+      margin-top: 10px;
+      bottom: 0;
+      background: linear-gradient(to right, #00093c, #2d0b00);
+      position: relative;
+      border-radius: 20px;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border-top-left-radius: 125px;
+      background-attachment: fixed;
+      color: white;
+    }
+
+    .row {
+      width: 85%;
+      margin: auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-evenly;
+      gap: 50px;
+    }
+
+    footer a {
+      text-decoration: none;
+      color: #ffffff;
+      /* Default text color */
+      background: linear-gradient(to right, #00093c, #2d0b00);
+      /* Background remains the same */
+      padding: 10px 15px;
+      /* Add some padding */
+      border-radius: 5px;
+      /* Slightly rounded corners */
+      transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+      /* Smooth transition */
+      font-size: 1rem;
+
+      transition: 0.5s;
+      /* Comfortable font size */
+    }
+
+    footer a:hover {
+      color: #275bde;
+      font-size: 1.5rem;
+      transition: 0.5s;
+      /* Brighter font color on hover */
+      text-shadow: 0 0 25px #ffffff;
+      /* Add a glowing effect to the text */
+    }
+
+    .col {
+      flex: 2 2 calc(22% - 35px);
+      padding: 10px;
+      font-size: 20px;
+      flex-basis: 30%;
+      line-height: 5vh;
+      text-align: left;
+      box-sizing: border-box;
+      min-width: 200px;
+      /* Ensure columns don't get too narrow */
+      margin: 20px 0;
+      /* Add space between columns */
+      border-radius: 10px;
+      /* Subtle shadow for depth */
+      transition: transform 0.3s, box-shadow 0.3s;
+      background-color: rgba(0, 0, 0, 0.2);
+      color: white;
+    }
+
+    .col * {
+      margin: 0;
+      padding: 0;
+      text-align: left;
+    }
+
+    .col p {
+      color: white;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+
+    .col h3,
+    .col h4 {
+      width: fit-content;
+      margin-bottom: 40px;
+      position: relative;
+      color: white;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    /* Animation for columns */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .col {
+      animation: fadeInUp 1s ease-in-out;
+      animation-delay: 0.3s;
+      animation-fill-mode: both;
+    }
+
+    .footer {
+      animation: fadeInUp 1s ease-in-out;
+      animation-delay: 0.5s;
+      animation-fill-mode: both;
+    }
+
+    .footer.animate {
+      animation: fadeInUp 1s ease-in-out;
+    }
+
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+
+    .col {
+      animation: fadeInUp 1s ease-in-out;
+    }
+
+    /*changed from here
+*/
+    .main-contect {
+      width: 100%;
+      max-width: 1140px;
+      flex: 1;
+      margin: 0 auto;
+      margin-top: 15vh;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      overflow: hidden;
+      height: 100vh;
+      color: white;
+    }
+
+    h3,
+    h1,
+    p {
+      margin: 0;
+      text-align: center;
+    }
+
+    section h3 {
+      font-size: 35px;
+      font-weight: 200;
+      letter-spacing: 3px;
+      text-shadow: 1px 1px 2px black;
+    }
+
+    section h1 {
+      margin: 30px 0 20px 0;
+      font-size: 55px;
+      font-weight: 700;
+      text-shadow: 2px 1px 5px black;
+      text-transform: uppercase;
+    }
+
+    section p {
+      font-size: 25px;
+      word-spacing: 2px;
+      margin-bottom: 25px;
+      text-shadow: 1px 1px 1px black;
+    }
+
+    section {
+      margin-top: 15vh;
+      margin-bottom: 5vh;
+    }
+
+    section a {
+      padding: 12px 30px;
+      border-radius: 4px;
+      outline: none;
+      text-transform: uppercase;
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      letter-spacing: 1px;
+      transition: all 0.5s ease;
+    }
+
+    section .btnone {
+      background: #00b894;
+      color: #fffefe;
+    }
+
+    .btnone:hover {
+      background: white;
+      color: black;
+    }
+
+    section .btntwo {
+      background: #00b894;
+      color: white;
+    }
+
+    .btntwo:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .change_content:after {
+      content: "";
+      animation: changetext 10s infinite linear;
+      color: #00b894;
+    }
+
+    @keyframes changetext {
+      0% {
+        content: "ADMIN";
+      }
+
+      20% {
+        content: "SUPERVISOR";
+      }
+
+      35% {
+        content: "CLIENT";
+      }
+
+      60% {
+        content: "ROOMS";
+      }
+
+      80% {
+        content: "Sound engineer";
+      }
+
+      100% {
+        content: "Arcitacture";
+      }
+    }
+
+    #company_logo {
+      height: 100%;
+      margin-left: 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    #company_logo2 {
+      align-items: center;
+      margin-left: -10px;
+      height: 30vh;
+    }
+
+    nav ul li a:hover {
+      color: #000000;
+      height: 120%;
+      background-color: rgba(144, 142, 142, 0.1);
+      transition: background-color 0.3s, color 0.3s;
+      border-radius: 5px;
+    }
+
+    .email a {
+      text-decoration: none;
+      color: white;
+    }
+
+    i {
+      font-size: larger;
+    }
+
+    .copy_right {
+      font-size: 14px;
+      text-align: center;
+      padding: 10px 0;
+      background: linear-gradient(to right, #000000, #525252);
+      color: white;
+      border-top: 1px solid #ffffff;
+    }
+
+    /* Base dropdown menu styles */
+
+    .styled-select {
+      /*  background-color: #444;*/
+      text-decoration: none;
+      color: #f1f1f1;
+      display: inline-block;
+      position: relative;
+      background-color: #000000;
+      height: 70px;
+      line-height: 70px;
+      font-family: "Noto Serif", serif;
+      padding: 0 20px;
+      font-weight: bolder;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 1;
+      text-transform: uppercase;
+      outline: none;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      transition: background_color 0.3s, color 0.3s,0.9s;
+      appearance: none;
+      /* Remove default styling */
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      cursor: pointer;
+      outline: none;
+    
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Add hover and focus styles */
+    .styled-select:hover {
+      font-size: 15px;
+      color: #ffffff;
+      background-color: rgb(0, 0, 0);
+      border-radius: 5%;
+      transition: transform 0.5s, box-shadow 0.3s,0.9s;
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .styled-select:focus {
+      transform: rotateX(0deg) scale(1.08);
+      box-shadow: 0px 8px 16px rgba(0, 123, 255, 0.5);
+    }
+
+    /* Ensure the dropdown options are styled */
+    .styled-select option {
+      opacity: 0;
+      animation: fadeIn 0.5s forwards ease-in-out;
+      color: #ffffff;
+      font-size: 14px;
+      width: 100px;
+      background-color: #2e2e4d;
+    }
+
+    .styled-select option:hover {
+      background-color: #3a3a5c;
+      /* Slightly lighter slate on hover */
+      color: #ffcc00;
+      /* Gold for hover text */
+    }
+
+    .styled-select :hover:after
+    {
+      transition: 0.9s;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const listButton = document.querySelector('.list-button');
+      const listContainer = document.querySelector('.list-container');
+      const overlay = document.querySelector('.overlay');
+
+      listButton.addEventListener('click', () => {
+        if (listContainer.classList.contains('show')) {
+          listContainer.classList.add('hide');
+          listContainer.classList.remove('show');
+          overlay.style.display = 'none'; // Hide the overlay
+          document.body.classList.remove('blurred');
+        } else {
+          listContainer.classList.add('show');
+          listContainer.classList.remove('hide');
+          listContainer.style.display = 'flex'; // Ensure the container is displayed
+          overlay.style.display = 'block'; // Show the overlay
+          document.body.classList.add('blurred');
+        }
+      });
+
+      overlay.addEventListener('click', () => {
+        listContainer.classList.add('hide');
+        listContainer.classList.remove('show');
+        overlay.style.display = 'none'; // Hide the overlay
+        document.body.classList.remove('blurred');
+      });
+
+      // Ensure the animation ends properly
+      listContainer.addEventListener('animationend', () => {
+        if (listContainer.classList.contains('hide')) {
+          listContainer.style.display = 'none';
+        }
+      });
+    });
+
+    window.addEventListener("scroll", function () {
+      var header = document.querySelector("nav");
+      if (window.scrollY > 50) {
+        document.body.classList.add("scrolled");
+      } else { document.body.classList.remove("scrolled"); }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const listContainer = document.getElementById('listContainer');
+      const overlay = document.getElementById('overlay');
+      const body = document.body;
+      listContainer.style.display = 'none';
+      overlay.style.display = 'none';
+      body.classList.remove('blurred');
+    });
+
+    function toggleList() {
+      const listContainer = document.getElementById('listContainer');
+      const body = document.body;
+      const overlay = document.getElementById('overlay');
+      if (listContainer.style.display === 'none' || listContainer.style.display === '') {
+        listContainer.style.display = 'block';
+        overlay.style.display = 'block'; // Show overlay
+        body.classList.add('blurred'); // Add blur effect
+      } else {
+        listContainer.style.display = 'none';
+        overlay.style.display = 'none'; // Hide overlay
+        body.classList.remove('blurred'); // Remove blur effect
+      }
+    }
+
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+  <button class="list-button" onclick="toggleList()">☰</button>
+  <div class="list-container" id="listContainer">
+    <ul>
+      <a href="./WORKER.html"><li><b>WORKER</b></li></a>
+      <hr class="hr_list">
+      <a href="./Room-Details.php"><li><b>ROOM</b></li></a>
+      <hr class="hr_list">
+      <a href="./Live Update.html"><li><b>LIVE UPDATES</b></li></a>
+      <hr class="hr_list">
+      <a href="./search_supervisor.php"><li><b>search</b></li></a>
+      <hr class="hr_list">
+      <a href="./RT calculator.html"><li><b>RT 60</b></li></a>
+      <hr class="hr_list">
+      <a href="./Sound Propagation Loss Calculator.html"><li><b>SPL CALCULATOR</b></li></a>
+      <hr class="hr_list">
+      <a href="./RH calculator.html"><li><b>RH CALCULATOR</b></li></a>
+      <hr class="hr_list">
+      <a href="./HT calculator.html"><li><b>HT CALCULATOR</b></li></a>
+      <hr class="hr_list">
+      <a href="./Phase calculator.html"><li><b>PH CALCULATOR</b></li></a>
+     <hr class="hr_list">
+     <a href="./Login_page.php"> <li class="logout-icon"><i class="fas fa-sign-out-alt"></i><span>Log out</span></li></a>
+    </ul>
+  </div>
+  </div>
+
+  </div>
+  <div class="overlay" id="overlay" onclick="toggleList()"></div>
+  <nav>
+    <img src="images/png logo.png" alt="company_logo" id="company_logo">
+    <ul>
+      <b><li><a href="./WORKER.php">WORKER</a></li></b>
+      <b><li><a href="./Room-Details.php">ROOM</a></li></b>
+      <b><li><a href="./Live Update.php">LIVE UPDATES</a></li></b>
+      <b><li><a href="./search_supervisor.php">search</a></li></b>
+      <select id="calculator-dropdown" class="styled-select" onclick="redirectToPage()">
+        <option value="" disabled selected>Calculator</option>
+        <option value="./RT calculator.html">RT 60</option>
+        <option value="./Sound Propagation Loss Calculator.html">SPL CALCULATOR</option>
+        <option value="./RH calculator.html">RH CALCULATOR</option>
+        <option value="./HT calculator.html">HT CALCULATOR</option>
+        <option value="./Phase calculator.html">PHASE CALCULATOR</option>
+      </select>
+    </ul>
+  </nav>
+
+  <main class="main-contect">
+    <section>
+      <h3>Welcome To Beat Audio</h3>
+      <h1>DO COME & VISIT <span class="change_content"> </span> <span style="margin-top: -10px;"> | </span> </h1>
+      <p>"once is not enough"</p>
+      <a href="#" class="btnone">learn more</a>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="row">
+      <div class="col">
+        <img src="images/png logo.png" alt="logo" id="company_logo2">
+        <p>At Beat Audio, we are dedicated to transforming the way you experience sound in
+          your home. Our commitment is to offer a premium, immersive audio experience with
+          solutions that cater to the discerning tastes of audiophiles across India.</p>
+      </div>
+      <div class="col">
+        <br>
+        <h3>Contact us</h3>
+        <p></p>
+        <i class="fa-regular fa-address-book"></i>
+        <p>Opp. Badbade Hospital ,Sagli Road,Near Mahasatta</p>
+        <p>Chowk,Ichalkaranji-416115</p>
+        <br>
+        <p class="email"><i class="fa-regular fa-envelope"></i> <a
+            href="mailto:beataudio080@gmail.com">beataudio080@gmail.com</a></p>
+        <br>
+        <h4><b><i class="fa-solid fa-phone"></i> +91-9860585861</b></h4>
+        <p><b>GSTIN:</b> 27BFPPB3404J1ZJ</p>
+        <P><b>State:</b> 27-Maharashta</P>
+      </div>
+      <div class="col">
+        <br>
+        <b>
+          <h4>Links</h4>
+        </b>
+
+        <b>
+          <p>ABOUT US</p>
+        </b>
+        <br>
+        <b><a href="./WORKER.html"><p>WORKER</p></a></b>
+        <br>
+        <b><a href="./Room-Details.php"><p>ROOM</p></a></b>
+        <br>
+        <b><a href="./Live Update.html"><p>LIVE UPDATES</p></a></b>
+        <br>
+        <b><a href="./search_supervisor.php"><p>search</p></a></b>
+        <br>
+        <b><a href="./RT calculator.html"><p>RT 60</p></a></b>
+        <br>
+        <b><a href="./Sound Propagation Loss Calculator.html"><p>SPL CALCULATOR</p></a></b>
+        <br>
+        <b><a href="./RH calculator.html"><p>RH CALCULATOR</p></a></b>
+        <br>
+        <b><a href="./HT calculator.html"><p>HT CALCULATOR</p></a></b>
+        <br>
+        <b><a href="./Phase calculator.html"><p>PHASE CALCULATOR</p></a></b> 
+      </div>
+    </div>
+    <div class="copy_right">
+      <p>Copyright &copy; <span id="year"></span> beataudio. All Rights Reserved</p>
+    </div>
+
+
+  </footer>
+  <script>
+
+function redirectToPage() {
+        const dropdown = document.getElementById("calculator-dropdown");
+        const selectedValue = dropdown.value;
+
+        if (selectedValue) {
+            // Redirect to the selected page
+            window.location.href = selectedValue;
+
+            // Reset the dropdown to default after redirection
+            setTimeout(() => {
+                dropdown.value = ""; // Reset the value to default
+            }, 0); // Reset immediately
+        }
+    }
+
+    // Function to ensure the default value is shown on page load
+    document.addEventListener("DOMContentLoaded", () => {
+        const dropdown = document.getElementById("calculator-dropdown");
+        dropdown.value = ""; // Reset to default
+    });
+
+    // Get the current year
+    const currentYear = new Date().getFullYear();
+
+    // Set the year in the element with id "year"
+    document.getElementById('year').textContent = currentYear;
+
+  </script>
+</body>
+
+</html>

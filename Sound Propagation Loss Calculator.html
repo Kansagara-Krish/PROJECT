@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <title>Sound Propagation Loss Calculator</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .form-ol {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0px 20px rgba(0, 0, 0, 0.5);
+            max-width: 1000px;
+            width: 100%;
+            font-weight: bolder;
+            overflow-x: auto;
+            box-sizing: border-box;
+            text-align: left;
+
+        }
+
+        .form-ol img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%;
+        }
+
+        .form p {
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-ol ol {
+            margin: 0;
+            padding-left: 20px;
+            list-style-type: decimal;
+        }
+
+        .form-ol h1 {
+            text-align: center;
+        }
+
+        .form-ol ol li {
+            font-size: 16px;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .form-ol ol li::marker {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .table-1 {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .table-1 th,
+        .table-1 td {
+            padding: 10px 13px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        .table-1 th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .table-1 tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+
+        .list-button {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: larger;
+            padding: 10px 20px;
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+            width: 10%;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 1000;
+            /* Ensure it is above other content */
+            display: none;
+            /* Hide by default */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .list-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 50%;
+            background-color: #2c3e50;
+            /* Dark blue background for better contrast */
+            border-right: 1px solid #34495e;
+            /* Slightly lighter border */
+            box-shadow: 1px 0 5px rgba(0, 0, 0, 0.2);
+            /* Darker shadow for better depth */
+            z-index: 999;
+            overflow-y: auto;
+            justify-content: center;
+            align-items: center;
+            display: none;
+            /* Hide by default */
+            transform: translateX(-100%);
+            /* Initial state for animation */
+            animation-duration: 0.5s;
+            /* Duration of the animation */
+            animation-fill-mode: forwards;
+            /* Center text horizontally */
+        }
+
+        .list-container ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            padding-top: 10px;
+            margin-top: 150px;
+        }
+
+        .list-container li:last-child {
+            border-bottom: none;
+        }
+
+        .list-container ul li {
+            display: flex;
+            height: 8vh;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .list-container a {
+            text-decoration: none;
+            color: #eeeeee;
+            font-family: "Noto Serif", serif;
+            text-shadow: 0 0 2px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.7);
+            display: block;
+            padding: 12px 20px;
+        }
+
+        /* Overlay for blur effect */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            /* Semi-transparent dark background */
+            z-index: 998;
+            /* Ensure it's below the menu but above other content */
+        }
+
+        body.blurred .overlay {
+            display: block;
+        }
+
+        body.blurred {
+            overflow: hidden;
+            /* Prevent scrolling when overlay is active */
+        }
+
+        body.blurred *:not(.list-button):not(.list-container):not(.list-container *):not(.overlay) {
+            filter: blur(5px);
+            /* Apply blur effect */
+        }
+
+        nav {
+            position: fixed;
+            /* Fix the header at the top */
+            top: 0;
+            width: 100%;
+            height: 60px;
+            background: #34495e;
+            border-radius: 0 0 8px 8px;
+            /* Round bottom corners */
+            box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: 1.5s;
+        }
+
+
+        nav:hover {
+            height: 12vh;
+            transition: 0.5s;
+            font-size: larger;
+        }
+
+        nav .brand {
+            float: left;
+            height: 100%;
+            line-height: 70px;
+        }
+
+        nav ul {
+            float: center;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            list-style: none;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            display: block;
+            height: 70px;
+            line-height: 70px;
+            padding: 0 20px;
+            font-size: large;
+            font-family: "Noto Serif", serif;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1;
+            text-transform: uppercase;
+            transition: .8s;
+        }
+
+        nav ul li a::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+            background: #fffAfA;
+            transform-origin: right;
+            transform: scaleX(0);
+            transition: transform .5s;
+        }
+
+        nav ul li a:hover::before {
+            transform-origin: left;
+            transform: scaleX(1);
+            transition: 0.5s;
+        }
+
+        nav ul li a:hover {
+            font-size: 20px;
+            color: #262622;
+            box-shadow: 0 5px 10px white;
+        }
+
+        body.scrolled nav {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 5px 20px;
+        }
+
+        nav li {
+            font-size: 15px;
+            text-transform: uppercase;
+            color: white;
+            text-decoration: none;
+            line-height: 50px;
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container {
+            margin-top: 100px;
+            /* Adjust this value if needed */
+            background: #fffAfA;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 50px rgb(0, 0, 0);
+            width: 90%;
+            justify-content: center;
+            text-align: center;
+            max-width: 1000px;
+        }
+
+        .form-container h2 {
+            color: #48cae4;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            width: 100%;
+            border-color: #000000;
+            text-align: center;
+        }
+
+        .form-group label {
+            margin-right: 10px;
+            flex-shrink: 0;
+            flex: 1;
+            font-size: 16px;
+            min-width: 100px;
+            width: 180px;
+            text-align: right;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        label.unit {
+            flex: 1;
+            display: inline-block;
+            margin-left: 10px;
+            /* Space between input and unit label */
+            padding: 5px 10px;
+            /* Reduced padding for cleaner layout */
+            height: 50vh;
+            /* Allow height to adjust based on content */
+            border: 1px solid #ccc;
+            /* Subtle border */
+            border-radius: 5px;
+            word-wrap: break-word;
+            /* Rounded corners */
+            background-color: #f9f9f9;
+            /* Light gray background for contrast */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* Softer shadow */
+            font-family: 'Poppins', sans-serif;
+            /* Clean, modern font */
+            color: #555;
+            /* Slightly darker text color for better readability */
+            text-align: left;
+            justify-content: left;
+            /* Center-align the text */
+            font-size: 14px;
+            /* Moderate font size */
+            line-height: 1.5;
+            /* Improved line spacing */
+            /* Prevent text wrapping */
+        }
+
+        .form-group input[type="text"],
+        .form-group select,
+        .form-group input[type="number"] {
+            flex: 1;
+            padding: 15px;
+            flex-grow: 1;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            width: calc(100% - 20px);
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            box-shadow: 0 0 5px black;
+        }
+
+        .form-group input[type="text"],
+        .form-group select {
+            width: 100%;
+        }
+
+        @media (max-width: 968px) {
+
+            .table-2 th,
+            .table-2 td {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+
+            .table-1 th,
+            .table-1 td {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+
+            label.unit {
+                display: block;
+                margin-left: 0px;
+                padding: 10px 15px;
+                padding-bottom: 10px;
+                height: 5vh;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+                font-family: 'Poppins', sans-serif;
+                font-size: 0.9rem;
+                color: #333;
+                text-align: left;
+                width: 500px;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .table-1 {
+                display: table;
+                width: 100%;
+                overflow-x: auto;
+            }
+
+            .table-1 tbody,
+            .table-1 th,
+            .table-1 td,
+            .table-1 tr {
+
+                display: table-row-group;
+                /* Hide table headers on mobile */
+            }
+
+            .table-1 td,
+            .table-1 th {
+                display: table-cell;
+            }
+
+            .form-ol ol li {
+                padding-left: 20px;
+                /* Adjust this value as needed */
+            }
+
+            .form-ol img {
+                width: 100%;
+                height: auto;
+                max-width: 100%;
+                display: block;
+                margin: 0 auto;
+            }
+
+            .output-container {
+                padding: 15px;
+            }
+
+            .output-container h2 {
+                font-size: 20px;
+            }
+
+            .output-container p {
+                font-size: 16px;
+                font-weight: bolder;
+            }
+
+            .list-button {
+                font-size: 14px;
+                padding: 10px 12px;
+                margin-left: 8px;
+            }
+
+            .list-container ul {
+                width: 100%;
+                /* Make list-container take up the full width */
+            }
+
+            .list-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 50%;
+                /* Make list-container take up half of the screen */
+            }
+
+            body.blurred *:not(.list-button):not(.list-container):not(.list-container *):not(.overlay) {
+                filter: blur(5px);
+                /* Apply blur effect */
+            }
+
+            nav {
+                display: none !important;
+            }
+
+            .list-button {
+                display: block;
+            }
+
+            select.mobile {
+                display: block;
+            }
+
+            select.laptop {
+                display: none;
+            }
+
+            .form-group {
+                flex-direction: column;
+            }
+
+            .form-group label {
+                width: auto;
+                max-width: 350px;
+            }
+
+   
+            .form-container,
+            .output-container {
+                padding: 15px;
+            }
+
+            .form-container h2,
+            .output-container h2 {
+                font-size: 20px;
+            }
+
+            .input-container input[type="number"],
+            .input-container select {
+                width: 150px;
+            }
+
+
+            .form-group label,
+            .output-container th,
+            .output-container td {
+                font-size: 14px;
+            }
+
+        }
+
+        @media (min-width: 969px) {
+            nav a {
+                text-decoration: none;
+                color: white;
+            }
+
+            .list-button {
+                display: none;
+            }
+
+            .overlay {
+                display: block;
+            }
+
+            select.mobile {
+                display: none;
+            }
+
+            select.laptop {
+                display: block;
+            }
+
+            .form-group {
+                flex-direction: row;
+            }
+
+            .form-group label {
+                height: 4vh;
+                margin-top: -12px;
+                width: 100%;
+                border-radius: 10%;
+                flex: 1;
+                max-width: 300px;
+                /* Adjust the width of the label as needed */
+            }
+
+            .form-group input[type="number"],
+            .form-group select {
+                flex: 1;
+                height: 8vh;
+                border-radius: 5%;
+                max-width: 150px;
+            }
+
+        }
+
+        .submit {
+            padding-top: 50px;
+            font-size: larger;
+        }
+
+        .btn-submit {
+            padding: 1em 2em;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px white;
+            cursor: pointer;
+            color: #2c9caf;
+            outline: 2px solid #040808;
+            transition: all 1000ms;
+            font-size: 15px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            outline: 2px solid #2c9caf;
+            background-color: #ffffff;
+        }
+
+        .btn-submit:hover {
+            color: #ffffff;
+            transform: scale(1.1);
+            outline: 2px solid #24a2d8;
+            box-shadow: 4px 5px 10px #0d1b1d;
+            background-color: #2c9caf;
+        }
+
+        .btn-submit:hover::before {
+            width: 250%;
+        }
+
+        hr {
+            height: 2px;
+            /* Adjust the height of the line */
+            background: linear-gradient(to right, #f0f0f0, #000000, #f0f0f0);
+            border: none;
+        }
+
+        .hr_list {
+            height: 3px;
+            width: 150px;
+            /* Adjust the height of the line */
+            background: linear-gradient(to right, #000000, #7b0808, #f0f0f0);
+            border: none;
+        }
+
+        .form-group label .required-asterisk {
+            color: red;
+            font-size: 18px;
+            /* Adjust the size as needed */
+        }
+
+        /* Styling for output */
+
+
+        .output-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 90%;
+            font-size: larger;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .output-container h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .output-container p {
+            font-size: 25px;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        .output-container span {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .output-container .highlight {
+            background-color: #e6f7ff;
+            padding: 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            max-width: 1000px;
+            box-shadow: 30px rgba(0, 0, 0, 0.5);
+            font-size: 18px;
+            text-align: left;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+        }
+
+        .results-table th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        .results-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .results-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .results-table td {
+            color: #555;
+        }
+
+        .table-2 {
+            width: 50%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            text-align: left;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .table-2 th,
+        .table-2 td {
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        .table-2 th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .table-2 tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+        }
+
+        .list-container.show {
+            display: flex;
+            /* Show the container */
+            animation-name: slideIn;
+            /* Trigger the slide in animation */
+        }
+
+        /* Class to trigger the slide out animation */
+        .list-container.hide {
+            animation-name: slideOut;
+            /* Trigger the slide out animation */
+        }
+
+        .input-container {
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 10px;
+            background-color: white;
+            padding-left: 20px;
+            padding-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            width: 80%;
+            vertical-align: top;
+        }
+
+        .input-container select {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 180px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            font-weight: bolder;
+        }
+
+        .input-container select option {
+            background-color: #ffffff;
+            color: #333;
+            font-weight: bolder;
+            border-radius: 20px;
+        }
+
+        .input-container select:focus {
+            outline: none;
+        }
+
+        .input-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.9);
+            background: linear-gradient(to bottom, #ffffff, #e0e0e0);
+        }
+
+        .input-container:hover::after {
+            position: absolute;
+            background-color: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: auto;
+            max-width: 100%;
+        }
+
+        #company_logo {
+            height: 100%;
+            margin-left: 30px;
+            display: flex;
+            align-items: center;
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const listButton = document.querySelector('.list-button');
+            const listContainer = document.querySelector('.list-container');
+            const overlay = document.querySelector('.overlay');
+
+            listButton.addEventListener('click', () => {
+                if (listContainer.classList.contains('show')) {
+                    listContainer.classList.add('hide');
+                    listContainer.classList.remove('show');
+                    overlay.style.display = 'none'; // Hide the overlay
+                    document.body.classList.remove('blurred');
+                } else {
+                    listContainer.classList.add('show');
+                    listContainer.classList.remove('hide');
+                    listContainer.style.display = 'flex'; // Ensure the container is displayed
+                    overlay.style.display = 'block'; // Show the overlay
+                    document.body.classList.add('blurred');
+                }
+            });
+
+            overlay.addEventListener('click', () => {
+                listContainer.classList.add('hide');
+                listContainer.classList.remove('show');
+                overlay.style.display = 'none'; // Hide the overlay
+                document.body.classList.remove('blurred');
+            });
+
+            // Ensure the animation ends properly
+            listContainer.addEventListener('animationend', () => {
+                if (listContainer.classList.contains('hide')) {
+                    listContainer.style.display = 'none';
+                }
+            });
+        });
+
+        window.addEventListener("scroll", function () {
+            var header = document.querySelector("nav");
+            if (window.scrollY > 50) {
+                document.body.classList.add("scrolled");
+            } else { document.body.classList.remove("scrolled"); }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const listContainer = document.getElementById('listContainer');
+            const overlay = document.getElementById('overlay');
+            const body = document.body;
+            listContainer.style.display = 'none';
+            overlay.style.display = 'none';
+            body.classList.remove('blurred');
+        });
+
+        function toggleList() {
+            const listContainer = document.getElementById('listContainer');
+            const body = document.body;
+            const overlay = document.getElementById('overlay');
+            if (listContainer.style.display === 'none' || listContainer.style.display === '') {
+                listContainer.style.display = 'block';
+                overlay.style.display = 'block'; // Show overlay
+                body.classList.add('blurred'); // Add blur effect
+            } else {
+                listContainer.style.display = 'none';
+                overlay.style.display = 'none'; // Hide overlay
+                body.classList.remove('blurred'); // Remove blur effect
+            }
+        }
+    </script>
+    <button class="list-button" onclick="toggleList()">☰</button>
+    <div class="list-container" id="listContainer">
+        <ul>
+            <a href="./home.html"><li><b>HOME</b></li></a>
+            <hr class="hr_list">
+            <a href="./WORKER.html"><li><b>WORKER</b></li></a>
+            <hr class="hr_list">
+            <a href="./Room-Details.html"><li><b>ROOM</b></li></a>
+            <hr class="hr_list">
+            <a href="./Live Update.html"><li><b>LIVE UPDATES</b></li></a>
+            <hr class="hr_list">
+            <a href="./RT calculator.html"><li><b>RT 60</b></li></a>
+            <hr class="hr_list">
+            <a href="./Sound Propagation Loss Calculator.html"><li><b>SPL CALCULATOR</b></li></a>
+            <hr class="hr_list">
+            <a href="./HT calculator.html"><li><b>HT CALCULATOR</b></li></a>
+            <hr class="hr_list">
+            <a href="./Phase calculator.html"><li><b>PH CALCULATOR</b></li></a>
+        </ul>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="toggleList()"></div>
+    <nav>
+        <img src="images/png logo.png" alt="company_logo" id="company_logo">
+        <ul class="ul_header">
+            <li><a href="./home.html"><b>Home</b></a></li>
+            <li><a href="./WORKER.html"><b>WORKER</b></a></li>
+            <li><a href="./Live Update.html"><b>LIVE UPDATES</b></a></li>
+            
+    </nav>
+    <div class="form-container">
+        <h2>Sound Propagation Loss Calculator</h2>
+        <hr>
+        <div class="form-group">
+            <b>
+                <p>Let's understand the sound, sound pressure level and a bit of human hearing before we go to the
+                    calculator !!!!!</p>
+            </b>
+        </div>
+        <hr>
+        <div class="form-ol">
+            <ol>
+                <li>The speaker sensitivity, typically expressed in decibels (dB) with 1 watt (or 2.83 volts across an 8
+                    ohm speaker) measured on-axis one meter away.
+                    Typical values are 85-89 dB for bookshelf speakers, 87 to 92 dB for floor standing models, with high
+                    efficiency speakers in the 93 to 100+ dB range.
+                    If you are not sure, try 90 dB as a default. (Pro equipment has sensitivities as high as 111 dB!)
+                </li>
+                <hr>
+                <li>The amplifier rated power per channel, expressed in watts. The calculated SPL will be RMS if
+                    amplifier power is RMS (Root-Mean-Square),
+                    The peak value is the highest voltage that the waveform will ever reach, like the peak is the
+                    highest point on a mountain.
+                    The RMS (Root-Mean-Square) value is the effective value of the total waveform. It is really the area
+                    under the curve. In audio it is the continuous or music power that the amplifier can deliver.
+                    For audio applications, our ears are RMS instruments, not peak reading. So using RMS values makes
+                    sense, and is normally how amplifiers are rated.
+                     <br><img src="./images/wave_spl_cal_page-0001.jpg">
+                    <hr>
+                </li>
+                <li> The distance from the speaker to the listening position. Expressed in feet. If you know the
+                    distance in meters, multiply by 3 to get an approximation in feet.
+                    <hr>
+                </li>
+                <li>The number of speakers in the system. For stereo, use 2. For multichannel systems, try using 3 (for
+                    left, center, and right). This calculation assumes that the speakers are each driven by the same
+                    power, have similar efficiencies, and are equidistant from the listening position.
+                    <hr>
+                </li>
+                <li>Speaker placement. You may account for "room gain", that is sound reflected from the walls that
+                    "reinforces" the sound coming directly from your speakers, by selecting the box that describes your
+                    speaker placement. This effect is most prominent at low (bass) frequencies and accounts for why
+                    subwoofers often sound louder when placed in a corner. This is an optional selection. If you do not
+                    have a subwoofer, or full range speakers with good bass extension close to the walls or corners; you
+                    will get a more accurate number by leaving the default.</li>
+            </ol>
+        </div>
+        <br>
+
+        <b>
+            <p>This calculator does not account for room acoustics, amplifier dynamic headroom or off-axis listening
+                positions. For interpretation of the results, see below. Let's try…..!!!!!</p>
+        </b>
+        <form method="post" action="">
+            <hr><br>
+            <div class="input-container">
+                <div class="form-group">
+                    <label for="Speaker_Sensitivity"><b>Speaker Sensitivity(DB):</b></label>
+                    <input type="number" step="any" id="Speaker_Sensitivity" placeholder="Speaker Sensitivity in Foot">
+                    <label for="Speaker_Sensitivity" class="unit">dB SPL (1 W/1 M) </label>
+                </div>
+                <div class="form-group">
+                    <label for="Seating Position"><b>Seating Position(FT)</b></label>
+                    <input type="number" step="any" id="Seating_Position" placeholder="Seating Position">
+                    <label for="Seating_Position" class="unit">Feet</label>
+                </div>
+                <div class="form-group">
+                    <label for="Listning_Level"><b>Desired Listning Level (DB)</b></label>
+                    <input type="number" step="any" id="Desired_Listning_Level" placeholder="Desired Listning Level">
+                    <label for="Listning_Level" class="unit">db</label>
+                </div>
+                <div class="form-group">
+                    <label for="Number_of_Speakers"><b>Nomber of Speakers</b></label>
+                    <input type="number" step="any" id="Number_Of_Speakers" placeholder="Number of Speakers">
+                    <label for="Number_Of_Speakers" class="unit">2 for stereo and more for
+                        multi-channel<br></label>
+                </div>
+                <div class="form-group">
+                    <label for="Speaker_Placement"><b>Speacker Placement</b></label>
+                    <select name="Speaker_Placement" id="Speaker_Placement">
+                        <option value="near_a_walls">Near a Walls</option>
+                        <option value="in_a_corner">In a Corner</option>
+                        <option value="away_from_walls">Away From Walls</option>
+                    </select>
+                    <label for="Speaker_Placement" class="unit">It should be within 18 to 24 inches</label>
+                </div>
+                <div class="form-group">
+                    <label for="Amplifier_Power"><b>Amplifier Power (WATT)</b></label>
+                    <input type="number" step="any" id="Amplifier_Power" placeholder="Amplifier Power">
+                    <label for="Amplifier_Power" class="unit">Amplifier power, in watts per channel</label>
+                </div>
+            </div>
+            <hr>
+            <div class="submit">
+                <button class="btn-submit" name="Calculate">Calculate</button>
+            </div>
+            <br>
+            <div class="output-container" id="sumOutput">
+            </div>
+        </form>
+        <script>
+            document.querySelector('.btn-submit').addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent form submission
+
+                const speakerSensitivity = parseFloat(document.getElementById('Speaker_Sensitivity').value);
+                const seatingPosition = parseFloat(document.getElementById('Seating_Position').value);
+                const listeningLevel = parseFloat(document.getElementById('Desired_Listning_Level').value);
+                const numberOfSpeakers = parseInt(document.getElementById('Number_Of_Speakers').value);
+                const speakerPlacement = document.getElementById('Speaker_Placement').value;
+                const amplifierPower = parseFloat(document.getElementById('Amplifier_Power').value);
+
+                if (isNaN(speakerSensitivity) || isNaN(seatingPosition) || isNaN(listeningLevel) || isNaN(numberOfSpeakers) || isNaN(amplifierPower) || speakerPlacement === "") {
+                    document.getElementById('sumOutput').innerHTML = '<p style="color: red;">Please enter all the data first.</p>';
+                }
+                else {
+                    let combined_sensitivity = (10 * Math.log10(numberOfSpeakers * amplifierPower) - 10 * Math.log10(amplifierPower)).toFixed(1);
+                    let gain_from_placement = 0.0;
+                    if (speakerPlacement === 'in_a_corner') {
+                        gain_from_placement = parseFloat(6.0);
+                    } else if (speakerPlacement === 'near_a_walls') {
+                        gain_from_placement = parseFloat(3.0);
+                    }
+                    const final_speaker_sensitivity = (parseFloat(combined_sensitivity) + gain_from_placement + speakerSensitivity).toFixed(1);
+                    const soundpropagationloss = ((-20) * (Math.log10((seatingPosition * 12) / 39))).toFixed(1);
+                    const speakersensitivity = (parseFloat(final_speaker_sensitivity) + parseFloat(soundpropagationloss)).toFixed(1);
+                    const gainfromamplifier = (10 * (Math.log10(amplifierPower))).toFixed(1);
+                    const spl_mpl = (parseFloat(speakerSensitivity) + parseFloat(combined_sensitivity) + gain_from_placement + parseFloat(soundpropagationloss) + parseFloat(gainfromamplifier)).toFixed(1);
+
+                    document.getElementById('sumOutput').innerHTML = `
+                <h2>RESULT</h2><table class="results-table">
+                    <tr><th>Metric</th><th>Value</th><th>Units</th></tr>
+                    <tr><td>Combined sensitivity(db)</td><td>${combined_sensitivity} dB</td><td>db Gain from sonic reinforcement (multi speakers)</td></tr>
+                    <tr><td>Gain from placement</td><td>${gain_from_placement} dB</td><td>db Gain from placement (reinforcement from reflected sound</td></tr>
+                    <tr><td>Final speaker Placement</td><td>${final_speaker_sensitivity}</td><td>db</td></tr>
+                    <tr><td>Sound Propagation Loss</td><td>${soundpropagationloss}</td><td>db Loss due to dispresion (distance)</td></tr>
+                    <tr><td>Speaker Sensitivity @MLP (db)</td><td>${speakersensitivity} dB</td><td>Amplifier power, in watts per channel</td></td></tr>
+                    <tr><td>Gain From Amplifier</td><td>${gainfromamplifier} Watts/Channel</td><td>Peal SPL @ listening position</tr>
+                    <tr><td>SPL@MPL</td><td>${spl_mpl}</td><td>Peak SPL@ listening position</tr>
+                </table>
+            `;
+                }
+            });
+        </script>
+        <hr>
+        <h1>How Loud it is?</h1>
+        <hr>
+        <b>
+            <p>Most home theater speakers and ampliers, even modest ones, are quite capable of producing sound pressure
+                levels in excess of 100 dB. So how loud is that? For some analogies, check out this table:</p>
+        </b>
+        <div class="form-ol">
+            <table class="table-1">
+                <tbody>
+                    <tr>
+                        <th>Description</th>
+                        <th>Sound level</th>
+                        <th>Example</th>
+                        <th>Sound Intensity</th>
+                    </tr>
+                    <tr>
+                        <td>Barely Audible</td>
+                        <td>0 db</td>
+                        <td>Threshold of hearing</td>
+                        <td>0.000000000001 W/m2</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>10 db</td>
+                        <td>Rusting leaf</td>
+                        <td>0.00000000001 W/m2</td>
+                    </tr>
+                    <tr>
+                        <td>Very quit</td>
+                        <td>20 db</td>
+                        <td>quit room</td>
+                        <td>0.00000000001 W/m2</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>30 db</td>
+                        <td>soft whisper</td>
+                        <td>0.000000001 W/m2</td>
+                    </tr>
+                    <tr>
+                        <td>Quit</td>
+                        <td>40 db</td>
+                        <td>Quit library</td>
+                        <td>0.00000001 W/m2</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>50 db</td>
+                        <td>Average home</td>
+                        <td>0.0000001 W/m2</td>
+                    </tr>
+                    <tr>
+                        <td>Moderatelt</td>
+                        <td>60 db</td>
+                        <td>Ordinary conversation, Light traffic</td>
+                        <td>0.000001 W/m2</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>70 db</td>
+                        <td>Vaccum cleaner, Heavy traffic</td>
+                        <td>0.00001 W/m2</td>
+                    </tr>
+                    <tr>
+                        <td>Very Loud</td>
+                        <td>80 db</td>
+                        <td>Garbege disposal</td>
+                        <td>0.0001 W/m2</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>90 db</td>
+                        <td>Disel truck (10 m away)</td>
+                        <td>0.001 W/m2</td>
+                    </tr>
+                    <tr>
+                        <td>uncomfortably loud</td>
+                        <td>100 db</td>
+                        <td>Newspaper press</td>
+                        <td>0.01 W/m2</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>110 db</td>
+                        <td>Jet flyover 300m</td>
+                        <td>0.1 W/m2</td>
+                    </tr>
+                    <tr>
+                        <td>Painful</td>
+                        <td>120 db</td>
+                        <td>Threshold of pain, Thunderclap</td>
+                        <td>1 W/m2</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div><br>
+        <div class="form-ol">
+            <h1>What does this mean for human hearing?</h1>
+        </div>
+        <br>
+        <div class="form-ol">
+
+            <p>Sounds less than 75 dB have no significant effect on our hearing.</p>
+            <hr><br>
+            <p>Exposure to sounds above 85 dB causes short term hearing losses called temporary threshold shifts [2]. If
+                this occurs, your ear becomes less sensitive, and sounds seem quieter than normal. After some time,
+                normal hearing returns.</p>
+            <hr><br>
+            <p>Repeated exposure to sounds that cause temporary threshold shifts results in permanent damage to the ear
+                in the form of a permanent threshold shift. The ear loses sensitivity in the frequencies 3,000 Hz
+                through 6,000 Hz, resulting in a "notch" in the hearing range. Time of exposure is important, the louder
+                the sound, the less exposure time before permanent damage sets in.</p>
+            <hr><br>
+            <p>According to OSHA, (Occupational Safety and Health Administration) the exposure time limits are below:
+                (these are A-weighted, most home theater measurements are made with C weighting, which typically gives
+                higher readings for broad spectrum measurements).</p>
+            <hr>
+        </div>
+        <br>
+        <div class="form-ol">
+            <table class="table-2">
+                <tbody>
+                    <tr>
+                        <th>Exposure Time</th>
+                        <th>Exposure Level (measured in db SPL)</th>
+                    </tr>
+                    <tr>
+                        <td>8 Hours</td>
+                        <td>90 db SPL</td>
+                    </tr>
+                    <tr>
+                        <td>6 Hours</td>
+                        <td>92 db spl</td>
+                    </tr>
+                    <tr>
+                        <td>4 Hours</td>
+                        <td>95 db spl</td>
+                    </tr>
+                    <tr>
+                        <td>3 Hours</td>
+                        <td>97 db spl</td>
+                    </tr>
+                    <tr>
+                        <td>2 Hours</td>
+                        <td>100 db spl</td>
+                    </tr>
+                    <tr>
+                        <td>1.5 Hours</td>
+                        <td>102 db spl</td>
+                    </tr>
+                    <tr>
+                        <td>1 Hours</td>
+                        <td>105 db spl</td>
+                    </tr>
+                    <tr>
+                        <td>0.5 Hours</td>
+                        <td>110 db spl</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            < 0.25 Hours</td>
+                        <td>115 db spl</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+        <br>
+
+        <div class="form-ol">
+            <h1>Your hearing is precious, take care of it.</h1>
+        </div>
+</body>
+
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password</title>
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    background: url("https://wallpapers.com/images/hd/720p-5wfq1i9etj969c3k.jpg") no-repeat;
+    background-position: auto;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    width: 90%;
+    max-width: 400px;
+    height: auto;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    border-radius: 40px;
+    display: flex;
+    backdrop-filter: blur(10px);
+    border: 3px solid rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.8s ease-in-out; 
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 20px;
+}
+
+h2 {
+    text-transform: uppercase;
+    color: aliceblue;
+    padding: 20px 0;
+    font-size: 2em;
+}
+
+.form-group {
+    position: relative;
+    width: 100%;
+    border-bottom: 3px solid #fff;
+    margin: 20px 0;
+}
+
+.form-group input {
+    background: transparent;
+    width: 100%;
+    border: none;
+    outline: none;
+    height: 50px;
+    font-size: 1.2em;
+    color: aliceblue;
+    padding: 0 30px 0 10px;
+}
+
+.form-group label {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+    color: aliceblue;
+    transition: 0.5s;
+}
+
+input:focus ~ label, input:valid ~ label {
+    top: -10px;
+    left: 10px;
+    font-size: 0.8em;
+}
+
+.form-group i {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    color: aliceblue;
+    font-size: 1.2em;
+}
+
+p {
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    padding: 10px 0;
+}
+
+p>a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+p>a:hover {
+    text-decoration: underline;
+    font-style: italic;
+}
+
+#btn {
+    width: 100%;
+    height: 50px;
+    border-radius: 40px;
+    border: none;
+    font-size: 1.5em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.btn-submit {
+    background-color: #fff;
+    transition: 0.5s;
+}
+
+.btn-submit:hover {
+    background-color: aqua;
+    transition: 0.5s;
+    box-shadow: 0 0 5px #fff, 0 0 25px #fff;
+}
+
+/* Mobile-friendly adjustments */
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .form-group input {
+        font-size: 1em;
+    }
+
+    .form-group label {
+        font-size: 1em;
+    }
+
+    #btn {
+        font-size: 1.2em;
+    }
+}
+
+        /* Include the CSS changes here */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Forgot Password</h2>
+        <form onsubmit="return validatePassword()">
+            <div class="form-group">
+                <input type="text" id="username" name="username" required>
+                <label for="username">Username</label>
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <div class="form-group">
+                <input type="text" id="phone" name="phone" required>
+                <label for="phone">Phone Number</label>
+                <i class="fa-solid fa-phone"></i>
+            </div>
+            <div class="form-group">
+                <input type="password" id="new-password" name="new-password" required>
+                <label for="new-password">New Password</label>
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <div class="form-group">
+                <input type="password" id="confirm-password" name="confirm-password" required>
+                <label for="confirm-password">Confirm Password</label>
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <input id="btn" type="submit" value="Change Password" class="btn-submit">
+        </form>
+    </div>
+    <script>
+        function validatePassword() {
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            if (newPassword !== confirmPassword) {
+                alert('New Password and Confirm Password do not match!');
+                return false;
+            }
+            alert('Password changed successfully!');
+            return true;
+        }
+    </script>
+</body>
+</html>

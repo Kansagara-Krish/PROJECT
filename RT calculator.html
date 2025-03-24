@@ -1,0 +1,3094 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <title>RT Calculator</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+            min-height: 100vh;
+            height: 100%;
+        }
+
+
+        .list-container ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            padding-top: 10px;
+            margin-top: 150px;
+        }
+
+        .list-container li:last-child {
+            border-bottom: none;
+        }
+
+        .list-container li {
+            display: flex;
+            height: 8vh;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .list-container a {
+            text-decoration: none;
+            color: #eeeeee;
+            text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.7);
+            display: block;
+            padding: 12px 20px;
+            font-family: "Noto Serif", serif;
+
+        }
+
+        /* Overlay for blur effect */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            /* Semi-transparent dark background */
+            z-index: 998;
+            /* Ensure it's below the menu but above other content */
+        }
+
+        body.blurred .overlay {
+            display: block;
+        }
+
+        body.blurred {
+            overflow: hidden;
+            /* Prevent scrolling when overlay is active */
+        }
+
+        body.blurred *:not(.list-button):not(.list-container):not(.list-container *) {
+            filter: blur(5px);
+            /* Apply blur effect */
+        }
+
+        .list-button {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: larger;
+            padding: 10px 20px;
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+            width: 10%;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 1000;
+            /* Ensure it is above other content */
+            display: none;
+            /* Hide by default */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .list-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 50%;
+            background-color: #2c3e50;
+            /* Dark blue background for better contrast */
+            border-right: 1px solid #34495e;
+            /* Slightly lighter border */
+            box-shadow: 1px 0 5px rgba(0, 0, 0, 0.2);
+            /* Darker shadow for better depth */
+            z-index: 999;
+            overflow-y: auto;
+            justify-content: center;
+            align-items: center;
+            display: none;
+            /* Hide by default */
+            transform: translateX(-100%);
+            /* Initial state for animation */
+            animation-duration: 0.5s;
+            /* Duration of the animation */
+            animation-fill-mode: forwards;
+            /* Retain the final state of the animation */
+            /* Retain the final state of the animation */
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+        }
+
+        /* Class to trigger the slide in animation */
+        .list-container.show {
+            display: flex;
+            /* Show the container */
+            animation-name: slideIn;
+            /* Trigger the slide in animation */
+        }
+
+        /* Class to trigger the slide out animation */
+        .list-container.hide {
+            animation-name: slideOut;
+            /* Trigger the slide out animation */
+        }
+
+        nav {
+            position: fixed;
+            /* Fix the header at the top */
+            top: 0;
+            width: 100%;
+            height: 60px;
+            background: #34495e;
+            border-radius: 0 0 8px 8px;
+            /* Round bottom corners */
+            box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: 1.5s;
+        }
+
+        nav:hover {
+            height: 12vh;
+            transition: 0.5s;
+            font-size: larger;
+        }
+
+        body.scrolled nav {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 5px 20px;
+        }
+
+        nav .brand {
+            float: left;
+            height: 100%;
+            line-height: 70px;
+        }
+
+        nav ul {
+            float: center;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            font-size: large;
+            list-style: none;
+
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            display: block;
+            height: 70px;
+            line-height: 70px;
+            font-family: "Noto Serif", serif;
+            padding: 0 20px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1;
+            text-transform: uppercase;
+            transition: .8s;
+        }
+
+        nav ul li a::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+            background: #fffAfA;
+            transform-origin: right;
+            transform: scaleX(0);
+            font-size: large;
+            transition: transform .5s;
+        }
+
+        nav ul li a:hover::before {
+            transform-origin: left;
+            transform: scaleX(1);
+            transition: 0.5s;
+        }
+
+        nav ul li a:hover {
+            font-size: 20px;
+            color: #262622;
+            box-shadow: 0 5px 10px white;
+        }
+
+        body.scrolled nav {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 0px 0px;
+            height: 70px;
+        }
+
+        nav li {
+            font-size: 15px;
+            text-transform: uppercase;
+            color: white;
+            text-decoration: none;
+            line-height: 50px;
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            display: inline-block;
+            text-align: center;
+        }
+
+
+        hr {
+            height: 5px;
+            background: linear-gradient(to right, #f0f0f0, #000000, #f0f0f0);
+            border: none;
+        }
+
+        .p2 {
+            font-size: 1rem;
+            line-height: 1.8;
+            margin: 8px auto 8px auto;
+            /* Increase line spacing for better readability */
+  /* Add vertical spacing between paragraphs */
+            color: #555;
+            /* Neutral gray for readability */
+            padding: 10px;
+            /* Add inner padding for better spacing */
+            background-color: #f0f8ff;
+            /* Light blue background for a subtle highlight */
+            border-left: 4px solid #3498db;
+            /* Add a vertical blue accent line */
+            border-radius: 5px;
+            /* Smooth corners for a modern look */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9),
+                /* Base shadow */
+                0 1px 3px rgba(0, 0, 0, 0.6);
+        }
+
+        p:last-of-type {
+            margin-bottom: 20px;
+            /* Add space after the last paragraph */
+        }
+
+        h1,
+        h3,
+        .p2 {
+            max-width: 90%;
+            /* Responsive width for smaller screens */
+            margin: 0 auto;
+        }
+
+        .results-table {
+            width: 95%;
+            border-collapse: collapse;
+            margin: 28px 0;
+            margin-left: 28px;
+            background-color: #fff;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .results-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .results-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+
+        .results-table thead tr th {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            background-color: #f2f2f2;
+            color: #333;
+            text-align: center;
+        }
+
+
+        .results-table-2 {
+            width: 35%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            margin-left: 35px;
+            justify-content: left;
+            background-color: #fff;
+            text-align: left;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        .results-table-2 tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .results-table-2 tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+
+        .results-table-2 tr th {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .results-table-2 th,
+        .results-table-2 td {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            background-color: #f2f2f2;
+            color: #333;
+            text-align: center;
+        }
+
+        .table-container {
+            margin-bottom: 40px;
+            box-shadow: 10PX BLACK;
+        }
+
+        .input-container {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-container label {
+            display: inline-block;
+            width: 90px;
+            font-weight: bold;
+        }
+
+        .input-container input {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 150px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-container select {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 170px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            font-weight: bolder;
+            font-size: 12px;
+            transition: all 0.3s ease-in-out;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            height: 6vh;
+            /* Ensure height is auto */
+
+            /* Limit height to show only 5 options */
+        }
+
+        .input-container select option {
+            background-color: #ffffff;
+            color: #333;
+            font-weight: bolder;
+            text-align: left;
+            border-radius: 20px;
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+            font-size: 12px;
+            padding: 2px 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
+            /* Adjusted line-height for smaller height */
+        }
+
+        .input-container select[multiple],
+        .input-container select[size] {
+            height: auto;
+            /* Ensure height is auto */
+            max-height: 100px;
+            /* Limit height to show only 5 options */
+        }
+
+        .input-2 {
+            display: inline-block;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            margin-left: 10px;
+            background-color: white;
+            padding-left: 20px;
+            padding-top: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            width: 30px;
+            vertical-align: top;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .input-container label,
+        .input-container input,
+        .input-container select {
+            text-align: center;
+        }
+
+        .input-2:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.9);
+            background: linear-gradient(to bottom, #ffffff, #e0e0e0);
+        }
+
+        .input-2:hover::after {
+            position: absolute;
+            background-color: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: auto;
+            max-width: 100%;
+        }
+
+        .instruction-container {
+            display: flex;
+            justify-content: center;
+            /* Center horizontally */
+            align-items: center;
+            /* Center vertically */
+            height: 100vh;
+            /* Full height of the viewport */
+            /* Optional: Set a background color */
+        }
+
+        .instruction-box {
+            background-color: #e8f4ff;
+            /* Light blue background */
+            padding: 10px;
+            /* Add padding for spacing inside the box */
+            border-radius: 10px;
+            /* Add rounded corners */
+            box-shadow: 0 0px 8px rgba(0, 0, 0, 0.9);
+            /* Add a shadow for effect */
+            width: 70%;
+            /* Adjust width */
+            max-width: 1200px;
+            /* Limit the maximum width */
+            text-align: left;
+            /* Center align text */
+        }
+
+        .input-container-wrapper {
+            display: flex;
+            padding-top: 5vh;
+            background: linear-gradient(to right, #ffffff, #d4d2d2);
+            border-radius: 30px;
+            box-shadow: 30px black;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+           
+
+        }
+
+        @media (min-width: 968px) {
+            nav a {
+                text-decoration: none;
+                color: white;
+            }
+
+            .list-button {
+                display: none;
+            }
+
+            .overlay {
+                display: block;
+            }
+
+            select.mobile {
+                display: none;
+            }
+
+            select.laptop {
+                display: block;
+            }
+
+            .p2 {
+                margin: 10px auto 20px auto;
+                /* Increased spacing for laptops */
+                max-width: 70%;
+            }
+
+            .input-container-wrapper
+            {
+                margin-left: 0px;
+            }
+            .input-container-wrapper .input-2:nth-child(1),
+            .input-container-wrapper .input-2:nth-child(2) {
+                width: calc(35% - 0px);
+                box-sizing: border-box;
+                /* First two items take up 50% width */
+            }
+
+            /* Subsequent divs after the first two */
+            .input-container-wrapper .input-2:nth-child(n+3) {
+                width: calc(30% - 20px);
+                box-sizing: border-box;
+                /* Next items take 33.33% width */
+            }
+        }
+
+        @media (max-width: 968px) {
+            .list-button {
+                font-size: 14px;
+                padding: 10px 12px;
+                margin-left: 8px;
+            }
+
+            .list-container ul {
+                width: 100%;
+                /* Make list-container take up the full width */
+            }
+
+            .list-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 50%;
+                /* Make list-container take up half of the screen */
+            }
+
+            body.blurred *:not(.list-button):not(.list-container):not(.list-container *):not(.overlay) {
+                filter: blur(5px);
+                /* Apply blur effect */
+            }
+
+            nav {
+                display: none !important;
+            }
+
+            .list-button {
+                display: block;
+            }
+
+            select.mobile {
+                display: block;
+            }
+
+            select.laptop {
+                display: none;
+            }
+
+            input-container-wrapper {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                gap: 10px;
+                margin-left: 50px;
+            }
+
+            .input-2 {
+                width: calc(48% - 5px);
+                box-sizing: border-box;
+                /* Adjust width to fit two elements in the same row */
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0px;
+                margin: 0;
+                margin-bottom: 10px;
+                padding: 10px;
+                margin-left: 0px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                background-color: #f9f9f9;
+                border-radius: 10px;
+            }
+
+            .input-container {
+                /*width: ; */
+
+                display: flex;
+                flex-wrap: wrap;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+
+                /* Space between label and input */
+
+
+                /* space between elements */
+            }
+
+            .input-container label {
+                width: 50%;
+                text-align: cenetr;
+                font-size: 14px;
+                /* slightly larger font */
+                color: #333;
+                /* dark text for readability */
+            }
+
+            .input-container input {
+                width: 50%;
+                padding: 8px;
+                font-size: 14px;
+                border-radius: 5px;
+                background-color: #fff;
+                /* white background */
+                border: 1px solid #ddd;
+                /* subtle border */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+                /* slight shadow for depth */
+            }
+
+            .input-2:hover::after {
+                top: auto;
+                bottom: 100%;
+                content: "Hovered!";
+                /* Sample hover text */
+                color: #007bff;
+                /* blue color */
+            }
+
+            .input-container select {
+                padding: 10px;
+                margin: 5px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                width: 120px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                background-color: #ffffff;
+                color: rgb(0, 0, 0);
+                font-weight: bolder;
+            }
+
+            .input-container select option {
+                background-color: #ffffff;
+                color: #333;
+                font-weight: bolder;
+                border-radius: 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+                /* Slightly smaller on tablets */
+            }
+
+            h3 {
+                margin-top: 20px;
+                font-size: 1.3rem;
+            }
+
+            .header{
+                margin-bottom: 10px;
+            }
+            .head{
+                
+                display: flex;
+                flex-wrap: wrap;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+
+
+            }
+            .instruction-container
+            {
+                margin-top: 20px;
+            }
+            .p2 {
+                font-size: 0.9rem;
+                padding: 8px;
+                text-align: left;
+                /* Slightly reduce padding on smaller screens */
+                margin: 12px 0;
+
+                margin-left: 10px;
+            }
+            .results-table-2
+            {
+                justify-content: center;
+            }
+            .results-table tbody th,
+            .results-table tbody td {
+                padding: 8px 10px;
+                font-size: 14px;
+                text-align: center;
+            }
+
+            .results-table tbody
+            {
+                text-align: center;
+            }
+            .results-table thead {
+                background: #f4f4f4;
+                position: sticky;
+                top: 0;
+                z-index: 2;
+            }
+
+            .results-table {
+                width: 100%;
+                text-align: center;
+                /* Ensures the table doesn't shrink too much */
+               
+            }
+
+
+            .results-table tbody,
+            .results-table th,
+            .results-table td,
+            .results-table tr {
+
+                display: table-col-group;
+                /* Hide table headers on mobile */
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: 6px 10px;
+                font-size: 14px;
+                text-align: left;
+                border: 1px solid #ddd;
+            }
+
+            .results-table-wrapper {
+                width: 100%;
+                overflow-x: auto;
+                /* Enable horizontal scrolling */
+                display: block;
+            }
+
+            .results-table td,
+            .results-table th {
+                padding: 8px 10px;
+                font-size: 14px;
+                text-align: left;
+                border: 1px solid #ddd;
+            }
+        }
+
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color:  #4CAF50;
+            /* Dark blue-gray color */
+            margin-bottom: 20px;
+            font-weight: bold;
+            margin-top: 80px;
+            text-align: center;
+        }
+
+        .head {
+            display: flex;
+            justify-content: center;
+            /* Center horizontally */
+            align-items: center;
+            /* Center vertically */
+            height: 12vh;
+            width: auto;
+            margin-top: 150px;
+            margin-bottom: 0px;
+        }
+
+        .header {
+            margin-bottom: 0px;
+            background-color: #e8f4ff;
+            /* Light blue background */
+            padding: 10px;
+            /* Add padding for spacing inside the box */
+            border-radius: 10px;
+            /* Add rounded corners */
+            box-shadow: 0 0px 8px rgba(0, 0, 0, 0.9);
+            /* Add a shadow for effect */
+            width: 50%;
+            /* Adjust width */
+            max-width: 1200px;
+            /* Limit the maximum width */
+            text-align: left;
+
+            
+        }
+
+        h3 {
+            font-weight: 600;
+            text-align: center;
+            font-size: 1.5rem;
+            color: #000000;
+            margin-top: 20px;
+            /* Slightly lighter dark blue-gray */
+            margin-bottom: 10px;
+            text-shadow: 10px rgb(255, 255, 255);
+        }
+
+        #company_logo {
+            height: 100%;
+            margin-left: 30px;
+            display: flex;
+            align-items: center;
+            position: absolute;
+            left: 0;
+        }
+
+        .hr_list {
+            height: 3px;
+            width: 150px;
+            /* Adjust the height of the line */
+            background: linear-gradient(to right, #000000, #7b0808, #f0f0f0);
+            border: none;
+        }
+    </style>
+</head>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const listButton = document.querySelector('.list-button');
+        const listContainer = document.querySelector('.list-container');
+        const overlay = document.querySelector('.overlay');
+
+        listButton.addEventListener('click', () => {
+            if (listContainer.classList.contains('show')) {
+                listContainer.classList.add('hide');
+                listContainer.classList.remove('show');
+                overlay.style.display = 'none'; // Hide the overlay
+                document.body.classList.remove('blurred');
+            } else {
+                listContainer.classList.add('show');
+                listContainer.classList.remove('hide');
+                listContainer.style.display = 'flex'; // Ensure the container is displayed
+                overlay.style.display = 'block'; // Show the overlay
+                document.body.classList.add('blurred');
+            }
+        });
+
+        overlay.addEventListener('click', () => {
+            listContainer.classList.add('hide');
+            listContainer.classList.remove('show');
+            overlay.style.display = 'none'; // Hide the overlay
+            document.body.classList.remove('blurred');
+        });
+
+        // Ensure the animation ends properly
+        listContainer.addEventListener('animationend', () => {
+            if (listContainer.classList.contains('hide')) {
+                listContainer.style.display = 'none';
+            }
+        });
+    });
+
+    window.addEventListener("scroll", function () {
+        var header = document.querySelector("nav");
+        if (window.scrollY > 50) {
+            document.body.classList.add("scrolled");
+        } else { document.body.classList.remove("scrolled"); }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const listContainer = document.getElementById('listContainer');
+        const overlay = document.getElementById('overlay');
+        const body = document.body;
+        listContainer.style.display = 'none';
+        overlay.style.display = 'none';
+        body.classList.remove('blurred');
+    });
+
+    function toggleList() {
+        const listContainer = document.getElementById('listContainer');
+        const body = document.body;
+        const overlay = document.getElementById('overlay');
+        if (listContainer.style.display === 'none' || listContainer.style.display === '') {
+            listContainer.style.display = 'block';
+            overlay.style.display = 'block'; // Show overlay
+            body.classList.add('blurred'); // Add blur effect
+        } else {
+            listContainer.style.display = 'none';
+            overlay.style.display = 'none'; // Hide overlay
+            body.classList.remove('blurred'); // Remove blur effect
+        }
+    }
+
+</script>
+
+<body>
+    <button class="list-button" onclick="toggleList()">☰</button>
+    <div class="list-container" id="listContainer">
+        <ul>
+            <a href="./home.html"><li><b>Home</b></li></a>
+            <hr class="hr_list">
+            <a href="./Room-Details.html"><li><b>ROOM</b></li></a>
+            <hr class="hr_list">
+            <a href="./WORKER.html"><li><b>WORKER</b></li></a>
+            <hr class="hr_list">
+            <a href="./Live Update.html"><li><b>LIVE UPDATES</b></li></a>
+            <hr class="hr_list">
+            <a href="./Sound Propagation Loss Calculator.html"><li><b>SPL CALCULATOR</b></li></a>
+            <hr class="hr_list">
+            <a href="./RH calculator.html"><li><b>RH CALCULATOR</b></li></a>
+            <hr class="hr_list">
+            <a href="./HT calculator.html"><li><b>HT CALCULATOR</b></li></a>
+            <hr class="hr_list">
+            <a href="./Phase calculator.html"><li><b>PH CALCULATOR</b></li></a>
+        </ul>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleList()"></div>
+    <nav>
+        <img src="images/png logo.png" alt="company_logo" id="company_logo">
+        <ul>
+            <li><a href="./home.html"><b>Home</b></a></li>
+            <li><a href="./Room-Details.html"><b>ROOM</b></a></li>
+            <li><a href="./Live Update.html"><b>Live Updates</b></a></li>
+
+    </nav>
+    <div class="head">
+        <div class="header">
+            <h1>RT Calculator</h1>
+            <h3>Instruction</h3>
+        </div>
+    </div>
+    <br>
+    <div class="instruction-container">
+        <div class="instruction-box">
+            <p class="p2">1. DO NOT CHANGE ANY OF THE GREEN CELLS!</p>
+            <p class="p2">2. Enter your room dimensions in feet into the yellow shaded cells in ROW 10</p>
+            <p class="p2">3. Select the best material for each room surface from the drop down menus in column G. These
+                cells
+                are also shaded yellow.</p>
+            <p class="p2">4. If you have windows, doors, rugs etc enter the info in yellow cells in ROWS 22-33. You can
+                enter 2
+                windows/rugs/doors per room surface.</p>
+            <p class="p2">5. Your estimated room REVERBERATION time will be shown in cell B24.</p>
+            <p class="p2">6. Your estimated treatment needs will be shown in the table.</p>
+        </div>
+    </div>
+    <hr>
+    <div class="input-container-wrapper">
+        <div class="input-2">
+            <h2>Room-Details</h2>
+            <div class="input-container"><label for="length-ft">Length (ft):</label><input type="number" id="length-ft"
+                    placeholder="Length in feet"></div>
+            <div class="input-container"><label for="width-ft">Width (ft):</label><input type="number" id="width-ft"
+                    placeholder="Width in Feet"></div>
+            <div class="input-container"><label for="height-ft">Height (ft):</label><input type="number" id="height-ft"
+                    placeholder="Height in Feet"></div>
+        </div>
+        <div class="input-2">
+            <h2>Room Material</h2>
+            <div class="input-container">
+                <label for="material_floor">Floor</label>
+                <select name="material_floor" id="material_floor">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+            <div class="input-container">
+                <label for="material_ceiling">Ceiling</label>
+                <select name="material_ceiling" id="material_ceiling">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+            <div class="input-container">
+                <label for="wall_1_material">Wall 1</label>
+                <select name="material_wall_1" id="material_wall_1">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+            <div class="input-container">
+                <label for="wall_2_material">Wall 2</label>
+                <select name="material_wall_2" id="material_wall_2">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+            <div class="input-container">
+                <label for="wall_3_material">Wall 3</label>
+                <select name="material_wall_3" id="material_wall_3">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+            <div class="input-container">
+                <label for="wall_4_material">Wall 4</label>
+                <select name="material_wall_4" id="material_wall_4">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+        </div>
+        <div class="input-2">
+            <h2>Floor-A</h2>
+            <div class="input-container"><label for="floor_a_width">Width(ft):</label><input type="number"
+                    id="floor_a_width" placeholder="Width in Feet"></input></div>
+            <div class="input-container">
+                <label for="floor_a_heigth_or_length">Heigth or Length(ft):</label>
+                <input type="number" id="floor_a_heigth_or_length" placeholder="Heigth or Length in Feet"></input>
+            </div>
+            <div class="input-container">
+                <label for="label_floor_a">Material</label>
+                <select name="material_floor_a" id="material_floor_a">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+        </div>
+        <div class="input-2">
+            <h2>Floor-B</h2>
+            <div class="input-container"><label for="floor_b_width">Width(ft):</label><input type="number"
+                    id="floor_b_width" placeholder="Width in Feet"></input></div>
+            <div class="input-container"><label for="floor_b_heigth_or_length">Heigth or Length(ft):</label><input
+                    type="number" id="floor_b_heigth_or_length" placeholder="Heigth or Length in Feet"></input></div>
+            <div class="input-container">
+                <label for="label_floor_a">Material</label>
+                <select name="material_floor_b" id="material_floor_b">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+        </div>
+        <div class="input-2">
+            <h2>Ceiling-A</h2>
+            <div class="input-container"><label for="ceiling_a_width">Width(ft):</label><input type="number"
+                    id="ceiling_a_width" placeholder="Width in Feet"></input></div>
+            <div class="input-container"><label for="ceiling_a_heigth_or_length">Heigth or Length(ft):</label><input
+                    type="number" id="ceiling_a_heigth_or_length" placeholder="Heigth or Length in Feet"></input></div>
+            <div class="input-container">
+                <label for="label_floor_a">Material</label>
+                <select name="material_floor_a" id="material_ceiling_a">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+        </div>
+        <div class="input-2">
+            <h2>Ceiling-B</h2>
+            <div class="input-container"><label for="ceiling_b_width">Width(ft):</label><input type="number"
+                    id="ceiling_b_width" placeholder="Width in Feet"></input></div>
+            <div class="input-container"><label for="ceiling_b_heigth_or_length">Heigth or Length(ft):</label><input
+                    type="number" id="ceiling_b_heigth_or_length" placeholder="Heigth or Length in Feet"></input></div>
+            <div class="input-container">
+                <label for="label_floor_a">Material</label>
+                <select name="material_floor_a" id="material_ceiling_b">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+        </div>
+        <div class="input-2">
+            <h2>Wall 1 A</h2>
+            <div class="input-container"><label for="wall_1_a_width">Width(ft):</label><input type="number"
+                    id="wall_1_a_width" placeholder="Width in Feet"></input></div>
+            <div class="input-container"><label for="wall_1_a_height_or_length">Heigth or Length(ft):</label><input
+                    type="number" id="wall_1_a_height_or_length" placeholder="Width or Heigth in Feet"></input></div>
+            <div class="input-container">
+                <label for="label_floor_a">Material</label>
+                <select name="material_floor_a" id="material_wall_1_a">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+        </div>
+        <div class="input-2">
+            <h2>Wall 1 B</h2>
+            <div class="input-container"><label for="wall_1_b_width">Width(ft):</label><input type="number"
+                    id="wall_1_b_width" placeholder="Width in Feet"></input></div>
+            <div class="input-container"><label for="wall_1_b_height_or_length">Heigth of Width(ft):</label><input
+                    type="number" id="wall_1_b_height_or_length" placeholder="Width or Heigth in Feet"></input></div>
+            <div class="input-container">
+                <label for="label_floor_a">Material</label>
+                <select name="material_floor_a" id="material_wall_1_b">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+        </div>
+        <div class="input-2">
+            <h2>Wall 2 A</h2>
+            <div class="input-container"><label for="wall_2_a_width">Width(ft):</label><input type="number"
+                    id="wall_2_a_width" placeholder="Width in Feet"></input></div>
+            <div class="input-container"><label for="wall_2_a_height_or_length">Heigth or Length(ft):</label><input
+                    type="number" id="wall_2_a_height_or_length" placeholder="Width or Heigth in Feet"></input></div>
+            <div class="input-container">
+                <label for="label_floor_a">Material</label>
+                <select name="material_floor_a" id="material_wall_2_a">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+        </div>
+        <div class="input-2">
+            <h2>Wall 2 B</h2>
+            <div class="input-container"><label for="wall_2_b_width">Width(ft):</label><input type="number"
+                    id="wall_2_b_width" placeholder="Width in Feet"></input></div>
+            <div class="input-container"><label for="wall_2_b_height_or_length">Heigth or Length(ft):</label><input
+                    type="number" id="wall_2_b_height_or_length" placeholder="Width or Heigth in Feet"></input></div>
+            <div class="input-container">
+                <label for="label_floor_a">Material</label>
+                <select name="material_floor_a" id="material_wall_2_b">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+        </div>
+        <div class="input-2">
+            <h2>Wall 3 A</h2>
+            <div class="input-container"><label for="wall_3_a_width">Width(ft):</label><input type="number"
+                    id="wall_3_a_width" placeholder="Width in Feet"></input></div>
+            <div class="input-container"><label for="wall_3_a_height_or_length">Heigth or Length(ft):</label><input
+                    type="number" id="wall_3_a_height_or_length" placeholder="Width or Heigth in Feet"></input></div>
+            <div class="input-container">
+                <label for="label_floor_a">Material</label>
+                <select name="material_floor_a" id="material_wall_3_a">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+        </div>
+        <div class="input-2">
+            <h2>Wall 3 B</h2>
+            <div class="input-container"><label for="wall_3_b_width">Width(ft):</label><input type="number"
+                    id="wall_3_b_width" placeholder="Width in Feet"></input></div>
+            <div class="input-container"><label for="wall_3_b_height_or_length">Heigth or Length(ft):</label><input
+                    type="number" id="wall_3_b_height_or_length" placeholder="Width or Heigth in Feet"></input></div>
+            <div class="input-container">
+                <label for="label_floor_a">Material</label>
+                <select name="material_floor_a" id="material_wall_3_b">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+        </div>
+        <div class="input-2">
+            <h2>Wall 4 A</h2>
+            <div class="input-container"><label for="wall_4_a_width">Width(ft):</label><input type="number"
+                    id="wall_4_a_width" placeholder="Width in Feet"></input></div>
+            <div class="input-container"><label for="wall_4_a_height_or_length">Heigth or Length(ft):</label><input
+                    type="number" id="wall_4_a_height_or_length" placeholder="Width or Heigth in Feet"></input></div>
+            <div class="input-container">
+                <label for="label_floor_a">Material</label>
+                <select name="material_floor_a" id="material_wall_4_a">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+        </div>
+        <div class="input-2">
+            <h2>Wall 4 B</h2>
+            <div class="input-container"><label for="wall_4_b_width">Width(ft):</label><input type="number"
+                    id="wall_4_b_width" placeholder="Width in Feet"></input></div>
+            <div class="input-container"><label for="wall_4_b_height_or_length">Heigth or Length(ft):</label><input
+                    type="number" id="wall_4_b_height_or_length" placeholder="Width or Heigth in Feet"></input></div>
+            <div class="input-container">
+                <label for="label_floor_a">Material</label>
+                <select name="material_floor_a" id="material_wall_4_b">
+                    <option value="" disabled selected>Select Material</option>
+                    <option value="gypsum">Gypsum wallboard (Drywall)</option>
+                    <hr>
+                    <option value="concrete">Concrete</option>
+                    <hr>
+                    <option value="plywood">Plywood</option>
+                    <hr>
+                    <option value="carpet_no_pad">Carpet - thick no pad</option>
+                    <hr>
+                    <option value="carpet_with_pad">Carpet - thick with pad</option>
+                    <hr>
+                    <option value="hardwood">Hardwood flooring</option>
+                    <hr>
+                    <option value="brick">Brick</option>
+                    <hr>
+                    <option value="linoleum">Linoleum</option>
+                    <hr>
+                    <option value="asphalt">Asphalt</option>
+                    <hr>
+                    <option value="glass">Glass</option>
+                    <hr>
+                    <option value="concrete_or_terrazzo">Concrete or terrazzo flooring</option>
+                    <hr>
+                    <option value="tile_on_concrete">Tile on concrete</option>
+                    <hr>
+                    <option value="light_velour_fabric">Light Velour Fabric</option>
+                    <hr>
+                    <option value="medium_velour_fabric">Medium Velour Fabric</option>
+                    <hr>
+                    <option value="heavy_velour_fabric">Heavy Velour Fabric</option>
+                    <hr>
+                    <option value="marble">Marble</option>
+                    <hr>
+                    <option value="water_surface">Water Surface - pool</option>
+                    <hr>
+                    <option value="1_inch_wedge">1 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="2_inch_wedge">2 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="3_inch_wedge">3 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                    <option value="4_inch_wedge">4 Inch Wedge Acoustic Foam</option>
+                    <hr>
+                </select>
+            </div>
+        </div>
+    </div>
+    <br>
+    <hr>
+    <div id="table-container"></div><br>
+    <hr>
+    <div class="table-container-2"></div>
+    <hr><br>
+    <script>
+        function updateResultsAndNrcValues() {
+            const inputs = [
+                "length-ft", "width-ft", "height-ft",
+                "floor_a_width", "floor_a_heigth_or_length", "floor_b_width", "floor_b_heigth_or_length",
+                "ceiling_a_width", "ceiling_a_heigth_or_length", "ceiling_b_width", "ceiling_b_heigth_or_length",
+                "wall_1_a_width", "wall_1_a_height_or_length", "wall_1_b_width", "wall_1_b_height_or_length",
+                "wall_2_a_width", "wall_2_a_height_or_length", "wall_2_b_width", "wall_2_b_height_or_length",
+                "wall_3_a_width", "wall_3_a_height_or_length", "wall_3_b_width", "wall_3_b_height_or_length",
+                "wall_4_a_width", "wall_4_a_height_or_length", "wall_4_b_width", "wall_4_b_height_or_length",
+                "absorption_floor", "absorption_ceiling", "absorption_wall_1", "absorption_wall_2", "absorption_wall_3", "absorption_wall_4",
+                "absorption_floor_a", "absorption_floor_b", "absorption_ceiling_a", "absorption_ceiling_b",
+                "absorption_wall_1_a", "absorption_wall_1_b", "absorption_wall_2_a", "absorption_wall_2_b",
+                "absorption_wall_3_a", "absorption_wall_3_b", "absorption_wall_4_a", "absorption_wall_4_b",
+                "floor_a_area_m2", "floor_b_area_m2", "ceiling_a_area_m2", "ceiling_b_area_m2",
+                "wall_1_area_m2", "wall_2_area_m2", "wall_3_area_m2", "wall_4_area_m2",
+                "wall_1_a_area_m2", "wall_1_b_area_m2", "wall_2_a_area_m2", "wall_2_b_area_m2",
+                "wall_3_a_area_m2", "wall_3_b_area_m2", "wall_4_a_area_m2", "wall_4_b_area_m2",
+                "total_abso", "volume", "rt_sec", "one_inch_0_2", "one_inch_0_3", "one_inch_0_4", "one_inch_0_5", "one_inch_0_6",
+                "one_inch_0_7", "onch_inch_0_8", "one_inch_0_9", "one_inch_1_0", "one_inch_1_1", "one_inch_1_2", "one_inch_1_3", "one_inch_1_4",
+                "one_inch_1_5", "one_inch_1_6", "one_inch_1_7", "one_inch_1_8", "one_inch_1_9", "one_inch_2_0", "one_inch_2_1", "one_inch_2_2", "one_inch_2_3", "one_inch_2_4",
+                "one_inch_2_5", "one_inch_2_6", "two_inch_0_2", "two_inch_0_3", "two_inch_0_4", "two_inch_0_5", "two_inch_0_6",
+                "two_inch_0_7", "two_inch_0_8", "two_inch_0_9", "two_inch_1_0", "two_inch_1_1", "two_inch_1_2", "two_inch_1_3", "two_inch_1_4",
+                "two_inch_1_5", "two_inch_1_6", "two_inch_1_7", "two_inch_1_8", "two_inch_1_9", "two_inch_2_0", "two_inch_2_1", "two_inch_2_2", "two_inch_2_3", "two_inch_2_4",
+                "two_inch_2_5", "two_inch_2_6", "three_inch_0_2", "three_inch_0_3", "three_inch_0_4", "three_inch_0_5", "three_inch_0_6",
+                "three_inch_0_7", "three_inch_0_8", "three_inch_0_9", "three_inch_1_0", "three_inch_1_1", "three_inch_1_2", "three_inch_1_3", "three_inch_1_4",
+                "three_inch_1_5", "three_inch_1_6", "three_inch_1_7", "three_inch_1_8", "three_inch_1_9", "three_inch_2_0", "three_inch_2_1", "three_inch_2_2", "three_inch_2_3", "three_inch_2_4",
+                "three_inch_2_5", "three_inch_2_6", "four_inch_0_2", "four_inch_0_3", "four_inch_0_4", "four_inch_0_5", "four_inch_0_6",
+                "four_inch_0_7", "four_inch_0_8", "four_inch_0_9", "four_inch_1_0", "four_inch_1_1", "four_inch_1_2", "four_inch_1_3", "four_inch_1_4",
+                "four_inch_1_5", "four_inch_1_6", "four_inch_1_7", "four_inch_1_8", "four_inch_1_9", "four_inch_2_0", "four_inch_2_1", "four_inch_2_2", "four_inch_2_3", "four_inch_2_4",
+                "four_inch_2_5", "four_inch_2_6"
+            ];
+
+            const materials = [
+                "material_floor", "material_ceiling",
+                "material_wall_1", "material_wall_2", "material_wall_3", "material_wall_4",
+                "material_floor_a", "material_floor_b",
+                "material_ceiling_a", "material_ceiling_b",
+                "material_wall_1_a", "material_wall_1_b",
+                "material_wall_2_a", "material_wall_2_b",
+                "material_wall_3_a", "material_wall_3_b",
+                "material_wall_4_a", "material_wall_4_b"
+            ];
+
+            const nrcValues = {
+                "gypsum": 0.05,
+                "concrete": 0.05,
+                "plywood": 0.15,
+                "carpet_no_pad": 0.3,
+                "carpet_with_pad": 0.55,
+                "hardwood": 0.15,
+                "brick": 0.05,
+                "linoleum": 0.05,
+                "asphalt": 0.05,
+                "glass": 0.05,
+                "concrete_or_terrazzo": 0.05,
+                "tile_on_concrete": 0.02,
+                "light_velour_fabric": 0.15,
+                "medium_velour_fabric": 0.55,
+                "heavy_velour_fabric": 0.6,
+                "marble": 0.01,
+                "water_surface": 0.01,
+                "1_inch_wedge": 0.4,
+                "2_inch_wedge": 0.65,
+                "3_inch_wedge": 0.75,
+                "4_inch_wedge": 0.8
+            };
+
+            const results = {};
+
+            // Collect numeric inputs
+            inputs.forEach(id => {
+                const element = document.getElementById(id);
+                results[id] = parseFloat(element?.value) || 0;
+            });
+
+            // Collect material inputs and calculate NRC values
+            const nrcResults = {};
+            materials.forEach(id => {
+                const element = document.getElementById(id);
+                const selectedMaterial = element ? element.value : "none";
+                nrcResults[id] = nrcValues[selectedMaterial] || 0.0; // Default NRC if not found
+            });
+
+            // Conversion factor for feet to meters
+            const ftToM = 0.305;
+
+            // Floor dimensions
+            results.floor_a_width_m = results.floor_a_width * ftToM;
+            results.floor_a_height_m = results.floor_a_heigth_or_length * ftToM;
+
+            results.floor_b_width_m = results.floor_b_width * ftToM;
+            results.floor_b_height_m = results.floor_b_heigth_or_length * ftToM;
+
+            // Ceiling dimensions
+            results.ceiling_a_width_m = results.ceiling_a_width * ftToM;
+            results.ceiling_a_height_m = results.ceiling_a_heigth_or_length * ftToM;
+
+            results.ceiling_b_width_m = results.ceiling_b_width * ftToM;
+            results.ceiling_b_height_m = results.ceiling_b_heigth_or_length * ftToM;
+
+            // Wall dimensions
+            results.wall_1_a_width_m = results.wall_1_a_width * ftToM;
+            results.wall_1_a_height_m = results.wall_1_a_height_or_length * ftToM;
+
+            results.wall_1_b_width_m = results.wall_1_b_width * ftToM;
+            results.wall_1_b_height_m = results.wall_1_b_height_or_length * ftToM;
+
+            results.wall_2_a_width_m = results.wall_2_a_width * ftToM;
+            results.wall_2_a_height_m = results.wall_2_a_height_or_length * ftToM;
+
+            results.wall_2_b_width_m = results.wall_2_b_width * ftToM;
+            results.wall_2_b_height_m = results.wall_2_b_height_or_length * ftToM;
+
+            results.wall_3_a_width_m = results.wall_3_a_width * ftToM;
+            results.wall_3_a_height_m = results.wall_3_a_height_or_length * ftToM;
+
+            results.wall_3_b_width_m = results.wall_3_b_width * ftToM;
+            results.wall_3_b_height_m = results.wall_3_b_height_or_length * ftToM;
+
+            results.wall_4_a_width_m = results.wall_4_a_width * ftToM;
+            results.wall_4_a_height_m = results.wall_4_a_height_or_length * ftToM;
+
+            results.wall_4_b_width_m = results.wall_4_b_width * ftToM;
+            results.wall_4_b_height_m = results.wall_4_b_height_or_length * ftToM;
+
+            results.floor_a_area_m2 = (results.floor_a_width_m * results.floor_a_height_m).toFixed(2);
+            results.floor_b_area_m2 = (results.floor_b_width_m * results.floor_b_height_m).toFixed(2);
+            results.ceiling_a_area_m2 = (results.ceiling_a_width_m * results.ceiling_a_height_m).toFixed(2);
+            results.ceiling_b_area_m2 = (results.ceiling_b_width_m * results.ceiling_b_height_m).toFixed(2);
+            results.wall_1_a_area_m2 = (results.wall_1_a_width_m * results.wall_1_a_height_m).toFixed(2);
+            results.wall_1_b_area_m2 = (results.wall_1_b_width_m * results.wall_1_b_height_m).toFixed(2);
+            results.wall_2_a_area_m2 = (results.wall_2_a_width_m * results.wall_2_a_height_m).toFixed(2);
+            results.wall_2_b_area_m2 = (results.wall_2_b_width_m * results.wall_2_b_height_m).toFixed(2);
+            results.wall_3_a_area_m2 = (results.wall_3_a_width_m * results.wall_3_a_height_m).toFixed(2);
+            results.wall_3_b_area_m2 = (results.wall_3_b_width_m * results.wall_3_b_height_m).toFixed(2);
+            results.wall_4_a_area_m2 = (results.wall_4_a_width_m * results.wall_4_a_height_m).toFixed(2);
+            results.wall_4_b_area_m2 = (results.wall_4_b_width_m * results.wall_4_b_height_m).toFixed(2);
+
+            // Convert dimensions to metric (meters) and calculate areas
+            results.width_m = (results["width-ft"] * 0.3048).toFixed(2);
+            results.length_m = (results["length-ft"] * 0.3048).toFixed(2);
+            results.height_m = (results["height-ft"] * 0.3048).toFixed(2);
+
+            // Calculate individual component areas
+            results.floor_a_area_m2 = parseFloat(results.floor_a_width_m) * parseFloat(results.floor_a_height_m);
+            results.floor_b_area_m2 = parseFloat(results.floor_b_width_m) * parseFloat(results.floor_b_height_m);
+            results.ceiling_a_area_m2 = parseFloat(results.ceiling_a_width_m) * parseFloat(results.ceiling_a_height_m);
+            results.ceiling_b_area_m2 = parseFloat(results.ceiling_b_width_m) * parseFloat(results.ceiling_b_height_m);
+
+            results.wall_1_a_area_m2 = parseFloat(results.wall_1_a_width_m) * parseFloat(results.wall_1_a_height_m);
+            results.wall_1_b_area_m2 = parseFloat(results.wall_1_b_width_m) * parseFloat(results.wall_1_b_height_m);
+            results.wall_2_a_area_m2 = parseFloat(results.wall_2_a_width_m) * parseFloat(results.wall_2_a_height_m);
+            results.wall_2_b_area_m2 = parseFloat(results.wall_2_b_width_m) * parseFloat(results.wall_2_b_height_m);
+            results.wall_3_a_area_m2 = parseFloat(results.wall_3_a_width_m) * parseFloat(results.wall_3_a_height_m);
+            results.wall_3_b_area_m2 = parseFloat(results.wall_3_b_width_m) * parseFloat(results.wall_3_b_height_m);
+            results.wall_4_a_area_m2 = parseFloat(results.wall_4_a_width_m) * parseFloat(results.wall_4_a_height_m);
+            results.wall_4_b_area_m2 = parseFloat(results.wall_4_b_width_m) * parseFloat(results.wall_4_b_height_m);
+
+            // Calculate total areas
+            results.floor_area_m2 = (
+                parseFloat(results.width_m) * parseFloat(results.length_m) -
+                results.floor_a_area_m2 -
+                results.floor_b_area_m2
+            ).toFixed(2);
+
+            results.ceiling_area_m2 = (
+                parseFloat(results.width_m) * parseFloat(results.length_m) -
+                results.ceiling_a_area_m2 -
+                results.ceiling_b_area_m2
+            ).toFixed(2);
+
+            results.wall_1_area_m2 = (
+                parseFloat(results.length_m) * parseFloat(results.height_m) -
+                results.wall_1_a_area_m2 -
+                results.wall_1_b_area_m2
+            ).toFixed(2);
+
+            results.wall_2_area_m2 = (
+                parseFloat(results.height_m) * parseFloat(results.width_m) -
+                results.wall_2_a_area_m2 -
+                results.wall_2_b_area_m2
+            ).toFixed(2);
+
+            results.wall_3_area_m2 = (
+                parseFloat(results.length_m) * parseFloat(results.height_m) -
+                results.wall_3_a_area_m2 -
+                results.wall_3_b_area_m2
+            ).toFixed(2);
+
+            results.wall_4_area_m2 = (
+                parseFloat(results.width_m) * parseFloat(results.height_m) -
+                results.wall_4_a_area_m2 -
+                results.wall_4_b_area_m2
+            ).toFixed(2);
+
+
+            results.absorption_floor = (results.floor_area_m2 * nrcResults.material_floor);
+            results.absorption_ceiling = (results.ceiling_area_m2 * nrcResults.material_ceiling);
+            results.absorption_wall_1 = (results.wall_1_area_m2 * nrcResults.material_wall_1);
+            results.absorption_wall_2 = (results.wall_2_area_m2 * nrcResults.material_wall_2);
+            results.absorption_wall_3 = (results.wall_3_area_m2 * nrcResults.material_wall_3);
+            results.absorption_wall_4 = (results.wall_4_area_m2 * nrcResults.material_wall_4);
+
+            results.absorption_floor_a = (results.floor_a_area_m2 * nrcResults.material_floor_a);
+            results.absorption_floor_b = (results.floor_b_area_m2 * nrcResults.material_floor_b);
+            results.absorption_ceiling_a = (results.ceiling_a_area_m2 * nrcResults.material_ceiling_a);
+            results.absorption_ceiling_b = (results.ceiling_b_area_m2 * nrcResults.material_ceiling_b);
+            results.absorption_wall_1_a = (results.wall_1_a_area_m2 * nrcResults.material_wall_1_a);
+            results.absorption_wall_1_b = (results.wall_1_b_area_m2 * nrcResults.material_wall_1_b);
+            results.absorption_wall_2_a = (results.wall_2_a_area_m2 * nrcResults.material_wall_2_a);
+            results.absorption_wall_2_b = (results.wall_2_b_area_m2 * nrcResults.material_wall_2_b);
+            results.absorption_wall_3_a = (results.wall_3_a_area_m2 * nrcResults.material_wall_3_a);
+            results.absorption_wall_3_b = (results.wall_3_b_area_m2 * nrcResults.material_wall_3_b);
+            results.absorption_wall_4_a = (results.wall_4_a_area_m2 * nrcResults.material_wall_4_a);
+            results.absorption_wall_4_b = (results.wall_4_b_area_m2 * nrcResults.material_wall_4_b);
+
+
+            results.total_abso = (
+                results.absorption_floor +
+                results.absorption_ceiling +
+                results.absorption_wall_1 +
+                results.absorption_wall_2 +
+                results.absorption_wall_3 +
+                results.absorption_wall_4 +
+                results.absorption_floor_a +
+                results.absorption_floor_b +
+                results.absorption_ceiling_a +
+                results.absorption_ceiling_b +
+                results.absorption_wall_1_a +
+                results.absorption_wall_1_b +
+                results.absorption_wall_2_a +
+                results.absorption_wall_2_b +
+                results.absorption_wall_3_a +
+                results.absorption_wall_3_b +
+                results.absorption_wall_4_a +
+                results.absorption_wall_4_b
+            );
+
+            results.volume = results.length_m * results.width_m * results.height_m;// Create the results table dynamically
+
+            if (results.total_abso === 0) {
+                results.rt_sec = 0;
+            } else {
+                results.rt_sec = ((0.161 * results.volume) / results.total_abso).toFixed(2);
+            }
+
+
+            // Create the results table dynamically
+            const tableHTML = `
+            <div class="results-table-wrapper">
+                <table class="results-table">
+                    <thead>
+                    <tr>
+                        <th>Surface</th>
+                        <th>Width (m)</th>
+                        <th>Height/Length (m)</th>
+                        <th>Area (m²)</th>
+                        <th>Material</th>
+                        <th>NRC</th>
+                        <th>Absorption</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Floor</td>
+                        <td>${results.width_m}</td>
+                        <td>${results.length_m}</td>
+                        <td>${results.floor_area_m2}</td>
+                        <td>${document.getElementById("material_floor").value || "Select material"}</td>
+                        <td>${nrcResults.material_floor}</td>
+                        <td>${(results.absorption_floor).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td>Ceiling</td>
+                        <td>${results.width_m}</td>
+                        <td>${results.length_m}</td>
+                        <td>${results.ceiling_area_m2}</td>
+                        <td>${document.getElementById("material_ceiling").value || "Select material"}</td>
+                        <td>${nrcResults.material_ceiling}</td>
+                        <td>${(results.absorption_ceiling).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td>Wall 1</td>
+                        <td>${results.length_m}</td>
+                        <td>${results.height_m}</td>
+                        <td>${results.wall_1_area_m2}</td>
+                        <td>${document.getElementById("material_wall_1").value || "Select material"}</td>
+                        <td>${nrcResults.material_wall_1}</td>
+                        <td>${(results.absorption_wall_1).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td>Wall 2</td>
+                        <td>${results.width_m}</td>
+                        <td>${results.height_m}</td>
+                        <td>${results.wall_2_area_m2}</td>
+                        <td>${document.getElementById("material_wall_2").value || "Select material"}</td>
+                        <td>${nrcResults.material_wall_2}</td>
+                        <td>${(results.absorption_wall_2).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td>Wall 3</td>
+                        <td>${results.length_m}</td>
+                        <td>${results.height_m}</td>
+                        <td>${results.wall_3_area_m2}</td>
+                        <td>${document.getElementById("material_wall_3").value || "Select material"}</td>
+                        <td>${nrcResults.material_wall_3}</td>
+                        <td>${(results.absorption_wall_3).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td>Wall 4</td>
+                        <td>${results.width_m}</td>
+                        <td>${results.height_m}</td>
+                        <td>${results.wall_4_area_m2}</td>
+                        <td>${document.getElementById("material_wall_4").value || "Select material"}</td>
+                        <td>${nrcResults.material_wall_4}</td>
+                        <td>${(results.absorption_wall_4).toFixed(2)}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>`;
+            //for the third table 
+            results.one_inch_0_2 = 0;
+            results.one_inch_0_3 = 0;
+            results.one_inch_0_4 = 0;
+            results.one_inch_0_5 = 0;
+            results.one_inch_0_6 = 0;
+            results.one_inch_0_7 = 0;
+            results.one_inch_0_8 = 0;
+            results.one_inch_0_9 = 0;
+            results.one_inch_1_0 = 0;
+            results.one_inch_1_1 = 0;
+            results.one_inch_1_2 = 0;
+            results.one_inch_1_3 = 0;
+            results.one_inch_1_4 = 0;
+            results.one_inch_1_5 = 0;
+            results.one_inch_1_6 = 0;
+            results.one_inch_1_7 = 0;
+            results.one_inch_1_8 = 0;
+            results.one_inch_1_9 = 0;
+            results.one_inch_2_0 = 0;
+            results.one_inch_2_1 = 0;
+            results.one_inch_2_2 = 0;
+            results.one_inch_2_3 = 0;
+            results.one_inch_2_4 = 0;
+            results.one_inch_2_5 = 0;
+            results.one_inch_2_6 = 0;
+
+            results.two_inch_0_2 = 0;
+            results.two_inch_0_3 = 0;
+            results.two_inch_0_4 = 0;
+            results.two_inch_0_5 = 0;
+            results.two_inch_0_6 = 0;
+            results.two_inch_0_7 = 0;
+            results.two_inch_0_8 = 0;
+            results.two_inch_0_9 = 0;
+            results.two_inch_1_0 = 0;
+            results.two_inch_1_1 = 0;
+            results.two_inch_1_2 = 0;
+            results.two_inch_1_3 = 0;
+            results.two_inch_1_4 = 0;
+            results.two_inch_1_5 = 0;
+            results.two_inch_1_6 = 0;
+            results.two_inch_1_7 = 0;
+            results.two_inch_1_8 = 0;
+            results.two_inch_1_9 = 0;
+            results.two_inch_2_0 = 0;
+            results.two_inch_2_1 = 0;
+            results.two_inch_2_2 = 0;
+            results.two_inch_2_3 = 0;
+            results.two_inch_2_4 = 0;
+            results.two_inch_2_5 = 0;
+            results.two_inch_2_6 = 0;
+
+            results.three_inch_0_2 = 0;
+            results.three_inch_0_3 = 0;
+            results.three_inch_0_4 = 0;
+            results.three_inch_0_5 = 0;
+            results.three_inch_0_6 = 0;
+            results.three_inch_0_7 = 0;
+            results.three_inch_0_8 = 0;
+            results.three_inch_0_9 = 0;
+            results.three_inch_1_0 = 0;
+            results.three_inch_1_1 = 0;
+            results.three_inch_1_2 = 0;
+            results.three_inch_1_3 = 0;
+            results.three_inch_1_4 = 0;
+            results.three_inch_1_5 = 0;
+            results.three_inch_1_6 = 0;
+            results.three_inch_1_7 = 0;
+            results.three_inch_1_8 = 0;
+            results.three_inch_1_9 = 0;
+            results.three_inch_2_0 = 0;
+            results.three_inch_2_1 = 0;
+            results.three_inch_2_2 = 0;
+            results.three_inch_2_3 = 0;
+            results.three_inch_2_4 = 0;
+            results.three_inch_2_5 = 0;
+            results.three_inch_2_6 = 0;
+
+            let a_0_2 = ((((0.16 * results.volume) / 0.2) - results.total_abso) / 0.036);
+            let a_0_3 = ((((0.16 * results.volume) / 0.3) - results.total_abso) / 0.036);
+            let a_0_4 = ((((0.16 * results.volume) / 0.4) - results.total_abso) / 0.036);
+            let a_0_5 = ((((0.16 * results.volume) / 0.5) - results.total_abso) / 0.036);
+            let a_0_6 = ((((0.16 * results.volume) / 0.6) - results.total_abso) / 0.036);
+            let a_0_7 = ((((0.16 * results.volume) / 0.7) - results.total_abso) / 0.036);
+            let a_0_8 = ((((0.16 * results.volume) / 0.8) - results.total_abso) / 0.036);
+            let a_0_9 = ((((0.16 * results.volume) / 0.9) - results.total_abso) / 0.036);
+            let a_1_0 = ((((0.16 * results.volume) / 1.0) - results.total_abso) / 0.036);
+            let a_1_1 = ((((0.16 * results.volume) / 1.1) - results.total_abso) / 0.036);
+            let a_1_2 = ((((0.16 * results.volume) / 1.2) - results.total_abso) / 0.036);
+            let a_1_3 = ((((0.16 * results.volume) / 1.3) - results.total_abso) / 0.036);
+            let a_1_4 = ((((0.16 * results.volume) / 1.4) - results.total_abso) / 0.036);
+            let a_1_5 = ((((0.16 * results.volume) / 1.5) - results.total_abso) / 0.036);
+            let a_1_6 = ((((0.16 * results.volume) / 1.6) - results.total_abso) / 0.036);
+            let a_1_7 = ((((0.16 * results.volume) / 1.7) - results.total_abso) / 0.036);
+            let a_1_8 = ((((0.16 * results.volume) / 1.8) - results.total_abso) / 0.036);
+            let a_1_9 = ((((0.16 * results.volume) / 1.9) - results.total_abso) / 0.036);
+            let a_2_0 = ((((0.16 * results.volume) / 2.0) - results.total_abso) / 0.036);
+            let a_2_1 = ((((0.16 * results.volume) / 2.1) - results.total_abso) / 0.036);
+            let a_2_2 = ((((0.16 * results.volume) / 2.2) - results.total_abso) / 0.036);
+            let a_2_3 = ((((0.16 * results.volume) / 2.3) - results.total_abso) / 0.036);
+            let a_2_4 = ((((0.16 * results.volume) / 2.4) - results.total_abso) / 0.036);
+            let a_2_5 = ((((0.16 * results.volume) / 2.5) - results.total_abso) / 0.036);
+            let a_2_6 = ((((0.16 * results.volume) / 2.6) - results.total_abso) / 0.036);
+
+            let b_0_2 = ((((0.16 * results.volume) / 0.2) - results.total_abso) / 0.0585);
+            let b_0_3 = ((((0.16 * results.volume) / 0.3) - results.total_abso) / 0.0585);
+            let b_0_4 = ((((0.16 * results.volume) / 0.4) - results.total_abso) / 0.0585);
+            let b_0_5 = ((((0.16 * results.volume) / 0.5) - results.total_abso) / 0.0585);
+            let b_0_6 = ((((0.16 * results.volume) / 0.6) - results.total_abso) / 0.0585);
+            let b_0_7 = ((((0.16 * results.volume) / 0.7) - results.total_abso) / 0.0585);
+            let b_0_8 = ((((0.16 * results.volume) / 0.8) - results.total_abso) / 0.0585);
+            let b_0_9 = ((((0.16 * results.volume) / 0.9) - results.total_abso) / 0.0585);
+            let b_1_0 = ((((0.16 * results.volume) / 1.0) - results.total_abso) / 0.0585);
+            let b_1_1 = ((((0.16 * results.volume) / 1.1) - results.total_abso) / 0.0585);
+            let b_1_2 = ((((0.16 * results.volume) / 1.2) - results.total_abso) / 0.0585);
+            let b_1_3 = ((((0.16 * results.volume) / 1.3) - results.total_abso) / 0.0585);
+            let b_1_4 = ((((0.16 * results.volume) / 1.4) - results.total_abso) / 0.0585);
+            let b_1_5 = ((((0.16 * results.volume) / 1.5) - results.total_abso) / 0.0585);
+            let b_1_6 = ((((0.16 * results.volume) / 1.6) - results.total_abso) / 0.0585);
+            let b_1_7 = ((((0.16 * results.volume) / 1.7) - results.total_abso) / 0.0585);
+            let b_1_8 = ((((0.16 * results.volume) / 1.8) - results.total_abso) / 0.0585);
+            let b_1_9 = ((((0.16 * results.volume) / 1.9) - results.total_abso) / 0.0585);
+            let b_2_0 = ((((0.16 * results.volume) / 2.0) - results.total_abso) / 0.0585);
+            let b_2_1 = ((((0.16 * results.volume) / 2.1) - results.total_abso) / 0.0585);
+            let b_2_2 = ((((0.16 * results.volume) / 2.2) - results.total_abso) / 0.0585);
+            let b_2_3 = ((((0.16 * results.volume) / 2.3) - results.total_abso) / 0.0585);
+            let b_2_4 = ((((0.16 * results.volume) / 2.4) - results.total_abso) / 0.0585);
+            let b_2_5 = ((((0.16 * results.volume) / 2.5) - results.total_abso) / 0.0585);
+            let b_2_6 = ((((0.16 * results.volume) / 2.6) - results.total_abso) / 0.0585);
+
+
+            let c_0_2 = ((((0.16 * results.volume) / 0.2) - results.total_abso) / 0.0675);
+            let c_0_3 = ((((0.16 * results.volume) / 0.3) - results.total_abso) / 0.0675);
+            let c_0_4 = ((((0.16 * results.volume) / 0.4) - results.total_abso) / 0.0675);
+            let c_0_5 = ((((0.16 * results.volume) / 0.5) - results.total_abso) / 0.0675);
+            let c_0_6 = ((((0.16 * results.volume) / 0.6) - results.total_abso) / 0.0675);
+            let c_0_7 = ((((0.16 * results.volume) / 0.7) - results.total_abso) / 0.0675);
+            let c_0_8 = ((((0.16 * results.volume) / 0.8) - results.total_abso) / 0.0675);
+            let c_0_9 = ((((0.16 * results.volume) / 0.9) - results.total_abso) / 0.0675);
+            let c_1_0 = ((((0.16 * results.volume) / 1.0) - results.total_abso) / 0.0675);
+            let c_1_1 = ((((0.16 * results.volume) / 1.1) - results.total_abso) / 0.0675);
+            let c_1_2 = ((((0.16 * results.volume) / 1.2) - results.total_abso) / 0.0675);
+            let c_1_3 = ((((0.16 * results.volume) / 1.3) - results.total_abso) / 0.0675);
+            let c_1_4 = ((((0.16 * results.volume) / 1.4) - results.total_abso) / 0.0675);
+            let c_1_5 = ((((0.16 * results.volume) / 1.5) - results.total_abso) / 0.0675);
+            let c_1_6 = ((((0.16 * results.volume) / 1.6) - results.total_abso) / 0.0675);
+            let c_1_7 = ((((0.16 * results.volume) / 1.7) - results.total_abso) / 0.0675);
+            let c_1_8 = ((((0.16 * results.volume) / 1.8) - results.total_abso) / 0.0675);
+            let c_1_9 = ((((0.16 * results.volume) / 1.9) - results.total_abso) / 0.0675);
+            let c_2_0 = ((((0.16 * results.volume) / 2.0) - results.total_abso) / 0.0675);
+            let c_2_1 = ((((0.16 * results.volume) / 2.1) - results.total_abso) / 0.0675);
+            let c_2_2 = ((((0.16 * results.volume) / 2.2) - results.total_abso) / 0.0675);
+            let c_2_3 = ((((0.16 * results.volume) / 2.3) - results.total_abso) / 0.0675);
+            let c_2_4 = ((((0.16 * results.volume) / 2.4) - results.total_abso) / 0.0675);
+            let c_2_5 = ((((0.16 * results.volume) / 2.5) - results.total_abso) / 0.0675);
+            let c_2_6 = ((((0.16 * results.volume) / 2.6) - results.total_abso) / 0.0675);
+
+            let d_0_2 = ((((0.16 * results.volume) / 0.2) - results.total_abso) / 0.072);
+            let d_0_3 = ((((0.16 * results.volume) / 0.3) - results.total_abso) / 0.072);
+            let d_0_4 = ((((0.16 * results.volume) / 0.4) - results.total_abso) / 0.072);
+            let d_0_5 = ((((0.16 * results.volume) / 0.5) - results.total_abso) / 0.072);
+            let d_0_6 = ((((0.16 * results.volume) / 0.6) - results.total_abso) / 0.072);
+            let d_0_7 = ((((0.16 * results.volume) / 0.7) - results.total_abso) / 0.072);
+            let d_0_8 = ((((0.16 * results.volume) / 0.8) - results.total_abso) / 0.072);
+            let d_0_9 = ((((0.16 * results.volume) / 0.9) - results.total_abso) / 0.072);
+            let d_1_0 = ((((0.16 * results.volume) / 1.0) - results.total_abso) / 0.072);
+            let d_1_1 = ((((0.16 * results.volume) / 1.1) - results.total_abso) / 0.072);
+            let d_1_2 = ((((0.16 * results.volume) / 1.2) - results.total_abso) / 0.072);
+            let d_1_3 = ((((0.16 * results.volume) / 1.3) - results.total_abso) / 0.072);
+            let d_1_4 = ((((0.16 * results.volume) / 1.4) - results.total_abso) / 0.072);
+            let d_1_5 = ((((0.16 * results.volume) / 1.5) - results.total_abso) / 0.072);
+            let d_1_6 = ((((0.16 * results.volume) / 1.6) - results.total_abso) / 0.072);
+            let d_1_7 = ((((0.16 * results.volume) / 1.7) - results.total_abso) / 0.072);
+            let d_1_8 = ((((0.16 * results.volume) / 1.8) - results.total_abso) / 0.072);
+            let d_1_9 = ((((0.16 * results.volume) / 1.9) - results.total_abso) / 0.072);
+            let d_2_0 = ((((0.16 * results.volume) / 2.0) - results.total_abso) / 0.072);
+            let d_2_1 = ((((0.16 * results.volume) / 2.1) - results.total_abso) / 0.072);
+            let d_2_2 = ((((0.16 * results.volume) / 2.2) - results.total_abso) / 0.072);
+            let d_2_3 = ((((0.16 * results.volume) / 2.3) - results.total_abso) / 0.072);
+            let d_2_4 = ((((0.16 * results.volume) / 2.4) - results.total_abso) / 0.072);
+            let d_2_5 = ((((0.16 * results.volume) / 2.5) - results.total_abso) / 0.072);
+            let d_2_6 = ((((0.16 * results.volume) / 2.6) - results.total_abso) / 0.072);
+
+            if (a_0_2 > 0) { results.one_inch_0_2 = (a_0_2).toFixed(2); }
+            else if (a_0_2 < 0) { results.one_inch_0_2 = " "; }
+            if (a_0_3 > 0) { results.one_inch_0_3 = (a_0_3).toFixed(2); }
+            else if (a_0_3 < 0) { results.one_inch_0_3 = " "; }
+            if (a_0_4 > 0) { results.one_inch_0_4 = (a_0_4).toFixed(2); }
+            else if (a_0_4 < 0) { results.one_inch_0_4 = " "; }
+            if (a_0_5 > 0) { results.one_inch_0_5 = (a_0_5).toFixed(2); }
+            else if (a_0_5 < 0) { results.one_inch_0_5 = " "; }
+            if (a_0_6 > 0) { results.one_inch_0_6 = (a_0_6).toFixed(2); }
+            else if (a_0_6 < 0) { results.one_inch_0_6 = " "; }
+            if (a_0_7 > 0) { results.one_inch_0_7 = (a_0_7).toFixed(2); }
+            else if (a_0_7 < 0) { results.one_inch_0_7 = " "; }
+            if (a_0_8 > 0) { results.one_inch_0_8 = (a_0_8).toFixed(2); }
+            else if (a_0_8 < 0) { results.one_inch_0_8 = " "; }
+            if (a_0_9 > 0) { results.one_inch_0_9 = (a_0_9).toFixed(2); }
+            else if (a_0_9 < 0) { results.one_inch_0_9 = " "; }
+            if (a_1_0 > 0) { results.one_inch_1_0 = (a_1_0).toFixed(2); }
+            else if (a_1_0 < 0) { results.one_inch_1_0 = " "; }
+            if (a_1_1 > 0) { results.one_inch_1_1 = (a_1_1).toFixed(2); }
+            else if (a_1_1 < 0) { results.one_inch_1_1 = " "; }
+            if (a_1_2 > 0) { results.one_inch_1_2 = (a_1_2).toFixed(2); }
+            else if (a_1_2 < 0) { results.one_inch_1_2 = " "; }
+            if (a_1_3 > 0) { results.one_inch_1_3 = (a_1_3).toFixed(2); }
+            else if (a_1_3 < 0) { results.one_inch_1_3 = " "; }
+            if (a_1_4 > 0) { results.one_inch_1_4 = (a_1_4).toFixed(2); }
+            else if (a_1_4 < 0) { results.one_inch_1_4 = ""; }
+            if (a_1_5 > 0) { results.one_inch_1_5 = (a_1_5).toFixed(2); }
+            else if (a_1_5 < 0) { results.one_inch_1_5 = ""; }
+            if (a_1_6 > 0) { results.one_inch_1_6 = (a_1_6).toFixed(2); }
+            else if (a_1_6 < 0) { results.one_inch_1_6 = ""; }
+            if (a_1_7 > 0) { results.one_inch_1_7 = (a_1_7).toFixed(2); }
+            else if (a_1_7 < 0) { results.one_inch_1_7 = ""; }
+            if (a_1_8 > 0) { results.one_inch_1_8 = (a_1_8).toFixed(2); }
+            else if (a_1_8 < 0) { results.one_inch_1_8 = ""; }
+            if (a_1_9 > 0) { results.one_inch_1_9 = (a_1_9).toFixed(2); }
+            else if (a_1_9 < 0) { results.one_inch_1_9 = ""; }
+            if (a_2_0 > 0) { results.one_inch_2_0 = (a_2_0).toFixed(2); }
+            else if (a_2_0 < 0) { results.one_inch_2_0 = ""; }
+            if (a_2_1 > 0) { results.one_inch_2_1 = (a_2_1).toFixed(2); }
+            else if (a_2_1 < 0) { results.one_inch_2_1 = ""; }
+            if (a_2_2 > 0) { results.one_inch_2_2 = (a_2_2).toFixed(2); }
+            else if (a_2_2 < 0) { results.one_inch_2_2 = ""; }
+            if (a_2_3 > 0) { results.one_inch_2_3 = (a_2_3).toFixed(2); }
+            else if (a_2_3 < 0) { results.one_inch_2_3 = ""; }
+            if (a_2_4 > 0) { results.one_inch_2_4 = (a_2_4).toFixed(2); }
+            else if (a_2_4 < 0) { results.one_inch_2_4 = ""; }
+            if (a_2_5 > 0) { results.one_inch_2_5 = (a_2_5).toFixed(2); }
+            else if (a_2_5 < 0) { results.one_inch_2_5 = ""; }
+            if (a_2_6 > 0) { results.one_inch_2_6 = (a_2_6).toFixed(2); }
+            else if (a_2_6 < 0) { results.one_inch_2_6 = ""; }
+
+            if (b_0_2 > 0) { results.two_inch_0_2 = (b_0_2).toFixed(2); }
+            else if (b_0_2 < 0) { results.two_inch_0_2 = ""; }
+            if (b_0_3 > 0) { results.two_inch_0_3 = (b_0_3).toFixed(2); }
+            else if (b_0_3 < 0) { results.two_inch_0_3 = ""; }
+            if (b_0_4 > 0) { results.two_inch_0_4 = (b_0_4).toFixed(2); }
+            else if (b_0_4 < 0) { results.two_inch_0_4 = ""; }
+            if (b_0_5 > 0) { results.two_inch_0_5 = (b_0_5).toFixed(2); }
+            else if (b_0_5 < 0) { results.two_inch_0_5 = ""; }
+            if (b_0_6 > 0) { results.two_inch_0_6 = (b_0_6).toFixed(2); }
+            else if (b_0_6 < 0) { results.two_inch_0_6 = ""; }
+            if (b_0_7 > 0) { results.two_inch_0_7 = (b_0_7).toFixed(2); }
+            else if (b_0_7 < 0) { results.two_inch_0_7 = ""; }
+            if (b_0_8 > 0) { results.two_inch_0_8 = (b_0_8).toFixed(2); }
+            else if (b_0_8 < 0) { results.two_inch_0_8 = ""; }
+            if (b_0_9 > 0) { results.two_inch_0_9 = (b_0_9).toFixed(2); }
+            else if (b_0_9 < 0) { results.two_inch_0_9 = ""; }
+            if (b_1_0 > 0) { results.two_inch_1_0 = (b_1_0).toFixed(2); }
+            else if (b_1_0 < 0) { results.two_inch_1_0 = ""; }
+            if (b_1_1 > 0) { results.two_inch_1_1 = (b_1_1).toFixed(2); }
+            else if (b_1_1 < 0) { results.two_inch_1_1 = ""; }
+            if (b_1_2 > 0) { results.two_inch_1_2 = (b_1_2).toFixed(2); }
+            else if (b_1_2 < 0) { results.two_inch_1_2 = ""; }
+            if (b_1_3 > 0) { results.two_inch_1_3 = (b_1_3).toFixed(2); }
+            else if (b_1_3 < 0) { results.two_inch_1_3 = ""; }
+            if (b_1_4 > 0) { results.two_inch_1_4 = (b_1_4).toFixed(2); }
+            else if (b_1_4 < 0) { results.two_inch_1_4 = ""; }
+            if (b_1_5 > 0) { results.two_inch_1_5 = (b_1_5).toFixed(2); }
+            else if (b_1_5 < 0) { results.two_inch_1_5 = ""; }
+            if (b_1_6 > 0) { results.two_inch_1_6 = (b_1_6).toFixed(2); }
+            else if (b_1_6 < 0) { results.two_inch_1_6 = ""; }
+            if (b_1_7 > 0) { results.two_inch_1_7 = (b_1_7).toFixed(2); }
+            else if (b_1_7 < 0) { results.two_inch_1_7 = ""; }
+            if (b_1_8 > 0) { results.two_inch_1_8 = (b_1_8).toFixed(2); }
+            else if (b_1_8 < 0) { results.two_inch_1_8 = ""; }
+            if (b_1_9 > 0) { results.two_inch_1_9 = (b_1_9).toFixed(2); }
+            else if (b_1_9 < 0) { results.two_inch_1_9 = ""; }
+            if (b_2_0 > 0) { results.two_inch_2_0 = (b_2_0).toFixed(2); }
+            else if (b_2_0 < 0) { results.two_inch_2_0 = ""; }
+            if (b_2_1 > 0) { results.two_inch_2_1 = (b_2_1).toFixed(2); }
+            else if (b_2_1 < 0) { results.two_inch_2_1 = ""; }
+            if (b_2_2 > 0) { results.two_inch_2_2 = (b_2_2).toFixed(2); }
+            else if (b_2_2 < 0) { results.two_inch_2_2 = ""; }
+            if (b_2_3 > 0) { results.two_inch_2_3 = (b_2_3).toFixed(2); }
+            else if (b_2_3 < 0) { results.two_inch_2_3 = ""; }
+            if (b_2_4 > 0) { results.two_inch_2_4 = (b_2_4).toFixed(2); }
+            else if (b_2_4 < 0) { results.two_inch_2_4 = ""; }
+            if (b_2_5 > 0) { results.two_inch_2_5 = (b_2_5).toFixed(2); }
+            else if (b_2_5 < 0) { results.two_inch_2_5 = ""; }
+            if (b_2_6 > 0) { results.two_inch_2_6 = (b_2_6).toFixed(2); }
+            else if (b_2_6 < 0) { results.two_inch_2_6 = ""; }
+
+            if (c_0_2 > 0) { results.three_inch_0_2 = (c_0_2).toFixed(2); }
+            else if (c_0_2 < 0) { results.three_inch_0_2 = ""; }
+            if (c_0_3 > 0) { results.three_inch_0_3 = (c_0_3).toFixed(2); }
+            else if (c_0_3 < 0) { results.three_inch_0_3 = ""; }
+            if (c_0_4 > 0) { results.three_inch_0_4 = (c_0_4).toFixed(2); }
+            else if (c_0_4 < 0) { results.three_inch_0_4 = ""; }
+            if (c_0_5 > 0) { results.three_inch_0_5 = (c_0_5).toFixed(2); }
+            else if (c_0_5 < 0) { results.three_inch_0_5 = ""; }
+            if (c_0_6 > 0) { results.three_inch_0_6 = (c_0_6).toFixed(2); }
+            else if (c_0_6 < 0) { results.three_inch_0_6 = ""; }
+            if (c_0_7 > 0) { results.three_inch_0_7 = (c_0_7).toFixed(2); }
+            else if (c_0_7 < 0) { results.three_inch_0_7 = ""; }
+            if (c_0_8 > 0) { results.three_inch_0_8 = (c_0_8).toFixed(2); }
+            else if (c_0_8 < 0) { results.three_inch_0_8 = ""; }
+            if (c_0_9 > 0) { results.three_inch_0_9 = (c_0_9).toFixed(2); }
+            else if (c_0_9 < 0) { results.three_inch_0_9 = ""; }
+            if (c_1_0 > 0) { results.three_inch_1_0 = (c_1_0).toFixed(2); }
+            else if (c_1_0 < 0) { results.three_inch_1_0 = ""; }
+            if (c_1_1 > 0) { results.three_inch_1_1 = (c_1_1).toFixed(2); }
+            else if (c_1_1 < 0) { results.three_inch_1_1 = ""; }
+            if (c_1_2 > 0) { results.three_inch_1_2 = (c_1_2).toFixed(2); }
+            else if (c_1_2 < 0) { results.three_inch_1_2 = ""; }
+            if (c_1_3 > 0) { results.three_inch_1_3 = (c_1_3).toFixed(2); }
+            else if (c_1_3 < 0) { results.three_inch_1_3 = ""; }
+            if (c_1_4 > 0) { results.three_inch_1_4 = (c_1_4).toFixed(2); }
+            else if (c_1_4 < 0) { results.three_inch_1_4 = ""; }
+            if (c_1_5 > 0) { results.three_inch_1_5 = (c_1_5).toFixed(2); }
+            else if (c_1_5 < 0) { results.three_inch_1_5 = ""; }
+            if (c_1_6 > 0) { results.three_inch_1_6 = (c_1_6).toFixed(2); }
+            else if (c_1_6 < 0) { results.three_inch_1_6 = ""; }
+            if (c_1_7 > 0) { results.three_inch_1_7 = (c_1_7).toFixed(2); }
+            else if (c_1_7 < 0) { results.three_inch_1_7 = ""; }
+            if (c_1_8 > 0) { results.three_inch_1_8 = (c_1_8).toFixed(2); }
+            else if (c_1_8 < 0) { results.three_inch_1_8 = ""; }
+            if (c_1_9 > 0) { results.three_inch_1_9 = (c_1_9).toFixed(2); }
+            else if (c_1_9 < 0) { results.three_inch_1_9 = ""; }
+            if (c_2_0 > 0) { results.three_inch_2_0 = (c_2_0).toFixed(2); }
+            else if (c_2_0 < 0) { results.three_inch_2_0 = ""; }
+            if (c_2_1 > 0) { results.three_inch_2_1 = (c_2_1).toFixed(2); }
+            else if (c_2_1 < 0) { results.three_inch_2_1 = ""; }
+            if (c_2_2 > 0) { results.three_inch_2_2 = (c_2_2).toFixed(2); }
+            else if (c_2_2 < 0) { results.three_inch_2_2 = ""; }
+            if (c_2_3 > 0) { results.three_inch_2_3 = (c_2_3).toFixed(2); }
+            else if (c_2_3 < 0) { results.three_inch_2_3 = ""; }
+            if (c_2_4 > 0) { results.three_inch_2_4 = (c_2_4).toFixed(2); }
+            else if (c_2_4 < 0) { results.three_inch_2_4 = ""; }
+            if (c_2_5 > 0) { results.three_inch_2_5 = (c_2_5).toFixed(2); }
+            else if (c_2_5 < 0) { results.three_inch_2_5 = ""; }
+            if (c_2_6 > 0) { results.three_inch_2_6 = (c_2_6).toFixed(2); }
+            else if (c_2_6 < 0) { results.three_inch_2_6 = ""; }
+
+            if (d_0_2 > 0) { results.four_inch_0_2 = (d_0_2).toFixed(2); }
+            else if (d_0_2 < 0) { results.four_inch_0_2 = ""; }
+            if (d_0_3 > 0) { results.four_inch_0_3 = (d_0_3).toFixed(2); }
+            else if (d_0_3 < 0) { results.four_inch_0_3 = ""; }
+            if (d_0_4 > 0) { results.four_inch_0_4 = (d_0_4).toFixed(2); }
+            else if (d_0_4 < 0) { results.four_inch_0_4 = ""; }
+            if (d_0_5 > 0) { results.four_inch_0_5 = (d_0_5).toFixed(2); }
+            else if (d_0_5 < 0) { results.four_inch_0_5 = ""; }
+            if (d_0_6 > 0) { results.four_inch_0_6 = (d_0_6).toFixed(2); }
+            else if (d_0_6 < 0) { results.four_inch_0_6 = ""; }
+            if (d_0_7 > 0) { results.four_inch_0_7 = (d_0_7).toFixed(2); }
+            else if (d_0_7 < 0) { results.four_inch_0_7 = ""; }
+            if (d_0_8 > 0) { results.four_inch_0_8 = (d_0_8).toFixed(2); }
+            else if (d_0_8 < 0) { results.four_inch_0_8 = ""; }
+            if (d_0_9 > 0) { results.four_inch_0_9 = (d_0_9).toFixed(2); }
+            else if (d_0_9 < 0) { results.four_inch_0_9 = ""; }
+            if (d_1_0 > 0) { results.four_inch_1_0 = (d_1_0).toFixed(2); }
+            else if (d_1_0 < 0) { results.four_inch_1_0 = ""; }
+            if (d_1_1 > 0) { results.four_inch_1_1 = (d_1_1).toFixed(2); }
+            else if (d_1_1 < 0) { results.four_inch_1_1 = ""; }
+            if (d_1_2 > 0) { results.four_inch_1_2 = (d_1_2).toFixed(2); }
+            else if (d_1_2 < 0) { results.four_inch_1_2 = ""; }
+            if (d_1_3 > 0) { results.four_inch_1_3 = (d_1_3).toFixed(2); }
+            else if (d_1_3 < 0) { results.four_inch_1_3 = ""; }
+            if (d_1_4 > 0) { results.four_inch_1_4 = (d_1_4).toFixed(2); }
+            else if (d_1_4 < 0) { results.four_inch_1_4 = ""; }
+            if (d_1_5 > 0) { results.four_inch_1_5 = (d_1_5).toFixed(2); }
+            else if (d_1_5 < 0) { results.four_inch_1_5 = ""; }
+            if (d_1_6 > 0) { results.four_inch_1_6 = (d_1_6).toFixed(2); }
+            else if (d_1_6 < 0) { results.four_inch_1_6 = ""; }
+            if (d_1_7 > 0) { results.four_inch_1_7 = (d_1_7).toFixed(2); }
+            else if (d_1_7 < 0) { results.four_inch_1_7 = ""; }
+            if (d_1_8 > 0) { results.four_inch_1_8 = (d_1_8).toFixed(2); }
+            else if (d_1_8 < 0) { results.four_inch_1_8 = ""; }
+            if (d_1_9 > 0) { results.four_inch_1_9 = (d_1_9).toFixed(2); }
+            else if (d_1_9 < 0) { results.four_inch_1_9 = ""; }
+            if (d_2_0 > 0) { results.four_inch_2_0 = (d_2_0).toFixed(2); }
+            else if (d_2_0 < 0) { results.four_inch_2_0 = ""; }
+            if (d_2_1 > 0) { results.four_inch_2_1 = (d_2_1).toFixed(2); }
+            else if (d_2_1 < 0) { results.four_inch_2_1 = ""; }
+            if (d_2_2 > 0) { results.four_inch_2_2 = (d_2_2).toFixed(2); }
+            else if (d_2_2 < 0) { results.four_inch_2_2 = ""; }
+            if (d_2_3 > 0) { results.four_inch_2_3 = (d_2_3).toFixed(2); }
+            else if (d_2_3 < 0) { results.four_inch_2_3 = ""; }
+            if (d_2_4 > 0) { results.four_inch_2_4 = (d_2_4).toFixed(2); }
+            else if (d_2_4 < 0) { results.four_inch_2_4 = ""; }
+            if (d_2_5 > 0) { results.four_inch_2_5 = (d_2_5).toFixed(2); }
+            else if (d_2_5 < 0) { results.four_inch_2_5 = ""; }
+            if (d_2_6 > 0) { results.four_inch_2_6 = (d_2_6).toFixed(2); }
+            else if (d_2_6 < 0) { results.four_inch_2_6 = ""; }
+            const tableHTML2 = `
+            <div class="results-table-wrapper">
+                <table class="results-table">
+                    <thead>
+                    <tr>
+                        <th>Surface</th>
+                        <th>Width (m)</th>
+                        <th>Length (m)</th>
+                        <th>Area (m²)</th>
+                        <th>Material</th>
+                        <th>NRC</th>
+                        <th>Absorption</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Floor A</td>
+                        <td>${results.floor_a_width_m}</td>
+                        <td>${results.floor_a_height_m}</td>
+                        <td>${(results.floor_a_area_m2).toFixed(2)}</td>
+                        <td>${document.getElementById("material_floor_a").value || "Select material"}</td>
+                        <td>${nrcResults.material_floor_a}</td>
+                        <td>${(results.absorption_floor_a).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                        <td>Floor B</td>
+                        <td>${results.floor_b_width_m}</td>
+                        <td>${results.floor_b_height_m}</td>
+                        <td>${(results.floor_b_area_m2).toFixed(2)}</td>
+                        <td>${document.getElementById("material_floor_b").value || "Select material"}</td>
+                        <td>${nrcResults.material_floor_b}</td>
+                        <td>${(results.absorption_floor_b).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                        <td>Ceiling A</td>
+                        <td>${results.ceiling_a_width_m}</td>
+                        <td>${results.ceiling_a_height_m}</td>
+                        <td>${(results.ceiling_a_area_m2).toFixed(2)}</td>
+                        <td>${document.getElementById("material_ceiling_a").value || "Select material"}</td>
+                        <td>${nrcResults.material_ceiling_a}</td>
+                        <td>${(results.absorption_ceiling_a).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                        <td>Ceiling B</td>
+                        <td>${results.ceiling_b_width_m}</td>
+                        <td>${results.ceiling_b_height_m}</td>
+                        <td>${(results.ceiling_b_area_m2).toFixed(2)}</td>
+                        <td>${document.getElementById("material_ceiling_b").value || "Select material"}</td>
+                        <td>${nrcResults.material_ceiling_b}</td>
+                        <td>${(results.absorption_ceiling_b).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                        <td>Wall 1 A</td>
+                        <td>${results.wall_1_a_width_m}</td>
+                        <td>${results.wall_1_a_height_m}</td>
+                        <td>${(results.wall_1_a_area_m2).toFixed(2)}</td>
+                        <td>${document.getElementById("material_wall_1_a").value || "Select material"}</td>
+                        <td>${nrcResults.material_wall_1_a}</td>
+                        <td>${(results.absorption_wall_1_a).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                        <td>Wall 1 B</td>
+                        <td>${results.wall_1_b_width_m}</td>
+                        <td>${results.wall_1_b_height_m}</td>
+                        <td>${(results.wall_1_b_area_m2).toFixed(2)}</td>
+                        <td>${document.getElementById("material_wall_1_b").value || "Select material"}</td>
+                        <td>${nrcResults.material_wall_1_b}</td>
+                        <td>${(results.absorption_wall_1_b).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                        <td>Wall 2 A</td>
+                        <td>${results.wall_2_a_width_m}</td>
+                        <td>${results.wall_2_a_height_m}</td>
+                        <td>${(results.wall_2_a_area_m2).toFixed(2)}</td>
+                        <td>${document.getElementById("material_wall_2_a").value || "Select material"}</td>
+                        <td>${nrcResults.material_wall_2_a}</td>
+                        <td>${(results.absorption_wall_2_a).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                        <td>Wall 2 B</td>
+                        <td>${results.wall_2_b_width_m}</td>
+                        <td>${results.wall_2_b_height_m}</td>
+                        <td>${(results.wall_2_b_area_m2).toFixed(2)}</td>
+                        <td>${document.getElementById("material_wall_2_b").value || "Select material"}</td>
+                          <td>${nrcResults.material_wall_2_b}</td>
+                            <td>${(results.absorption_wall_2_b).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                        <td>Wall 3 A</td>
+                        <td>${results.wall_3_a_width_m}</td>
+                        <td>${results.wall_3_a_height_m}</td>
+                        <td>${(results.wall_3_a_area_m2).toFixed(2)}</td>
+                        <td>${document.getElementById("material_wall_3_a").value || "Select material"}</td>
+                        <td>${nrcResults.material_wall_3_a}</td>
+                        <td>${(results.absorption_wall_3_a).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                        <td>Wall 3 B</td>
+                        <td>${results.wall_3_b_width_m}</td>
+                        <td>${results.wall_3_b_height_m}</td>
+                        <td>${(results.wall_3_b_area_m2).toFixed(2)}</td>
+                        <td>${document.getElementById("material_wall_3_b").value || "Select material"}</td>
+                        <td>${nrcResults.material_wall_3_b}</td>
+                        <td>${(results.absorption_wall_3_b).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                        <td>Wall 4 A</td>
+                        <td>${results.wall_4_a_width_m}</td>
+                        <td>${results.wall_4_a_height_m}</td>
+                        <td>${(results.wall_4_a_area_m2).toFixed(2)}</td>
+                        <td>${document.getElementById("material_wall_4_a").value || "Select material"}</td>
+                        <td>${nrcResults.material_wall_4_a}</td>
+                        <td>${(results.absorption_wall_4_a).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                        <td>Wall 4 B</td>
+                        <td>${results.wall_4_b_width_m}</td>
+                        <td>${results.wall_4_b_height_m}</td>
+                        <td>${(results.wall_4_b_area_m2).toFixed(2)}</td>
+                        <td>${document.getElementById("material_wall_4_b").value || "Select material"}</td>
+                        <td>${nrcResults.material_wall_4_b}</td>
+                        <td>${(results.absorption_wall_4_b).toFixed(2)}</td>
+                        </tr>  
+                        </tbody>
+                </table>
+                </div>
+                <br><hr>
+                <div class="results-table-wrapper">
+                   <table class="results-table-2">
+                        <tr>
+                        <th>Total Absorption</th>
+                        <td>${(results.total_abso).toFixed(2)}</td>
+                        </tr>
+                        <tr>    
+                        <th>Volume m(3)</th>
+                        <td>${(results.volume).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                        <th>Reverberation Time (RT60) in seconds</th>
+                        <td>${results.rt_sec}</td>
+                        </tr>
+                        </table>
+                        </div>
+
+                    <div class="results-table-wrapper">
+                        <table class="results-table">
+                            <thead>
+                            <tr>
+                                <th>Desired Reverberation Time is seconds</th>
+                                <th>Total Absorption Needed</th>
+                                <th>Number of 1 Inch Thick Panels Needed</th>
+                                <th>Number of 2 Inch Thick Panels Needed</th>
+                                <th>Number of 3 Inch Thick Panels Needed</th>
+                                <th>Number of 4 Inch Thick Panels Needed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>0.2</td>
+                                <td>${((0.16 * results.volume) / 0.2).toFixed(2)}</td>
+                                <td>${results.one_inch_0_2}</td>
+                                <td>${results.two_inch_0_2}</td>
+                               <td>${results.three_inch_0_2}</td>
+                               <td>${results.four_inch_0_2}</td>
+                            </tr>
+                                <td>0.3</td>
+                                <td>${((0.16 * results.volume) / 0.3).toFixed(2)}</td>
+                                <td>${results.one_inch_0_3}</td>
+                                <td>${results.two_inch_0_3}</td>
+                                <td>${results.three_inch_0_3}</td>
+                                <td>${results.four_inch_0_3}</td>
+                            </tr>
+                            <tr>
+                                <td>0.4</td>
+                                <td>${((0.16 * results.volume) / 0.4).toFixed(2)}</td>
+                                <td>${results.one_inch_0_4}</td>
+                                <td>${results.two_inch_0_4}</td>
+                                <td>${results.three_inch_0_4}</td>
+                                <td>${results.four_inch_0_4}</td>
+                            </tr>
+                            <tr>
+                                <td>0.5</td>
+                                <td>${((0.16 * results.volume) / 0.5).toFixed(2)}</td>
+                                <td>${results.one_inch_0_5}</td>
+                                <td>${results.two_inch_0_5}</td>
+                                <td>${results.three_inch_0_5}</td>
+                                <td>${results.four_inch_0_5}</td>
+                            </tr>
+                            <tr>
+                                <td>0.6</td>
+                                <td>${((0.16 * results.volume) / 0.6).toFixed(2)}</td>
+                                <td>${results.one_inch_0_6}</td>
+                                <td>${results.two_inch_0_6}</td>
+                                <td>${results.three_inch_0_6}</td>
+                                <td>${results.four_inch_0_6}</td>
+                            </tr>
+                            <tr>
+                                <td>0.7</td>
+                                <td>${((0.16 * results.volume) / 0.7).toFixed(2)}</td>
+                                 <td>${results.one_inch_0_7}</td>
+                                 <td>${results.two_inch_0_7}</td>
+                                 <td>${results.three_inch_0_7}</td>
+                                 <td>${results.four_inch_0_7}</td>
+                            <tr>
+                                <td>0.8</td>
+                                <td>${((0.16 * results.volume) / 0.8).toFixed(2)}</td>
+                                 <td>${results.one_inch_0_8}</td>
+                                 <td>${results.two_inch_0_8}</td>
+                                 <td>${results.three_inch_0_8}</td>
+                                 <td>${results.four_inch_0_8}</td>
+                            </tr>
+                                <td>0.9</td>
+                                <td>${((0.16 * results.volume) / 0.9).toFixed(2)}</td>
+                                 <td>${results.one_inch_0_9}</td>
+                                 <td>${results.two_inch_0_9}</td>
+                                 <td>${results.three_inch_0_9}</td>
+                                 <td>${results.four_inch_0_9}</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>${((0.16 * results.volume) / 1.0).toFixed(2)}</td>
+                                 <td>${results.one_inch_1_0}</td>
+                                 <td>${results.two_inch_1_0}</td>
+                                 <td>${results.three_inch_1_0}</td>
+                                 <td>${results.four_inch_1_0}</td>
+                            </tr>
+                            <tr>
+                                <td>1.1</td>
+                                <td>${((0.16 * results.volume) / 1.1).toFixed(2)}</td>
+                                 <td>${results.one_inch_1_1}</td>
+                                 <td>${results.two_inch_1_1}</td>
+                                 <td>${results.three_inch_1_1}</td>
+                                 <td>${results.four_inch_1_1}</td>
+                            </tr>
+                            <tr>
+                                <td>1.2</td>
+                                <td>${((0.16 * results.volume) / 1.2).toFixed(2)}</td>
+                                 <td>${results.one_inch_1_2}</td>
+                                 <td>${results.two_inch_1_2}</td>
+                                 <td>${results.three_inch_1_2}</td>
+                                 <td>${results.four_inch_1_2}</td>
+                            </tr>
+                            <tr>
+                                <td>1.3</td>
+                                <td>${((0.16 * results.volume) / 1.3).toFixed(2)}</td>
+                                 <td>${results.one_inch_1_3}</td>
+                                 <td>${results.two_inch_1_3}</td>
+                                 <td>${results.three_inch_1_3}</td>
+                                 <td>${results.four_inch_1_3}</td>
+                            </tr>
+                            <tr>
+                                <td>1.4</td>
+                                <td>${((0.16 * results.volume) / 1.4).toFixed(2)}</td>
+                                 <td>${results.one_inch_1_4}</td>
+                                 <td>${results.two_inch_1_4}</td>
+                                 <td>${results.three_inch_1_4}</td>
+                                  <td>${results.four_inch_1_4}</td>
+                            </tr>
+                            <tr>
+                                <td>1.5</td>
+                                <td>${((0.16 * results.volume) / 1.5).toFixed(2)}</td>
+                                 <td>${results.one_inch_1_5}</td>
+                                 <td>${results.two_inch_1_5}</td>
+                                 <td>${results.three_inch_1_5}</td>
+                                  <td>${results.four_inch_1_5}</td>
+                            </tr>
+                            <tr>
+                                <td>1.6</td>
+                                <td>${((0.16 * results.volume) / 1.6).toFixed(2)}</td>
+                                 <td>${results.one_inch_1_6}</td>
+                                 <td>${results.two_inch_1_6}</td>
+                                 <td>${results.three_inch_1_6}</td>
+                                  <td>${results.four_inch_1_6}</td>
+                            </tr>
+                            <tr>
+                                <td>1.7</td>
+                                <td>${(0.16 * results.volume / 1.7).toFixed(2)}</td>
+                                 <td>${results.one_inch_1_7}</td>
+                                 <td>${results.two_inch_1_7}</td>
+                                 <td>${results.three_inch_1_7}</td>
+                                  <td>${results.four_inch_1_7}</td>
+                            </tr>
+                            <tr>
+                                <th>1.8</th>
+                                <th>${(0.16 * results.volume / 1.8).toFixed(2)}</th>
+                                 <td>${results.one_inch_1_8}</td>
+                                 <td>${results.two_inch_1_8}</td>
+                                 <td>${results.three_inch_1_8}</td>
+                                  <td>${results.four_inch_1_8}</td>
+                            </tr>
+                            <tr>
+                                <td>1.9</td>
+                                <td>${(0.16 * results.volume / 1.9).toFixed(2)}</td>
+                                 <td>${results.one_inch_1_9}</td>
+                                 <td>${results.two_inch_1_9}</td>
+                                 <td>${results.three_inch_1_9}</td>
+                                  <td>${results.four_inch_1_9}</td>
+                            </tr>
+                            <tr>
+                                <td>2.0</td>
+                                <td>${(0.16 * results.volume / 2.0).toFixed(2)}</td>
+                                 <td>${results.one_inch_2_0}</td>
+                                 <td>${results.two_inch_2_0}</td>
+                                 <td>${results.three_inch_2_0}</td>
+                                  <td>${results.four_inch_2_0}</td>
+                            </tr>
+                            <tr>
+                                <td>2.1</td>
+                                <td>${(0.16 * results.volume / 2.1).toFixed(2)}</td>
+                                 <td>${results.one_inch_2_1}</td>
+                                 <td>${results.two_inch_2_1}</td>
+                                 <td>${results.three_inch_2_1}</td>
+                                <td>${results.four_inch_2_1}</td>
+                            </tr>
+                            <tr>
+                                <td>2.2</td>
+                                <td>${(0.16 * results.volume / 2.2).toFixed(2)}</td>
+                                 <td>${results.one_inch_2_2}</td>
+                                 <td>${results.two_inch_2_2}</td>
+                                 <td>${results.three_inch_2_2}</td>
+                                  <td>${results.four_inch_2_2}</td>
+                            </tr>
+                            <tr>
+                                <td>2.3</td>
+                                <td>${(0.16 * results.volume / 2.3).toFixed(2)}</td>
+                                 <td>${results.one_inch_2_3}</td>
+                                 <td>${results.two_inch_2_3}</td>
+                                 <td>${results.three_inch_2_3}</td>
+                                  <td>${results.four_inch_2_3}</td>
+                            </tr>
+                            <tr>
+                                <td>2.4</td>
+                                <td>${(0.16 * results.volume / 2.4).toFixed(2)}</td>
+                                 <td>${results.one_inch_2_4}</td>
+                                 <td>${results.two_inch_2_4}</td>
+                                 <td>${results.three_inch_2_4}</td>
+                                  <td>${results.four_inch_2_4}</td>
+                            </tr>
+                            <tr>
+                                <td>2.5</td>
+                                <td>${(0.16 * results.volume / 2.5).toFixed(2)}</td>
+                                 <td>${results.one_inch_2_5}</td>
+                                 <td>${results.two_inch_2_5}</td>
+                                 <td>${results.three_inch_2_5}</td>
+                                  <td>${results.four_inch_2_5}</td>
+                            </tr>
+                            <tr>
+                                <td>2.6</td>
+                                <td>${(0.16 * results.volume / 2.6).toFixed(2)}</td>
+                                 <td>${results.one_inch_2_6}</td>
+                                 <td>${results.two_inch_2_6}</td>
+                                 <td>${results.three_inch_2_6}</td>
+                                <td>${results.four_inch_2_6}</td>
+                                </tr>   
+                                </tbody>
+                </table>
+            </div>`;
+            // Display the table
+            document.getElementById("table-container").innerHTML = tableHTML;
+            document.querySelector(".table-container-2").innerHTML = tableHTML2;
+
+
+            localStorage.setItem("rt_sec", results.rt_sec);
+        }
+
+        // Add event listeners to inputs and material selectors
+        document.querySelectorAll("input, select").forEach(element => {
+            element.addEventListener("input", updateResultsAndNrcValues);
+            element.addEventListener("change", updateResultsAndNrcValues);
+            //document.getElementById("rt_sec").addEventListener("input", updateResultsAndNrcValues);
+        });
+
+        // Initial rendering
+        updateResultsAndNrcValues();
+    </script>
+
+
+</html>
